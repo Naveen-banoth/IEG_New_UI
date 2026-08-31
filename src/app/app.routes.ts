@@ -6,6 +6,11 @@ import { authGuard, authChildGuard, loginGuard } from './core/guards/auth.guard'
 
 export const routes: Routes = [
   {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'login'
+  },
+  {
     path: 'login',
     component: LoginComponent,
     canActivate: [loginGuard]
@@ -21,11 +26,6 @@ export const routes: Routes = [
     canActivate: [authGuard],
     canActivateChild: [authChildGuard],
     children: [
-      {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'ist'
-      },
       {
         path: 'ist',
         loadChildren: () => import('./features/ist/ist.routes').then(m => m.IST_ROUTES)

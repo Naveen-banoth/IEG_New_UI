@@ -13,10 +13,10 @@ export const authGuard: CanActivateFn = (
     return true;
   }
 
-  const returnUrl = state.url && state.url !== '/' ? state.url : '/ist';
-  return router.createUrlTree(['/login'], {
-    queryParams: { returnUrl }
-  });
+  const isSpecificDeepLink = state.url && state.url !== '/' && state.url !== '/ist' && state.url !== '/ist/dashboard' && state.url !== '/login';
+  return router.createUrlTree(['/login'], isSpecificDeepLink ? {
+    queryParams: { returnUrl: state.url }
+  } : {});
 };
 
 export const authChildGuard: CanActivateChildFn = (

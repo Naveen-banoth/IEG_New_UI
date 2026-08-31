@@ -5,10 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { AdminUserManagementService } from '../../../TestServices/Administration/admin-user-management.service';
 
 
+import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-user-toolbar.component';
+
 @Component({
   selector: 'app-admin-settings',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TopUserToolbarComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })

@@ -11,9 +11,17 @@
 .nav-header {
   margin-bottom: 2rem;
 
+  .nav-header-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.85rem;
+    gap: 1rem;
+  }
+
   /* ==================== STYLISH BREADCRUMB ==================== */
   .breadcrumb-nav {
-    margin-bottom: 0.85rem;
+    margin-bottom: 0;
 
     .breadcrumb-list {
       display: inline-flex;

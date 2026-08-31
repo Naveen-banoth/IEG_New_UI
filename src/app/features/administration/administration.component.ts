@@ -19,10 +19,12 @@ interface AdminSection {
   items?: ShortcutItem[];
 }
 
+import { TopUserToolbarComponent } from '../../layout/top-user-toolbar/top-user-toolbar.component';
+
 @Component({
   selector: 'app-administration',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TopUserToolbarComponent],
   templateUrl: './administration.component.html',
   styleUrl: './administration.component.scss'
 })

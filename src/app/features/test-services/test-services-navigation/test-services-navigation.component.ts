@@ -16,10 +16,12 @@ export interface TestSuiteSummary {
   apiCount: number;
 }
 
+import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-user-toolbar.component';
+
 @Component({
   selector: 'app-test-services-navigation',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TopUserToolbarComponent],
   templateUrl: './test-services-navigation.component.html',
   styleUrl: './test-services-navigation.component.scss'
 })

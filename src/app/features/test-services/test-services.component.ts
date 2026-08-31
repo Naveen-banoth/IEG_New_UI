@@ -39,10 +39,12 @@ import { UM_CATEGORIES, getUmTestItems } from './test-services-um.data';
 // Re-export types so consumers importing from this file directly continue working
 export * from './test-services.types';
 
+import { TopUserToolbarComponent } from '../../layout/top-user-toolbar/top-user-toolbar.component';
+
 @Component({
   selector: 'app-test-services',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, TopUserToolbarComponent],
   templateUrl: './test-services.component.html',
   styleUrl: './test-services.component.scss'
 })

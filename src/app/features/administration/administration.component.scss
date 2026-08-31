@@ -25,6 +25,12 @@
     letter-spacing: -0.025em;
   }
 
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
   .btn-close-hub {
     width: 40px;
     height: 40px;

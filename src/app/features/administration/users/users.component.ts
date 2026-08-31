@@ -8,10 +8,12 @@ import { UserItem } from '../../../core/models/administration.model';
 export { UserItem };
 
 
+import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-user-toolbar.component';
+
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TopUserToolbarComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })

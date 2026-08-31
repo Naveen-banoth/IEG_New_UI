@@ -8,10 +8,12 @@ import { UserRoleItem } from '../../../core/models/administration.model';
 export { UserRoleItem };
 
 
+import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-user-toolbar.component';
+
 @Component({
   selector: 'app-user-roles',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TopUserToolbarComponent],
   templateUrl: './user-roles.component.html',
   styleUrl: './user-roles.component.scss'
 })
