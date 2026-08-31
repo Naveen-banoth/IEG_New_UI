@@ -1,0 +1,73 @@
+<div class="detail-container">
+  <!-- TOP NAVIGATION & STATUS BAR -->
+  <header class="detail-top-bar glass-panel">
+    <div class="top-left">
+      <button class="back-btn" (click)="goBack()" title="Back to Applications">
+        <i class="ph ph-arrow-left" style="font-size: 1.25rem;"></i>
+      </button>
+      
+      <div class="title-meta">
+        <div class="title-row">
+          <h2 class="app-title">{{ applicationTitle }}</h2>
+          <span class="type-pill">IST</span>
+        </div>
+        <span class="subtitle-meta">&bull; Viewing &bull; {{ appId }}</span>
+      </div>
+    </div>
+
+    <div class="top-right-actions">
+      <span class="status-pill-submitted">Submitted</span>
+      
+      <button class="action-icon-btn" title="Assign Team">
+        <i class="ph ph-user-plus" style="font-size: 1.1rem;"></i>
+        <span>Assign</span>
+      </button>
+
+      <button class="action-icon-btn" title="Features & Settings">
+        <i class="ph ph-sliders" style="font-size: 1.1rem;"></i>
+        <span>Features</span>
+      </button>
+
+      <button class="close-btn" (click)="goBack()" title="Close View">
+        <i class="ph ph-x" style="font-size: 1.15rem;"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- BODY SPLIT (LEFT STEPPER + RIGHT ROUTED COMPONENT) -->
+  <div class="detail-body">
+    <!-- LEFT STEPPER WIZARD SIDEBAR -->
+    <aside class="stepper-sidebar">
+      <a 
+        *ngFor="let step of steps" 
+        class="step-item"
+        [class.completed]="step.id < currentStep"
+        [class.active]="step.id === currentStep"
+        [routerLink]="['/ist/detail', appId, step.path]"
+        routerLinkActive="active"
+        (click)="selectStep(step.id)">
+        
+        <div class="step-badge">
+          <span *ngIf="step.id < currentStep">&#10003;</span>
+          <span *ngIf="step.id >= currentStep">{{ step.id }}</span>
+        </div>
+        <span class="step-title">{{ step.name }}</span>
+      </a>
+    </aside>
+
+    <!-- RIGHT STEP CONTENT VIEWPORT -->
+    <main class="step-content-card glass-panel">
+      <div class="router-viewport">
+        <router-outlet></router-outlet>
+      </div>
+
+      <!-- BOTTOM WIZARD BAR -->
+      <footer class="wizard-footer">
+        <button class="btn-footer-back" (click)="prevStep()" [disabled]="currentStep === 1">Back</button>
+        <button class="btn-footer-continue" (click)="nextStep()">
+          {{ currentStep === 5 ? 'Finish' : 'Continue' }}
+        </button>
+      </footer>
+    </main>
+  </div>
+</div>

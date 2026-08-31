@@ -1,0 +1,338 @@
+<div class="admin-subpage-container" (click)="activeActionMenuId = null">
+  
+  <!-- VIEW 1: USER ROLES LIST TABLE -->
+  <ng-container *ngIf="!isCreatingOrEditing">
+    <!-- Top Header -->
+    <div class="subpage-header">
+      <div class="header-titles">
+        <div class="breadcrumb-trail">
+          <a routerLink="/administration" class="crumb-link">Administration</a>
+          <span class="crumb-separator">/</span>
+          <span class="crumb-active">User Roles</span>
+        </div>
+        <h1 class="page-title">User Roles</h1>
+        <p class="subtitle-text">Configure role names, status, and permission access across modules.</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-primary-action" (click)="openCreateRole()">
+          <span>Add User Role</span>
+        </button>
+        <a routerLink="/administration" class="btn-back-icon" title="Back to Administration">
+          <i class="ph ph-arrow-u-up-left"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Search Criteria Accordion Card -->
+    <div class="search-criteria-card">
+      <button class="criteria-toggle" (click)="searchExpanded = !searchExpanded; $event.stopPropagation()">
+        <span class="toggle-symbol">{{ searchExpanded ? '-' : '+' }}</span>
+        <span class="toggle-label">Search Criteria</span>
+      </button>
+
+      <div class="criteria-body" *ngIf="searchExpanded">
+        <div class="criteria-grid">
+          <div class="form-group">
+            <label>Role Name</label>
+            <input type="text" [(ngModel)]="searchKeyword" placeholder="Search by role name..." class="filter-input" />
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select [(ngModel)]="filterStatus" class="filter-input">
+              <option value="">All Statuses</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table Card -->
+    <div class="data-table-card">
+      <div class="table-meta-bar">
+        <span class="meta-count">
+          Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ (currentPage * pageSize > filteredRoles.length) ? filteredRoles.length : currentPage * pageSize }} of {{ filteredRoles.length }}
+        </span>
+
+        <div class="pagination-controls" *ngIf="totalPages > 1">
+          <button class="page-arrow" [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1">
+            <i class="ph ph-caret-left"></i>
+          </button>
+          <span class="page-num active">{{ currentPage }}</span>
+          <button class="page-arrow" [disabled]="currentPage === totalPages" (click)="currentPage = currentPage + 1">
+            <i class="ph ph-caret-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="scimax-table">
+          <thead>
+            <tr>
+              <th class="th-user">USER ROLE</th>
+              <th class="th-status">STATUS</th>
+              <th class="th-actions">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let role of paginatedRoles" (click)="openEditRole(role)">
+              <td class="td-username">
+                <span class="user-link-name">{{ role.name }}</span>
+                <div class="role-desc-preview" *ngIf="role.description">{{ role.description }}</div>
+              </td>
+              <td class="td-status">
+                <span class="status-badge" [ngClass]="role.active ? 'badge-active' : 'badge-inactive'">
+                  {{ role.active ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td class="td-actions" (click)="$event.stopPropagation()">
+                <div class="action-dropdown-anchor">
+                  <button class="btn-more-dots" (click)="toggleActionMenu($event, role.id)">
+                    <i class="ph ph-dots-three-vertical"></i>
+                  </button>
+
+                  <div class="action-popover" *ngIf="activeActionMenuId === role.id">
+                    <button class="pop-item" (click)="openEditRole(role)">
+                      <i class="ph ph-pencil-simple"></i>
+                      <span>Configure Permissions</span>
+                    </button>
+                    <button class="pop-item" (click)="toggleRoleStatus(role)">
+                      <i class="ph ph-power"></i>
+                      <span>{{ role.active ? 'Deactivate' : 'Activate' }}</span>
+                    </button>
+                    <button class="pop-item item-danger" (click)="deleteRole(role.id)">
+                      <i class="ph ph-trash"></i>
+                      <span>Delete Role</span>
+                    </button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="paginatedRoles.length === 0">
+              <td colspan="3" class="empty-message">No user roles found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- VIEW 2: ADD / EDIT ROLE CONFIGURATOR SCREEN (Exact replicate from scimaxieg) -->
+  <ng-container *ngIf="isCreatingOrEditing">
+    <!-- Header -->
+    <div class="subpage-header">
+      <div class="header-titles">
+        <div class="breadcrumb-trail">
+          <a routerLink="/administration" class="crumb-link">Administration</a>
+          <span class="crumb-separator">/</span>
+          <span class="crumb-link" (click)="cancelEdit()">User Roles</span>
+          <span class="crumb-separator">/</span>
+          <span class="crumb-active">{{ isEditMode ? 'Edit User Role' : 'Add User Role' }}</span>
+        </div>
+        <h1 class="page-title">{{ isEditMode ? 'Edit User Role' : 'Add User Role' }}</h1>
+        <p class="subtitle-text">Configure permissions and access settings for a role.</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-primary-action" (click)="saveRole()">
+          <span>Save</span>
+        </button>
+        <button class="btn-back-icon" (click)="cancelEdit()" title="Back to User Roles">
+          <i class="ph ph-arrow-u-up-left"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 2-Column Layout: Left Nav Pills + Right Content -->
+    <div class="role-editor-layout">
+      <!-- Left Sidebar Pills -->
+      <aside class="role-nav-sidebar">
+        <button 
+          class="role-nav-tab" 
+          [class.active]="activeSidebarTab === 'details'"
+          (click)="activeSidebarTab = 'details'">
+          <span class="tab-dot"></span>
+          <span>Role Details</span>
+        </button>
+
+        <button 
+          class="role-nav-tab" 
+          [class.active]="activeSidebarTab === 'general'"
+          (click)="activeSidebarTab = 'general'">
+          <span class="tab-dot"></span>
+          <div class="tab-text-wrap">
+            <span class="tab-title">General</span>
+            <span class="tab-meta">{{ getEnabledCount(roleForm.modulePermissions.general) }}/{{ roleForm.modulePermissions.general.length }} enabled</span>
+          </div>
+        </button>
+
+        <button 
+          class="role-nav-tab" 
+          [class.active]="activeSidebarTab === 'ist'"
+          (click)="activeSidebarTab = 'ist'">
+          <span class="tab-dot"></span>
+          <div class="tab-text-wrap">
+            <span class="tab-title">Investigator Sponsored Trial</span>
+            <span class="tab-meta">{{ getEnabledCount(roleForm.modulePermissions.ist) }}/{{ roleForm.modulePermissions.ist.length }} enabled</span>
+          </div>
+        </button>
+
+        <button 
+          class="role-nav-tab" 
+          [class.active]="activeSidebarTab === 'eap'"
+          (click)="activeSidebarTab = 'eap'">
+          <span class="tab-dot"></span>
+          <div class="tab-text-wrap">
+            <span class="tab-title">Expanded Access Program</span>
+            <span class="tab-meta">{{ getEnabledCount(roleForm.modulePermissions.eap) }}/{{ roleForm.modulePermissions.eap.length }} enabled</span>
+          </div>
+        </button>
+
+        <button 
+          class="role-nav-tab" 
+          [class.active]="activeSidebarTab === 'grants'"
+          (click)="activeSidebarTab = 'grants'">
+          <span class="tab-dot"></span>
+          <div class="tab-text-wrap">
+            <span class="tab-title">Grants</span>
+            <span class="tab-meta">{{ getEnabledCount(roleForm.modulePermissions.grants) }}/{{ roleForm.modulePermissions.grants.length }} enabled</span>
+          </div>
+        </button>
+
+        <button 
+          class="role-nav-tab" 
+          [class.active]="activeSidebarTab === 'analytics'"
+          (click)="activeSidebarTab = 'analytics'">
+          <span class="tab-dot"></span>
+          <div class="tab-text-wrap">
+            <span class="tab-title">Analytics</span>
+            <span class="tab-meta">{{ getEnabledCount(roleForm.modulePermissions.analytics) }}/{{ roleForm.modulePermissions.analytics.length }} enabled</span>
+          </div>
+        </button>
+      </aside>
+
+      <!-- Right Main Panel -->
+      <div class="role-content-panel">
+        
+        <!-- SUB-PAGE A: Role Details & Modules Overview Card Grid -->
+        <ng-container *ngIf="activeSidebarTab === 'details'">
+          <div class="section-card">
+            <h2 class="section-title">Role details</h2>
+            <p class="section-desc">Give this role a clear name, set its status, then configure permissions by module.</p>
+
+            <div class="role-inputs-row">
+              <div class="input-col">
+                <label class="field-label">User Role <span class="required-star">*</span></label>
+                <input type="text" [(ngModel)]="roleForm.name" placeholder="e.g. Analytics Reviewer" class="scimax-input" />
+              </div>
+              <div class="status-toggle-col">
+                <span class="toggle-status-label">Active</span>
+                <div class="toggle-switch-container">
+                  <button 
+                    type="button" 
+                    class="ios-switch" 
+                    [class.switch-on]="roleForm.active"
+                    (click)="roleForm.active = !roleForm.active">
+                    <span class="switch-thumb"></span>
+                  </button>
+                  <span class="toggle-state-text">{{ roleForm.active ? 'On' : 'Off' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-card margin-top">
+            <h2 class="section-title">Permission modules</h2>
+            <p class="section-desc">Select a module from the sidebar or jump in below.</p>
+
+            <div class="modules-config-grid">
+              <!-- General -->
+              <div class="module-config-card">
+                <div class="card-head">
+                  <span class="module-name">General</span>
+                  <span class="module-count-badge">{{ getEnabledCount(roleForm.modulePermissions.general) }}/{{ roleForm.modulePermissions.general.length }}</span>
+                </div>
+                <button class="btn-configure-link" (click)="activeSidebarTab = 'general'">Configure</button>
+              </div>
+
+              <!-- IST -->
+              <div class="module-config-card">
+                <div class="card-head">
+                  <span class="module-name">Investigator Sponsored Trial</span>
+                  <span class="module-count-badge">{{ getEnabledCount(roleForm.modulePermissions.ist) }}/{{ roleForm.modulePermissions.ist.length }}</span>
+                </div>
+                <button class="btn-configure-link" (click)="activeSidebarTab = 'ist'">Configure</button>
+              </div>
+
+              <!-- EAP -->
+              <div class="module-config-card">
+                <div class="card-head">
+                  <span class="module-name">Expanded Access Program</span>
+                  <span class="module-count-badge">{{ getEnabledCount(roleForm.modulePermissions.eap) }}/{{ roleForm.modulePermissions.eap.length }}</span>
+                </div>
+                <button class="btn-configure-link" (click)="activeSidebarTab = 'eap'">Configure</button>
+              </div>
+
+              <!-- Grants -->
+              <div class="module-config-card">
+                <div class="card-head">
+                  <span class="module-name">Grants</span>
+                  <span class="module-count-badge">{{ getEnabledCount(roleForm.modulePermissions.grants) }}/{{ roleForm.modulePermissions.grants.length }}</span>
+                </div>
+                <button class="btn-configure-link" (click)="activeSidebarTab = 'grants'">Configure</button>
+              </div>
+
+              <!-- Analytics -->
+              <div class="module-config-card">
+                <div class="card-head">
+                  <span class="module-name">Analytics</span>
+                  <span class="module-count-badge">{{ getEnabledCount(roleForm.modulePermissions.analytics) }}/{{ roleForm.modulePermissions.analytics.length }}</span>
+                </div>
+                <button class="btn-configure-link" (click)="activeSidebarTab = 'analytics'">Configure</button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- SUB-PAGE B: Granular Module Checkbox Matrix (General, IST, EAP, Grants, Analytics) -->
+        <ng-container *ngIf="activeSidebarTab !== 'details'">
+          <div class="section-card">
+            <div class="perm-config-header">
+              <div>
+                <h2 class="section-title">
+                  {{ activeSidebarTab === 'general' ? 'General Permissions' : 
+                     activeSidebarTab === 'ist' ? 'Investigator Sponsored Trial Permissions' : 
+                     activeSidebarTab === 'eap' ? 'Expanded Access Program Permissions' : 
+                     activeSidebarTab === 'grants' ? 'Grants Permissions' : 'Analytics Permissions' }}
+                </h2>
+                <p class="section-desc">Toggle granular capabilities and authorization rights for this module.</p>
+              </div>
+
+              <div class="quick-batch-actions">
+                <button class="btn-batch" (click)="toggleAllInModule(activeSidebarTab, true)">Select All</button>
+                <button class="btn-batch" (click)="toggleAllInModule(activeSidebarTab, false)">Deselect All</button>
+              </div>
+            </div>
+
+            <!-- Permission Checkbox List -->
+            <div class="permissions-checklist">
+              <label *ngFor="let perm of roleForm.modulePermissions[activeSidebarTab]" class="perm-checkbox-item">
+                <input type="checkbox" [(ngModel)]="perm.enabled" />
+                <span class="perm-title">{{ perm.name }}</span>
+              </label>
+            </div>
+
+            <div class="config-footer-row">
+              <button class="btn-back-to-overview" (click)="activeSidebarTab = 'details'">
+                ‹ Back to Role Overview
+              </button>
+            </div>
+          </div>
+        </ng-container>
+
+      </div>
+    </div>
+  </ng-container>
+</div>

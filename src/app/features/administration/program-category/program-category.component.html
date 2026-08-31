@@ -1,0 +1,443 @@
+<div class="admin-subpage-container" (click)="activeActionMenuId.set(null); showProductDropdown.set(false); showAppTypeDropdown.set(false)">
+  <!-- Subpage Header -->
+  <div class="subpage-header">
+    <div class="header-titles">
+      <div class="breadcrumb-trail">
+        <a routerLink="/administration" class="crumb-link">Administration</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-active">Program Category</span>
+      </div>
+      <h1 class="page-title">Program Category</h1>
+      <p class="subtitle-text">Configure research program categories, support types, application mapping, and available products.</p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-primary-action" (click)="openAddModal()">
+        <span>Add Program Category</span>
+      </button>
+      <a routerLink="/administration" class="btn-back-icon" title="Back to Administration">
+        <i class="ph ph-arrow-u-up-left"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Banner Message -->
+  <div *ngIf="bannerMessage()" class="status-banner" [ngClass]="'banner-' + bannerMessage()?.type">
+    <i *ngIf="bannerMessage()?.type === 'success'" class="ph ph-check-circle" style="font-size: 1.15rem;"></i>
+    <i *ngIf="bannerMessage()?.type === 'error'" class="ph ph-warning-circle" style="font-size: 1.15rem;"></i>
+    <span>{{ bannerMessage()?.text }}</span>
+  </div>
+
+  <!-- Search Criteria Accordion Card -->
+  <div class="search-criteria-card">
+    <div class="criteria-header-row">
+      <button class="criteria-toggle" (click)="toggleSearchCriteria(); $event.stopPropagation()">
+        <span class="toggle-symbol">{{ isSearchExpanded() ? '-' : '+' }}</span>
+        <span class="toggle-label">Search Criteria</span>
+      </button>
+
+      <div class="criteria-quick-btns" *ngIf="isSearchExpanded()">
+        <button class="btn-criteria-action" (click)="onViewAll()">View All</button>
+        <button class="btn-criteria-action" (click)="onClearSearch()">Clear</button>
+        <button class="btn-criteria-action btn-highlight" (click)="onSearch()">Search</button>
+      </div>
+    </div>
+
+    <!-- Search Criteria Form Fields -->
+    <div class="criteria-body" *ngIf="isSearchExpanded()">
+      <div class="criteria-grid">
+        <div class="form-group">
+          <label>Program Category</label>
+          <input 
+            type="text" 
+            [ngModel]="searchModel().name" 
+            (ngModelChange)="updateSearchField('name', $event)"
+            placeholder="Search by category name..." 
+            class="filter-input" />
+        </div>
+
+        <div class="form-group">
+          <label>Program</label>
+          <select 
+            [ngModel]="searchModel().programId" 
+            (ngModelChange)="updateSearchField('programId', $event)"
+            class="filter-input">
+            <option value="">All</option>
+            <option *ngFor="let prog of programOptions" [value]="prog.value">{{ prog.label }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Type</label>
+          <select 
+            [ngModel]="searchModel().supports" 
+            (ngModelChange)="updateSearchField('supports', $event)"
+            class="filter-input">
+            <option value="">All</option>
+            <option value="Product">Product</option>
+            <option value="Fund">Fund</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Available Products</label>
+          <select 
+            [ngModel]="searchModel().mappedProducts" 
+            (ngModelChange)="updateSearchField('mappedProducts', $event)"
+            class="filter-input">
+            <option value="">All</option>
+            <option *ngFor="let prod of productOptions" [value]="prod.value">{{ prod.label }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select 
+            [ngModel]="searchModel().status" 
+            (ngModelChange)="updateSearchField('status', $event)"
+            class="filter-input">
+            <option value="">All</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Table Card -->
+  <div class="data-table-card">
+    <!-- Meta info & Pagination -->
+    <div class="table-meta-bar">
+      <span class="meta-count">
+        Showing {{ (currentPage() - 1) * pageSize() + 1 }} to {{ (currentPage() * pageSize() > totalCount()) ? totalCount() : currentPage() * pageSize() }} of {{ totalCount() }}
+      </span>
+
+      <div class="pagination-controls" *ngIf="totalPages() > 1">
+        <button class="page-arrow" [disabled]="currentPage() === 1" (click)="currentPage.set(currentPage() - 1)">
+          <i class="ph ph-caret-left"></i>
+        </button>
+        <span class="page-num active">{{ currentPage() }}</span>
+        <button class="page-arrow" [disabled]="currentPage() === totalPages()" (click)="currentPage.set(currentPage() + 1)">
+          <i class="ph ph-caret-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Responsive Table -->
+    <div class="table-responsive">
+      <table class="scimax-table">
+        <thead>
+          <tr>
+            <th class="th-prog-cat">PROGRAM CATEGORY</th>
+            <th class="th-program">PROGRAM</th>
+            <th class="th-app-type">APPLICATION TYPE</th>
+            <th class="th-type">TYPE</th>
+            <th class="th-status">STATUS</th>
+            <th class="th-actions">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of paginatedCategories()" (click)="openEditModal(item)">
+            <!-- Program Category Name -->
+            <td class="td-category-name">
+              <span class="category-link">{{ item.NAME }}</span>
+              <div class="category-code-tag" *ngIf="item.CODE">{{ item.CODE }}</div>
+            </td>
+
+            <!-- Program Name -->
+            <td class="td-program-name">
+              <span class="program-pill" [ngClass]="'prog-badge-' + item.PROGRAM_ID">
+                {{ item.PROGRAM_NAME }}
+              </span>
+            </td>
+
+            <!-- Application Types -->
+            <td class="td-app-types">
+              <span class="app-types-text" [title]="item.MappedAppTypesNames">
+                {{ item.MappedAppTypesNames }}
+              </span>
+            </td>
+
+            <!-- Supports Type -->
+            <td class="td-supports">
+              <span class="support-type-badge" [ngClass]="{'type-product': item.IS_PRODUCT_SUPPORT, 'type-fund': item.IS_FUND_SUPPORT}">
+                {{ item.SUPPORTS }}
+              </span>
+            </td>
+
+            <!-- Status -->
+            <td class="td-status">
+              <span class="status-badge" [ngClass]="item.ACTIVECHECK ? 'badge-active' : 'badge-inactive'">
+                {{ item.RecordStatus }}
+              </span>
+            </td>
+
+            <!-- 3-Dots Action Popover -->
+            <td class="td-actions" (click)="$event.stopPropagation()">
+              <div class="action-dropdown-anchor">
+                <button class="btn-more-dots" (click)="toggleActionMenu($event, item.ID)">
+                  <i class="ph ph-dots-three-vertical"></i>
+                </button>
+
+                <div class="action-popover" *ngIf="activeActionMenuId() === item.ID">
+                  <button class="pop-item" (click)="openViewModal(item)">
+                    <i class="ph ph-eye"></i>
+                    <span>View Details</span>
+                  </button>
+                  <button class="pop-item" (click)="openEditModal(item)">
+                    <i class="ph ph-pencil-simple"></i>
+                    <span>Edit Category</span>
+                  </button>
+                  <button class="pop-item" (click)="toggleStatus(item)">
+                    <i class="ph ph-power"></i>
+                    <span>{{ item.ACTIVECHECK ? 'Deactivate' : 'Activate' }}</span>
+                  </button>
+                  <button class="pop-item item-danger" (click)="promptDelete(item)">
+                    <i class="ph ph-trash"></i>
+                    <span>Delete</span>
+                  </button>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="paginatedCategories().length === 0">
+            <td colspan="6" class="empty-message">No program categories found matching the criteria.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ADD / EDIT / VIEW PROGRAM CATEGORY MODAL DIALOG -->
+<div class="modal-overlay-backdrop" *ngIf="isModalOpen()" (click)="isModalOpen.set(false)">
+  <div class="modal-card-dialog program-modal-dialog" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">
+        {{ modalMode() === 'add' ? 'Add Program Category' : (modalMode() === 'edit' ? 'Edit Program Category' : 'View Program Category') }}
+      </h2>
+      <div class="modal-header-actions">
+        <button class="btn-modal-save" *ngIf="modalMode() !== 'view'" (click)="saveProgramCategory()">Save</button>
+        <button class="btn-modal-close" (click)="isModalOpen.set(false)">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Form Body -->
+    <form [formGroup]="programForm" class="modal-form-body">
+      <!-- Row 1: Program Category Name & Active Toggle -->
+      <div class="form-row-between">
+        <div class="form-field full-flex">
+          <label class="field-label">Program Category <span class="required-star">*</span></label>
+          <input 
+            type="text" 
+            formControlName="NAME" 
+            maxlength="100" 
+            placeholder="e.g. Oncology Interventional Research" 
+            class="scimax-input" />
+        </div>
+
+        <div class="status-toggle-wrapper">
+          <span class="toggle-status-label">Active</span>
+          <div class="toggle-switch-container">
+            <button 
+              type="button" 
+              class="ios-switch" 
+              [class.switch-on]="programForm.get('ACTIVECHECK')?.value"
+              [disabled]="modalMode() === 'view'"
+              (click)="programForm.patchValue({ ACTIVECHECK: !programForm.get('ACTIVECHECK')?.value })">
+              <span class="switch-thumb"></span>
+            </button>
+            <span class="toggle-state-text">{{ programForm.get('ACTIVECHECK')?.value ? 'On' : 'Off' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Program Dropdown & Application Type Multi-Select -->
+      <div class="form-grid-2">
+        <div class="form-field">
+          <label class="field-label">Program <span class="required-star">*</span></label>
+          <select 
+            formControlName="PROGRAM_ID" 
+            (change)="onProgramChange()"
+            class="scimax-input select-styled">
+            <option value="">Select Program...</option>
+            <option *ngFor="let p of programOptions" [value]="p.value">{{ p.label }}</option>
+          </select>
+        </div>
+
+        <!-- Application Type Multi-Select -->
+        <div class="form-field position-relative">
+          <label class="field-label">Application Type <span class="required-star">*</span></label>
+          <div 
+            class="custom-multiselect-input" 
+            (click)="toggleAppTypeDropdown($event)">
+            <span class="selected-text" [class.placeholder-color]="programForm.get('ApplicationType')?.value?.length === 0">
+              {{ getSelectedAppTypesDisplay() }}
+            </span>
+            <i class="ph ph-caret-down dropdown-chevron" [class.rotated]="showAppTypeDropdown()"></i>
+          </div>
+
+          <!-- Application Types Dropdown Drawer -->
+          <div class="multiselect-dropdown-drawer" *ngIf="showAppTypeDropdown()" (click)="$event.stopPropagation()">
+            <div class="multiselect-search-header">
+              <label class="select-all-label">
+                <input 
+                  type="checkbox" 
+                  [checked]="programForm.get('ApplicationType')?.value?.length === modalApplicationTypes().length && modalApplicationTypes().length > 0"
+                  (change)="selectAllAppTypes()" />
+                <span>Select all</span>
+              </label>
+
+              <div class="multiselect-search-box">
+                <i class="ph ph-magnifying-glass search-ico"></i>
+                <input 
+                  type="text" 
+                  [ngModel]="appTypeSearchQuery()" 
+                  (ngModelChange)="updateAppTypeSearch($event)"
+                  [ngModelOptions]="{standalone: true}"
+                  placeholder="Search types..." />
+                <button class="clear-search-btn" *ngIf="appTypeSearchQuery()" (click)="updateAppTypeSearch('')">×</button>
+              </div>
+            </div>
+
+            <div class="multiselect-options-list">
+              <label *ngFor="let app of filteredAppTypeOptions()" class="option-row">
+                <input 
+                  type="checkbox" 
+                  [checked]="isAppTypeSelected(app.value)"
+                  (change)="toggleAppTypeSelection(app.value)" />
+                <span class="option-label-text">{{ app.label }}</span>
+              </label>
+              <div *ngIf="filteredAppTypeOptions().length === 0" class="no-options-text">
+                No matching application types found.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: Support Type Checkboxes & Available Products Multi-Select -->
+      <div class="form-grid-2">
+        <!-- Support Types (Product / Fund) -->
+        <div class="form-field" *ngIf="showProductSupportCheckbox || showFundSupportCheckbox">
+          <label class="field-label">Type <span class="required-star">*</span></label>
+          <div class="checkbox-types-row">
+            <!-- Product Support Checkbox -->
+            <label class="type-check-label" *ngIf="showProductSupportCheckbox">
+              <input 
+                type="checkbox" 
+                formControlName="IS_PRODUCT_SUPPORT" 
+                (change)="onProductSupportToggle()" />
+              <span class="check-box-text">Product</span>
+            </label>
+
+            <!-- Fund Support Checkbox -->
+            <label class="type-check-label" *ngIf="showFundSupportCheckbox">
+              <input 
+                type="checkbox" 
+                formControlName="IS_FUND_SUPPORT" />
+              <span class="check-box-text">Fund</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Available Products Multi-Select -->
+        <div class="form-field position-relative" *ngIf="showAvailableProductsField">
+          <label class="field-label">Available Products <span class="required-star">*</span></label>
+          <div 
+            class="custom-multiselect-input" 
+            (click)="toggleProductDropdown($event)">
+            <span class="selected-text" [class.placeholder-color]="programForm.get('PRODUCT_ID')?.value?.length === 0">
+              {{ getSelectedProductsDisplay() }}
+            </span>
+            <i class="ph ph-caret-down dropdown-chevron" [class.rotated]="showProductDropdown()"></i>
+          </div>
+
+          <!-- Product Dropdown Drawer -->
+          <div class="multiselect-dropdown-drawer" *ngIf="showProductDropdown()" (click)="$event.stopPropagation()">
+            <div class="multiselect-search-header">
+              <label class="select-all-label">
+                <input 
+                  type="checkbox" 
+                  [checked]="programForm.get('PRODUCT_ID')?.value?.length === productOptions.length && productOptions.length > 0"
+                  (change)="selectAllProducts()" />
+                <span>Select all</span>
+              </label>
+
+              <div class="multiselect-search-box">
+                <i class="ph ph-magnifying-glass search-ico"></i>
+                <input 
+                  type="text" 
+                  [ngModel]="productSearchQuery()" 
+                  (ngModelChange)="updateProductSearch($event)"
+                  [ngModelOptions]="{standalone: true}"
+                  placeholder="Search products..." />
+                <button class="clear-search-btn" *ngIf="productSearchQuery()" (click)="updateProductSearch('')">×</button>
+              </div>
+            </div>
+
+            <div class="multiselect-options-list">
+              <label *ngFor="let prod of filteredProductOptions()" class="option-row">
+                <input 
+                  type="checkbox" 
+                  [checked]="isProductSelected(prod.value)"
+                  (change)="toggleProductSelection(prod.value)" />
+                <span class="option-label-text">{{ prod.label }}</span>
+              </label>
+              <div *ngIf="filteredProductOptions().length === 0" class="no-options-text">
+                No matching products found.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 4: Description -->
+      <div class="form-field">
+        <label class="field-label">Description</label>
+        <textarea 
+          formControlName="DESCRIPTION" 
+          rows="3" 
+          placeholder="Enter category description..." 
+          class="scimax-input"></textarea>
+      </div>
+    </form>
+
+    <!-- Modal Footer Actions -->
+    <div class="modal-footer">
+      <button 
+        type="button" 
+        class="btn-footer-save" 
+        *ngIf="modalMode() !== 'view'" 
+        (click)="saveProgramCategory()">Save</button>
+      <button 
+        type="button" 
+        class="btn-footer-cancel" 
+        (click)="isModalOpen.set(false)">
+        {{ modalMode() === 'view' ? 'Close' : 'Cancel' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRMATION MODAL -->
+<div class="modal-overlay-backdrop" *ngIf="isDeleteModalOpen()" (click)="isDeleteModalOpen.set(false)">
+  <div class="modal-card-dialog delete-modal-dialog" (click)="$event.stopPropagation()">
+    <div class="delete-icon-wrapper">
+      <i class="ph ph-warning" style="font-size: 2rem; color: #ef4444;"></i>
+    </div>
+    <h3 class="delete-title">Delete Program Category</h3>
+    <p class="delete-msg">
+      Are you sure you want to delete the Program Category <strong>'{{ pendingDeleteItem()?.NAME }}'</strong>? This action cannot be undone.
+    </p>
+
+    <div class="delete-actions-row">
+      <button class="btn-cancel-delete" (click)="isDeleteModalOpen.set(false)">Cancel</button>
+      <button class="btn-confirm-delete" (click)="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>

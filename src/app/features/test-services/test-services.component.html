@@ -1,0 +1,529 @@
+<div class="test-services-container">
+  <!-- BREADCRUMB NAVIGATION -->
+  <nav class="test-breadcrumb-nav" aria-label="Breadcrumb">
+    <ol class="breadcrumb-list">
+      <li class="breadcrumb-item">
+        <a routerLink="/ist" class="crumb-link">
+          <i class="ph ph-house-simple"></i>
+          <span>Home</span>
+        </a>
+      </li>
+      <li class="breadcrumb-separator"><i class="ph ph-caret-right"></i></li>
+      <li class="breadcrumb-item">
+        <a routerLink="/test-services" class="crumb-link">
+          <i class="ph ph-flask"></i>
+          <span>Test Services</span>
+        </a>
+      </li>
+      <li class="breadcrumb-separator"><i class="ph ph-caret-right"></i></li>
+      <li class="breadcrumb-item active" aria-current="page">
+        <i class="ph" [ngClass]="moduleIcon"></i>
+        <span>{{ moduleDisplayName }}</span>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- HERO TOP HEADER BANNER -->
+  <header class="test-services-hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        <span>Enterprise API Integration Suite</span>
+      </div>
+      <h1 class="hero-title">
+        <i class="ph" [ngClass]="moduleIcon"></i>
+        <span>{{ moduleDisplayName }} Test Services</span>
+      </h1>
+      <p class="hero-subtitle">
+        Automated API test runner, payload modifiers, assertion validations, and browser console inspector for
+        <code>{{ moduleFolderPath }}</code>.
+      </p>
+    </div>
+
+    <!-- HERO TOP ACTIONS -->
+    <div class="hero-actions">
+      <a routerLink="/test-services" class="btn-secondary" title="View all test service suites">
+        <i class="ph ph-squares-four"></i>
+        <span>All Suites</span>
+      </a>
+
+      <!-- AUTH BUTTON -->
+      <button class="btn-auth-toggle" [class.is-auth]="isAuthorized" (click)="openAuthModal()"
+        title="Manage Bearer Token & Authentication">
+        <i class="ph" [ngClass]="isAuthorized ? 'ph-lock-key-open' : 'ph-lock-key'"></i>
+        <span>{{ isAuthorized ? 'Authorized' : 'Authorize' }}</span>
+      </button>
+
+      <button class="btn-primary-run-all" [disabled]="isRunningAll" (click)="runAllTests()"
+        title="Execute all endpoints sequentially in test runner">
+        <i class="ph" [ngClass]="isRunningAll ? 'ph-spinner ph-spin' : 'ph-play-circle'"></i>
+        <span>{{ isRunningAll ? 'Executing Suite...' : ('Run All ' + moduleDisplayName + ' Tests') }}</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MODULE EXECUTION PARAMETERS CARD -->
+  <section class="test-params-card">
+    <div class="params-card-header">
+      <div class="params-title-group">
+        <i class="ph ph-gear-six"></i>
+        <h3>Active Suite Context &amp; Environment</h3>
+      </div>
+      <div class="params-actions">
+        <span class="env-pill"><i class="ph ph-desktop"></i> API: http://localhost:4074/</span>
+      </div>
+    </div>
+
+    <div class="params-card-body">
+      <!-- Superadmin Parameters Grid -->
+      <div class="params-chips-grid" *ngIf="activeModule === 'SUPERADMIN'">
+        <div class="param-chip">
+          <span class="chip-label">Target Area:</span>
+          <span class="chip-val">Super Admin Master Management</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Domains:</span>
+          <span class="chip-val">Auth, Orgs, SAML/LDAP, SMTP, Users, Audit</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Total Endpoints:</span>
+          <span class="chip-val">{{ totalCount }} API Test Definitions</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Console Output:</span>
+          <span class="chip-val highlight">F12 &bull; DevTools Console</span>
+        </div>
+      </div>
+
+      <!-- Administration Parameters Grid -->
+      <div class="params-chips-grid" *ngIf="activeModule === 'ADMINISTRATION'">
+        <div class="param-chip">
+          <span class="chip-label">Target Area:</span>
+          <span class="chip-val">Administration Portal Management</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Domains:</span>
+          <span class="chip-val">Settings, Products, Instructions, System Logs</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Total Endpoints:</span>
+          <span class="chip-val">{{ totalCount }} API Test Definitions</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Console Output:</span>
+          <span class="chip-val highlight">F12 &bull; DevTools Console</span>
+        </div>
+      </div>
+
+      <!-- Common Parameters Grid -->
+      <div class="params-chips-grid" *ngIf="activeModule === 'COMMON'">
+        <div class="param-chip">
+          <span class="chip-label">Target Area:</span>
+          <span class="chip-val">Common Services &amp; Workflow Policies</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Domains:</span>
+          <span class="chip-val">Alerts, Screen Controls, Reviews, Files, Lookups</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Total Endpoints:</span>
+          <span class="chip-val">{{ totalCount }} API Test Definitions</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Console Output:</span>
+          <span class="chip-val highlight">F12 &bull; DevTools Console</span>
+        </div>
+      </div>
+
+      <!-- EAP Parameters Grid -->
+      <div class="params-chips-grid" *ngIf="activeModule === 'EAP'">
+        <div class="param-chip">
+          <span class="chip-label">Target Area:</span>
+          <span class="chip-val">Early Access Programs (EAP)</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Domains:</span>
+          <span class="chip-val">General Info, Study Team, Milestones, Requests</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Total Endpoints:</span>
+          <span class="chip-val">{{ totalCount }} API Test Definitions</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Console Output:</span>
+          <span class="chip-val highlight">F12 &bull; DevTools Console</span>
+        </div>
+      </div>
+
+      <!-- IST Parameters Grid -->
+      <div class="params-chips-grid" *ngIf="activeModule === 'IST'">
+        <div class="param-chip">
+          <span class="chip-label">Target Area:</span>
+          <span class="chip-val">Investigator Sponsored Trials (IST)</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Domains:</span>
+          <span class="chip-val">General Info, Study Team, Activities, Requests</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Total Endpoints:</span>
+          <span class="chip-val">{{ totalCount }} API Test Definitions</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Console Output:</span>
+          <span class="chip-val highlight">F12 &bull; DevTools Console</span>
+        </div>
+      </div>
+
+      <!-- Grants Parameters Grid -->
+      <div class="params-chips-grid" *ngIf="activeModule === 'GRANTS'">
+        <div class="param-chip">
+          <span class="chip-label">Target Area:</span>
+          <span class="chip-val">Grants Management (GM)</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Domains:</span>
+          <span class="chip-val">General Info, Sponsor &amp; Signees, Budget, Study Team</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Total Endpoints:</span>
+          <span class="chip-val">{{ totalCount }} API Test Definitions</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Console Output:</span>
+          <span class="chip-val highlight">F12 &bull; DevTools Console</span>
+        </div>
+      </div>
+
+      <!-- UM Parameters Grid -->
+      <div class="params-chips-grid" *ngIf="activeModule === 'UM'">
+        <div class="param-chip">
+          <span class="chip-label">Target Area:</span>
+          <span class="chip-val">User Management &amp; Activity Logs</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Domains:</span>
+          <span class="chip-val">Audit Logs, Users, Depts &amp; Roles, Organizations</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Total Endpoints:</span>
+          <span class="chip-val">{{ totalCount }} API Test Definitions</span>
+        </div>
+        <div class="param-chip">
+          <span class="chip-label">Console Output:</span>
+          <span class="chip-val highlight">F12 &bull; DevTools Console</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- METRICS SUMMARY STATS -->
+  <section class="metrics-summary-grid">
+    <div class="stat-card total-card">
+      <div class="stat-icon"><i class="ph ph-list-checks"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">Total APIs</span>
+        <span class="stat-value">{{ totalCount }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card success-card">
+      <div class="stat-icon"><i class="ph ph-check-circle"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">Passed / Matched</span>
+        <span class="stat-value">{{ successCount }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card failed-card">
+      <div class="stat-icon"><i class="ph ph-x-circle"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">Failed / Issues</span>
+        <span class="stat-value">{{ failedCount }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card rate-card">
+      <div class="stat-icon"><i class="ph ph-chart-pie"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">Pass Rate</span>
+        <span class="stat-value">{{ successRate }}%</span>
+      </div>
+    </div>
+
+    <div class="stat-card time-card">
+      <div class="stat-icon"><i class="ph ph-timer"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">Runtime</span>
+        <span class="stat-value">{{ totalDuration > 0 ? (totalDuration + 'ms') : '-' }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTROLS & DYNAMIC FILTER BAR -->
+  <section class="filter-controls-card">
+    <!-- Dynamic Category Tabs -->
+    <div class="category-tabs">
+      <button *ngFor="let cat of dynamicCategories" class="cat-tab-btn" [class.active]="selectedCategory === cat.key"
+        (click)="selectedCategory = cat.key">
+        <i class="ph {{ cat.icon }}"></i>
+        <span>{{ cat.label }}</span>
+        <span class="cat-pill" *ngIf="cat.key === 'ALL'">{{ totalCount }}</span>
+      </button>
+    </div>
+
+    <div class="filter-actions-row">
+      <!-- Search Box -->
+      <div class="search-box-wrap">
+        <i class="ph ph-magnifying-glass search-icon"></i>
+        <input type="text" placeholder="Filter by API name, endpoint, method..." [(ngModel)]="searchQuery"
+          class="search-input" />
+        <button *ngIf="searchQuery" (click)="searchQuery = ''" class="clear-search-btn">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="status-select-wrap">
+        <select [(ngModel)]="filterStatus" class="status-dropdown">
+          <option value="ALL">All Statuses</option>
+          <option value="SUCCESS">Passed Only</option>
+          <option value="FAILED">Failed / Issues Only</option>
+          <option value="PENDING">Pending / Running</option>
+        </select>
+      </div>
+
+      <!-- View Switcher -->
+      <div class="view-toggle-wrap">
+        <button class="view-btn" [class.active]="activeTab === 'cards'" (click)="activeTab = 'cards'"
+          title="Cards View">
+          <i class="ph ph-cards"></i>
+          <span>API Cards</span>
+        </button>
+        <button class="view-btn" [class.active]="activeTab === 'logs'" (click)="activeTab = 'logs'"
+          title="Terminal Logs Stream">
+          <i class="ph ph-terminal-window"></i>
+          <span>Live Console ({{ consoleLogs.length }})</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TAB 1: API CARDS VIEW ==================== -->
+  <main class="test-cards-view" *ngIf="activeTab === 'cards'">
+    <div class="cards-list">
+      <div *ngFor="let item of filteredItems" class="api-card"
+        [attr.data-method]="item.method"
+        [class.card-success]="item.status === 'SUCCESS' && item.matched"
+        [class.card-failed]="item.status === 'FAILED' || (item.status === 'SUCCESS' && !item.matched)"
+        [class.card-running]="item.status === 'RUNNING'" [class.card-pending]="item.status === 'PENDING'">
+
+        <!-- CARD TOP ROW -->
+        <div class="card-header-bar" (click)="toggleExpand(item)">
+          <div class="header-meta-group">
+            <span class="method-badge" [attr.data-method]="item.method">{{ item.method }}</span>
+            <div class="name-endpoint-box">
+              <div class="api-title-row">
+                <h4 class="api-name">{{ item.apiName }}</h4>
+                <span class="category-pill-sm">{{ item.categoryLabel }}</span>
+              </div>
+              <code class="endpoint-code">{{ item.endpoint }}</code>
+            </div>
+          </div>
+
+          <div class="header-status-group">
+            <!-- STATUS BADGE WITH STATUS CODE -->
+            <div class="status-badge-wrap">
+              <span *ngIf="item.status === 'SUCCESS' && item.matched" class="status-pill status-success">
+                <i class="ph ph-check-circle"></i> PASSED ({{ item.statusCode || 200 }})
+              </span>
+              <span *ngIf="item.status === 'SUCCESS' && !item.matched" class="status-pill status-warn">
+                <i class="ph ph-warning"></i> MISMATCH ({{ item.statusCode || 200 }})
+              </span>
+              <span *ngIf="item.status === 'FAILED'" class="status-pill status-error">
+                <i class="ph ph-x-circle"></i> FAILED ({{ item.statusCode || 'ERR' }})
+              </span>
+              <span *ngIf="item.status === 'RUNNING'" class="status-pill status-running">
+                <i class="ph ph-spinner ph-spin"></i> RUNNING
+              </span>
+              <span *ngIf="item.status === 'PENDING'" class="status-pill status-pending">
+                <i class="ph ph-clock"></i> PENDING
+              </span>
+            </div>
+
+            <!-- DURATION -->
+            <span class="duration-badge" *ngIf="item.durationMs !== undefined">
+              <i class="ph ph-timer"></i> {{ item.durationMs }}ms
+            </span>
+
+            <!-- ACTION BUTTONS -->
+            <div class="card-actions" (click)="$event.stopPropagation()">
+              <button *ngIf="item.payload !== null && item.payload !== undefined" class="btn-icon"
+                [class.active-edit]="item.isEditingPayload" (click)="toggleEditPayload(item)"
+                title="Edit Request Payload JSON">
+                <i class="ph ph-pencil-simple-line"></i>
+              </button>
+
+              <button class="btn-icon btn-run-single" [disabled]="item.status === 'RUNNING' || isRunningAll"
+                (click)="executeSingleTest(item)" title="Run this single API">
+                <i class="ph" [ngClass]="item.status === 'RUNNING' ? 'ph-spinner ph-spin' : 'ph-play'"></i>
+              </button>
+
+              <button class="btn-icon btn-expand" (click)="toggleExpand(item)" title="Toggle Details">
+                <i class="ph" [ngClass]="item.expanded ? 'ph-caret-up' : 'ph-caret-down'"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- INLINE PAYLOAD JSON EDITOR (COLLAPSIBLE) -->
+        <div class="payload-editor-drawer" *ngIf="item.isEditingPayload">
+          <div class="editor-header">
+            <span class="editor-title"><i class="ph ph-code"></i> Dynamic Payload Customizer</span>
+            <div class="editor-actions">
+              <button class="btn-editor-sm" (click)="formatPayloadJson(item)">Format</button>
+              <button class="btn-editor-sm" (click)="resetPayloadJson(item)">Reset Default</button>
+            </div>
+          </div>
+          <textarea class="json-textarea" rows="5" [(ngModel)]="item.customPayloadJson"
+            (ngModelChange)="validateJson(item)" placeholder="Enter valid JSON payload object..."></textarea>
+          <div *ngIf="item.jsonValidationError" class="json-error-msg">
+            <i class="ph ph-warning-circle"></i> {{ item.jsonValidationError }}
+          </div>
+        </div>
+
+        <!-- EXPANDABLE DETAILS DRAWER -->
+        <div class="card-details-drawer" *ngIf="item.expanded">
+          <div class="details-grid">
+            <!-- REQUEST SECTION -->
+            <div class="detail-block">
+              <div class="block-header">
+                <h5>Request Details</h5>
+                <button *ngIf="item.payload" class="btn-copy-sm" (click)="copyJson(getEffectivePayload(item))"
+                  title="Copy Request JSON">
+                  <i class="ph ph-copy"></i> Copy
+                </button>
+              </div>
+              <div class="code-block">
+                <pre>{{ (getEffectivePayload(item) ? (getEffectivePayload(item) | json) : 'No payload (GET / Empty)') }}</pre>
+              </div>
+            </div>
+
+            <!-- RESPONSE SECTION -->
+            <div class="detail-block">
+              <div class="block-header">
+                <h5>Server Response &amp; Expected Assertion</h5>
+                <div class="response-header-actions">
+                  <span *ngIf="item.statusCode" class="status-code-tag"
+                    [class.code-200]="item.statusCode === 200 || item.statusCode === '200'"
+                    [class.code-err]="item.statusCode !== 200 && item.statusCode !== '200'">
+                    HTTP {{ item.statusCode }}
+                  </span>
+                  <button *ngIf="item.response" class="btn-copy-sm" (click)="copyJson(item.response)"
+                    title="Copy Response JSON">
+                    <i class="ph ph-copy"></i> Copy
+                  </button>
+                </div>
+              </div>
+              <div class="expected-row">
+                <strong>Assertion Check:</strong> {{ item.expectedData }}
+              </div>
+              <div class="code-block" [class.code-error]="item.status === 'FAILED'">
+                <pre *ngIf="item.response">{{ item.response | json }}</pre>
+                <pre *ngIf="item.error && !item.response">{{ item.error | json }}</pre>
+                <span *ngIf="!item.response && !item.error" class="text-muted-italics">API has not been executed yet. Click Run to test.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMPTY STATE -->
+      <div *ngIf="filteredItems.length === 0" class="empty-state-box">
+        <i class="ph ph-magnifying-glass empty-icon"></i>
+        <h3>No API Endpoints Found</h3>
+        <p>No endpoints match your active search query or filter criteria.</p>
+        <button class="btn-secondary" (click)="searchQuery = ''; filterStatus = 'ALL'; selectedCategory = 'ALL'">
+          Reset All Filters
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== TAB 2: LIVE CONSOLE TERMINAL STREAM ==================== -->
+  <main class="test-terminal-view" *ngIf="activeTab === 'logs'">
+    <div class="terminal-card">
+      <div class="terminal-topbar">
+        <div class="dots-group">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
+        <div class="terminal-title">
+          <i class="ph ph-terminal-window"></i> Test Runner Execution Console Stream
+        </div>
+        <div class="terminal-actions">
+          <button class="btn-terminal-action" (click)="clearLogs()"><i class="ph ph-trash"></i> Clear</button>
+        </div>
+      </div>
+
+      <div class="terminal-body" #terminalLogsContainer>
+        <div *ngIf="consoleLogs.length === 0" class="terminal-empty">
+          <i class="ph ph-terminal"></i>
+          <span>No logs recorded yet. Execute the test suite to view live console logs.</span>
+        </div>
+        <div *ngFor="let log of consoleLogs" class="log-line" [ngClass]="'log-' + log.level">
+          <span class="log-ts">[{{ log.timestamp }}]</span>
+          <span class="log-level-tag">[{{ log.level.toUpperCase() }}]</span>
+          <span class="log-msg">{{ log.message }}</span>
+          <pre *ngIf="log.data" class="log-payload">{{ log.data | json }}</pre>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== GLOBAL AUTHORIZATION MODAL ==================== -->
+  <div class="auth-modal-backdrop" *ngIf="isAuthModalOpen" (click)="closeAuthModal()">
+    <div class="auth-modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-card-header">
+        <div class="modal-title-group">
+          <i class="ph ph-lock-key"></i>
+          <h3>Global API Authorization Token</h3>
+        </div>
+        <button class="btn-modal-close" (click)="closeAuthModal()"><i class="ph ph-x"></i></button>
+      </div>
+
+      <div class="modal-card-body">
+        <p class="modal-desc">
+          The token configured below is persisted in <code>localStorage</code> and automatically passed via HTTP Interceptor to each API request.
+        </p>
+
+        <div class="modal-field">
+          <label class="modal-label">Bearer Token Value:</label>
+          <textarea class="token-textarea" rows="3" [(ngModel)]="authTokenInput"
+            placeholder="Enter or paste Bearer Token..."></textarea>
+        </div>
+
+        <div *ngIf="authSuccessMessage" class="modal-alert-success">
+          <i class="ph ph-check-circle"></i> {{ authSuccessMessage }}
+        </div>
+
+        <div class="modal-actions-row">
+          <button class="btn-modal-save" (click)="saveAuthorization()">
+            <i class="ph ph-check"></i> Save Token
+          </button>
+          <button class="btn-modal-gen" (click)="autoGenerateToken()">
+            <i class="ph ph-sparkle"></i> Auto-Generate Token
+          </button>
+          <button *ngIf="isAuthorized" class="btn-modal-clear" (click)="clearAuthorization()">
+            <i class="ph ph-sign-out"></i> Clear / Logout
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-card-footer">
+        <button class="btn-modal-done" (click)="closeAuthModal()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>

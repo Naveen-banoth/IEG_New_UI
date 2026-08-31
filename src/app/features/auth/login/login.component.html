@@ -1,0 +1,223 @@
+<div class="login-page-container">
+  <div class="login-layout-wrapper">
+    <!-- LEFT SIDE: Platform Branding, HIPAA Compliance & Trust Badges -->
+    <div class="left-column-section">
+      <!-- Platform Header Logo -->
+      <div class="platform-header-brand">
+        <div class="brand-hex-icon">
+          <i class="ph-bold ph-hexagon"></i>
+          <span class="inner-dot"></span>
+        </div>
+        <div class="brand-text-block">
+          <span class="platform-caption">SECURE CLINICAL PLATFORM</span>
+          <h2 class="platform-brand-name">SCIMAX</h2>
+        </div>
+      </div>
+
+      <!-- Main HIPAA Compliance Card -->
+      <div class="hipaa-compliance-card">
+        <!-- Card Header Badge -->
+        <div class="hipaa-card-header">
+          <div class="hipaa-shield-badge">
+            <i class="ph-bold ph-shield-check"></i>
+          </div>
+          <div class="hipaa-title-meta">
+            <span class="hipaa-region-label">UNITED STATES</span>
+            <h3 class="hipaa-main-heading">HIPAA Compliance Verified</h3>
+          </div>
+        </div>
+
+        <!-- Scrollable Compliance Text Content -->
+        <div class="hipaa-body-scrollable">
+          <p class="hipaa-text-para">
+            Scimax maintains HIPAA compliance in the United States. HIPAA compliance involves fulfilling the requirements of the Health Insurance Portability and Accountability Act of 1996, its subsequent amendments, and related legislation such as the Health Information Technology for Economic and Clinical Health (HITECH) Act.
+          </p>
+          <p class="hipaa-text-para">
+            Protected health information (PHI) handled in Scimax is safeguarded under the HIPAA Privacy Rule. Access is limited to authorized users for permitted treatment, payment, and healthcare operations, with role-based controls that keep investigator, sponsor, and operations teams within their approved scope.
+          </p>
+          <p class="hipaa-text-para">
+            The HIPAA Security Rule guides how Scimax protects electronic PHI. Platform controls include encrypted transport (TLS), encrypted storage for sensitive records, unique user authentication, session timeouts, and audit logging of access and key administrative actions.
+          </p>
+          <p class="hipaa-text-para">
+            Under the Breach Notification Rule and HITECH Act expectations, Scimax maintains documented incident response practices. Suspected unauthorized access or disclosure is investigated promptly, contained, and communicated according to applicable federal and organizational requirements.
+          </p>
+          <p class="hipaa-text-para">
+            Administrative safeguards include workforce training, access authorization procedures, contingency planning, and vendor oversight for systems that touch PHI. Physical and technical safeguards cover facility access, workstation security, and continuous monitoring of identity and access events.
+          </p>
+          <p class="hipaa-text-para">
+            Business associate obligations are addressed through contractual and operational controls with partners that create, receive, maintain, or transmit PHI on behalf of covered entities using Scimax. Data retention and disposal practices are aligned with program, legal, and compliance policies.
+          </p>
+          <p class="hipaa-text-para">
+            Users should only access applications and documents needed for their assigned responsibilities, avoid sharing credentials, and report suspected security issues immediately. Scimax support can assist with access requests, MFA reset workflows, and compliance documentation for audits.
+          </p>
+          <p class="hipaa-text-para">
+            This overview is provided for transparency on the login experience and does not replace your organization's policies, BAAs, or formal compliance attestations. For detailed security whitepapers or audit packages, contact your Scimax administrator or customer success representative.
+          </p>
+        </div>
+      </div>
+
+      <!-- Bottom Trust Badges Row -->
+      <div class="trust-badges-row">
+        <div class="trust-badge-pill">
+          <i class="ph-bold ph-shield-check badge-icon"></i>
+          <span class="badge-label">HIPAA Verified</span>
+        </div>
+        <div class="trust-badge-pill">
+          <i class="ph-bold ph-lock-key badge-icon"></i>
+          <span class="badge-label">256-bit SSL</span>
+        </div>
+        <div class="trust-badge-pill">
+          <i class="ph-bold ph-headset badge-icon"></i>
+          <span class="badge-label">24/7 Support</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE: Login Card & Program Applications -->
+    <div class="right-column-section">
+      <!-- Main Sign In Card -->
+      <div class="signin-card">
+        <span class="signin-welcome-label">WELCOME TO</span>
+        <h2 class="signin-org-title">{{ orgName }}</h2>
+
+        <form [formGroup]="loginForm" (ngSubmit)="Next()" class="signin-form-box">
+          <!-- Email Input Field -->
+          <div class="input-form-group">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-field-label" for="userEmailInput">
+                EMAIL ID <span class="required-star">*</span>
+              </label>
+              <button 
+                *ngIf="showPassword" 
+                type="button" 
+                class="btn-edit-email" 
+                (click)="showPassword = false"
+                title="Edit Email Address">
+                <i class="ph-bold ph-pencil-simple"></i>
+              </button>
+            </div>
+            <div class="input-control-wrapper">
+              <input
+                type="email"
+                id="userEmailInput"
+                formControlName="username"
+                class="styled-auth-input"
+                placeholder="internal@gmail.com"
+                [readonly]="showPassword"
+                autofocus
+                required>
+            </div>
+          </div>
+
+          <!-- Password Input Field (Shows on Step 2) -->
+          <div class="input-form-group password-form-group" *ngIf="showPassword">
+            <label class="form-field-label" for="userPasswordInput">
+              PASSWORD <span class="required-star">*</span>
+            </label>
+            <div class="input-control-wrapper">
+              <input
+                type="password"
+                id="userPasswordInput"
+                formControlName="password"
+                class="styled-auth-input"
+                placeholder="Enter your password"
+                autofocus
+                required>
+            </div>
+          </div>
+
+          <!-- Error Alert Banner -->
+          <div *ngIf="errorMess" class="auth-error-alert mt-2">
+            <i class="ph-bold ph-warning-circle me-1"></i>
+            <span>{{ errorMess }}</span>
+          </div>
+
+          <!-- Continue / Login Button -->
+          <button 
+            type="submit" 
+            class="btn-auth-continue" 
+            [disabled]="isLoading">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+            <span>{{ showPassword ? (isLoading ? 'Signing In...' : 'Login') : 'Continue' }}</span>
+            <i class="ph-bold ph-arrow-right btn-arrow-icon" *ngIf="!isLoading"></i>
+          </button>
+
+          <!-- Forgot Password Link -->
+          <div class="forgot-password-row mt-3">
+            <a href="javascript:void(0)" class="forgot-link-btn" (click)="forgotPassword()">
+              Forgot Password?
+            </a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Applied Programs Section Divider -->
+      <div class="program-section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-badge-label">NEW HERE? APPLY FOR A PROGRAM</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <!-- Program Action Cards -->
+      <div class="program-cards-list">
+        <!-- 1. IST Program Card -->
+        <div class="program-item-card" (click)="applyProgram('ist')">
+          <div class="program-icon-circle">
+            <i class="ph-bold ph-microscope"></i>
+          </div>
+          <div class="program-details">
+            <h4 class="program-title">Interested in Investigator Sponsored Trial?</h4>
+            <span class="program-action-link">Create Account</span>
+          </div>
+          <div class="program-chevron">
+            <i class="ph-bold ph-caret-right"></i>
+          </div>
+        </div>
+
+        <!-- 2. EAP Program Card -->
+        <div class="program-item-card" (click)="applyProgram('eap')">
+          <div class="program-icon-circle">
+            <i class="ph-bold ph-heart-straight"></i>
+          </div>
+          <div class="program-details">
+            <h4 class="program-title">Interested in Expanded Access Program?</h4>
+            <span class="program-action-link">Create Account</span>
+          </div>
+          <div class="program-chevron">
+            <i class="ph-bold ph-caret-right"></i>
+          </div>
+        </div>
+
+        <!-- 3. Grants Program Card -->
+        <div class="program-item-card" (click)="applyProgram('grants')">
+          <div class="program-icon-circle">
+            <i class="ph-bold ph-certificate"></i>
+          </div>
+          <div class="program-details">
+            <h4 class="program-title">Interested in Grants?</h4>
+            <span class="program-action-link">Create Account</span>
+          </div>
+          <div class="program-chevron">
+            <i class="ph-bold ph-caret-right"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Footer Info -->
+      <div class="right-footer-meta">
+        <div class="version-privacy-row">
+          <span>{{ currentbuildversion }}</span>
+          <span class="dot-sep">&bull;</span>
+          <a href="https://www.scimaxglobal.com/application-privacy-notice/" target="_blank" class="privacy-link">Privacy</a>
+        </div>
+        <div class="powered-by-brand mt-1">
+          <span>Powered by</span>
+          <div class="powered-logo-mark">
+            <i class="ph-bold ph-circle-notch"></i>
+          </div>
+          <span class="powered-brand-name">SCIMAX</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

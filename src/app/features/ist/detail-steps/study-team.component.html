@@ -1,0 +1,33 @@
+<div class="step-pane">
+  <div class="pane-header">
+    <div>
+      <h3 class="pane-title">Study Team</h3>
+      <p class="pane-desc">Add study team members for this application.</p>
+    </div>
+    <button class="btn-add-pill" (click)="addMember()">Add</button>
+  </div>
+
+  <div class="team-table-wrapper">
+    <table class="team-table">
+      <thead>
+        <tr>
+          <th>FULL NAME</th>
+          <th>OCCUPATION</th>
+          <th>EMAIL ID</th>
+          <th class="text-right">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let member of teamMembers; let i = index">
+          <td class="col-fullname">{{ member.fullName }}</td>
+          <td class="col-occupation">{{ member.occupation }}</td>
+          <td class="col-email">{{ member.emailId }}</td>
+          <td class="text-right">
+            <button class="btn-sm-edit">Edit</button>
+            <button class="btn-sm-remove" (click)="removeMember(i)">Remove</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

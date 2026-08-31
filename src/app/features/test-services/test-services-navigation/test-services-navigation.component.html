@@ -1,0 +1,224 @@
+<div class="test-services-nav-container">
+  <!-- PAGE HEADER & BREADCRUMB -->
+  <header class="nav-header">
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <a routerLink="/ist" class="crumb-link">
+            <i class="ph ph-house-simple crumb-icon"></i>
+            <span>Home</span>
+          </a>
+        </li>
+        <li class="breadcrumb-separator">
+          <i class="ph ph-caret-right"></i>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          <i class="ph ph-flask crumb-icon"></i>
+          <span>Test Services</span>
+        </li>
+      </ol>
+    </nav>
+
+    <div class="title-row">
+      <div class="title-with-badge">
+        <h1 class="page-title">Test Services Portal</h1>
+        <span class="badge-pill">v25R1.1</span>
+      </div>
+      <p class="subtitle-text">
+        Select a module to launch the automated API test runner, payload customizer, and live console inspector.
+      </p>
+    </div>
+  </header>
+
+  <!-- NAVIGATION BUTTONS / MODULE COMPACT CARDS -->
+  <div class="nav-buttons-grid">
+    <!-- 1. SUPERADMIN COMPACT CARD -->
+    <div class="nav-card card-superadmin" (click)="navigateTo('superadmin')">
+      <div class="card-header-compact">
+        <div class="icon-box icon-superadmin">
+          <i class="ph ph-crown"></i>
+        </div>
+        <div class="header-titles">
+          <h2 class="card-title">Superadmin</h2>
+          <span class="chip-count">{{ superadminCountText }}</span>
+        </div>
+      </div>
+
+      <p class="card-desc">
+        Automated test suite for Super Admin Auth, Organizations, SAML/LDAP configs, SMTP email, and User Management.
+      </p>
+
+      <div class="card-footer-compact">
+        <span class="pill-tag"><i class="ph ph-shield-check"></i> Super Admin Suite</span>
+        <button class="btn-action-compact btn-superadmin-action">
+          <span>Launch</span>
+          <i class="ph ph-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 2. ADMINISTRATION COMPACT CARD -->
+    <div class="nav-card card-administration" (click)="navigateTo('administration')">
+      <div class="card-header-compact">
+        <div class="icon-box icon-administration">
+          <i class="ph ph-sliders"></i>
+        </div>
+        <div class="header-titles">
+          <h2 class="card-title">Administration</h2>
+          <span class="chip-count chip-admin">{{ administrationCountText }}</span>
+        </div>
+      </div>
+
+      <p class="card-desc">
+        Automated test suite for Core Settings, Products, User Instructions, Platform Logs, and Workflow Policies.
+      </p>
+
+      <div class="card-footer-compact">
+        <span class="pill-tag admin-tag"><i class="ph ph-gear"></i> Administration Suite</span>
+        <button class="btn-action-compact btn-administration-action">
+          <span>Launch</span>
+          <i class="ph ph-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 3. COMMON SERVICES COMPACT CARD -->
+    <div class="nav-card card-common" (click)="navigateTo('common')">
+      <div class="card-header-compact">
+        <div class="icon-box icon-common">
+          <i class="ph ph-squares-four"></i>
+        </div>
+        <div class="header-titles">
+          <h2 class="card-title">Common Services</h2>
+          <span class="chip-count chip-common">{{ commonCountText }}</span>
+        </div>
+      </div>
+
+      <p class="card-desc">
+        Automated test suite for Alerts & Notifications, Dynamic Screen Controls, Review Workflow, and File Services.
+      </p>
+
+      <div class="card-footer-compact">
+        <span class="pill-tag common-tag"><i class="ph ph-sparkle"></i> Common Suite</span>
+        <button class="btn-action-compact btn-common-action">
+          <span>Launch</span>
+          <i class="ph ph-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. EAP SERVICES COMPACT CARD -->
+    <div class="nav-card card-eap" (click)="navigateTo('eap')">
+      <div class="card-header-compact">
+        <div class="icon-box icon-eap">
+          <i class="ph ph-first-aid"></i>
+        </div>
+        <div class="header-titles">
+          <h2 class="card-title">EAP Services</h2>
+          <span class="chip-count chip-eap">{{ eapCountText }}</span>
+        </div>
+      </div>
+
+      <p class="card-desc">
+        Automated test suite for Early Access Programs: General Info, Study Team, Milestones, Products & Fund Requests.
+      </p>
+
+      <div class="card-footer-compact">
+        <span class="pill-tag eap-tag"><i class="ph ph-first-aid-kit"></i> EAP Suite</span>
+        <button class="btn-action-compact btn-eap-action">
+          <span>Launch</span>
+          <i class="ph ph-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 5. IST SERVICES COMPACT CARD -->
+    <div class="nav-card card-ist" (click)="navigateTo('ist')">
+      <div class="card-header-compact">
+        <div class="icon-box icon-ist">
+          <i class="ph ph-dna"></i>
+        </div>
+        <div class="header-titles">
+          <h2 class="card-title">IST Services</h2>
+          <span class="chip-count chip-ist">{{ istCountText }}</span>
+        </div>
+      </div>
+
+      <p class="card-desc">
+        Automated test suite for Investigator Sponsored Trials: General Info, Study Team, Seminars, Publications & Reports.
+      </p>
+
+      <div class="card-footer-compact">
+        <span class="pill-tag ist-tag"><i class="ph ph-flask"></i> IST Suite</span>
+        <button class="btn-action-compact btn-ist-action">
+          <span>Launch</span>
+          <i class="ph ph-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 6. GRANTS SERVICES COMPACT CARD -->
+    <div class="nav-card card-grants" (click)="navigateTo('grants')">
+      <div class="card-header-compact">
+        <div class="icon-box icon-grants">
+          <i class="ph ph-currency-circle-dollar"></i>
+        </div>
+        <div class="header-titles">
+          <h2 class="card-title">Grants Services</h2>
+          <span class="chip-count chip-grants">{{ grantsCountText }}</span>
+        </div>
+      </div>
+
+      <p class="card-desc">
+        Automated test suite for Grants Management: Audience, Delivery Formats, Sponsors, Signees, and Budgets.
+      </p>
+
+      <div class="card-footer-compact">
+        <span class="pill-tag grants-tag"><i class="ph ph-coins"></i> Grants Suite</span>
+        <button class="btn-action-compact btn-grants-action">
+          <span>Launch</span>
+          <i class="ph ph-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 7. USER MANAGEMENT (UM) COMPACT CARD -->
+    <div class="nav-card card-um" (click)="navigateTo('um')">
+      <div class="card-header-compact">
+        <div class="icon-box icon-um">
+          <i class="ph ph-users-three"></i>
+        </div>
+        <div class="header-titles">
+          <h2 class="card-title">User Management</h2>
+          <span class="chip-count chip-um">{{ umCountText }}</span>
+        </div>
+      </div>
+
+      <p class="card-desc">
+        Automated test suite for Audit Logs, Activity History, Users, Roles, Departments, and Organization APIs.
+      </p>
+
+      <div class="card-footer-compact">
+        <span class="pill-tag um-tag"><i class="ph ph-user-gear"></i> UM Suite</span>
+        <button class="btn-action-compact btn-um-action">
+          <span>Launch</span>
+          <i class="ph ph-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTICE BANNER -->
+  <div class="portal-info-box">
+    <div class="info-icon">
+      <i class="ph ph-terminal-window"></i>
+    </div>
+    <div class="info-body">
+      <h4>DevTools Console Automated Logging</h4>
+      <p>
+        All test runners execute endpoints sequentially and log formatted assertions to the browser console.
+        Direct functions: <code>window.runSuperAdminApiTests()</code>, <code>window.runAdministrationApiTests()</code>, <code>window.runCommonApiTests()</code>, <code>window.runEapApiTests()</code>, <code>window.runIstApiTests()</code>, <code>window.runGrantsApiTests()</code> &amp; <code>window.runUmApiTests()</code>.
+      </p>
+    </div>
+  </div>
+</div>

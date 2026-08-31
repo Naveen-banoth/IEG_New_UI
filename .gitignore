@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Angular
+.angular/
+dist/
+
+# Visual Studio
+.vs/
+
+# VS Code
+.vscode/
+
+# Environment
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db

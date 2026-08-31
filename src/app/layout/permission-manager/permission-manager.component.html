@@ -1,0 +1,77 @@
+<div class="modal-backdrop" (click)="closeModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <h3>Local DB Permission Control Center</h3>
+        <p class="subtitle">Modify user permissions in real-time. Test module and screen-based authorization guards.</p>
+      </div>
+      <button class="close-btn" (click)="closeModal()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="section-box">
+        <h4>Quick Role Presets (Pre-configured in Local DB)</h4>
+        <div class="role-grid">
+          <button 
+            *ngFor="let role of predefinedRoles" 
+            class="role-card" 
+            [class.active]="currentProfile.role === role.roleName"
+            (click)="applyRolePreset(role.id)">
+            <div class="role-name">{{ role.roleName }}</div>
+            <div class="role-desc">{{ role.description }}</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="section-box">
+        <div class="flex-between">
+          <h4>Granular Permissions Matrix</h4>
+          <span class="badge">Local DB Storage</span>
+        </div>
+        
+        <div class="modules-container">
+          <div *ngFor="let mod of moduleRegistry" class="module-block">
+            <div class="module-header">
+              <label class="checkbox-container font-bold">
+                <input 
+                  type="checkbox" 
+                  [checked]="isModuleSelected(mod.code)" 
+                  (change)="toggleModule(mod.code)" />
+                <span class="checkmark"></span>
+                <span class="module-title" [style.color]="mod.badgeColor">{{ mod.name }} ({{ mod.code }})</span>
+              </label>
+              <span class="count-badge">{{ getSelectedScreenCount(mod.code) }}/{{ mod.screens.length }} screens</span>
+            </div>
+
+            <div class="screens-list">
+              <div *ngFor="let scr of mod.screens" class="screen-item">
+                <label class="checkbox-container">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isScreenSelected(scr.code)" 
+                    [disabled]="!isModuleSelected(mod.code)"
+                    (change)="toggleScreen(scr.code)" />
+                  <span class="checkmark"></span>
+                  <div class="screen-info">
+                    <span class="screen-name">{{ scr.name }}</span>
+                    <span class="screen-code">[{{ scr.code }}] &bull; {{ scr.route }}</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="db-status">
+        <span>Last Sync: {{ lastSyncTime }}</span>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-secondary" (click)="resetDb()">Reset Defaults</button>
+        <button class="btn btn-primary" (click)="savePermissions()">Apply & Sync Local DB</button>
+      </div>
+    </div>
+  </div>
+</div>

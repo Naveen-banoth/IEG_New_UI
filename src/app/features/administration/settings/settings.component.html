@@ -1,0 +1,149 @@
+<div class="admin-subpage-container">
+  <!-- Header -->
+  <div class="subpage-header">
+    <div class="header-titles">
+      <div class="breadcrumb-trail">
+        <a routerLink="/administration" class="crumb-link">Administration</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-active">Settings</span>
+      </div>
+      <h1 class="page-title">Settings</h1>
+      <p class="subtitle-text">Configure organization identity, programs, currency, and login experience.</p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-primary-action" (click)="saveSettings()">
+        <span>Save</span>
+      </button>
+      <a routerLink="/administration" class="btn-back-icon" title="Back to Administration">
+        <i class="ph ph-arrow-u-up-left"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Success Notification -->
+  <div class="success-banner" *ngIf="isSavedAlert">
+    <i class="ph ph-check-circle" style="font-size: 1.15rem;"></i>
+    <span>Settings successfully saved and synchronized across all nodes.</span>
+  </div>
+
+  <div class="settings-cards-list">
+    <!-- Card 1: Account Activities & Correspondence -->
+    <div class="section-card">
+      <div class="form-grid-2">
+        <div class="form-field">
+          <label class="field-label">Account Activities <span class="required-star">*</span></label>
+          <select [(ngModel)]="accountActivity" class="scimax-input select-styled">
+            <option *ngFor="let opt of accountActivityOptions" [value]="opt">{{ opt }}</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label class="field-label">Correspondence <span class="required-star">*</span></label>
+          <select [(ngModel)]="correspondence" class="scimax-input select-styled">
+            <option *ngFor="let opt of correspondenceOptions" [value]="opt">{{ opt }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Regional Preferences -->
+    <div class="section-card">
+      <h2 class="section-title">Regional Preferences</h2>
+      <p class="section-desc">Set the default timezone used across portal timestamps.</p>
+
+      <div class="form-field max-w-half">
+        <label class="field-label">Time Zone</label>
+        <select [(ngModel)]="timeZone" class="scimax-input select-styled">
+          <option *ngFor="let tz of timezonesList" [value]="tz">{{ tz }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Card 3: Login Screen Text & Rich Text Editor Preview -->
+    <div class="section-card">
+      <div class="title-with-pill">
+        <h2 class="section-title">Login Screen Text</h2>
+        <button class="pill-preview-btn" (click)="showTextPreview = !showTextPreview">
+          {{ showTextPreview ? 'Close Preview' : 'Preview' }}
+        </button>
+      </div>
+      <p class="section-desc">Compose the compliance message shown on the login experience.</p>
+
+      <!-- Rich Text Editor Container (Exact replicate from scimaxieg) -->
+      <div class="rich-editor-wrapper">
+        <!-- Menu Bar Row -->
+        <div class="editor-menu-bar">
+          <button class="menu-item">File</button>
+          <button class="menu-item">Edit</button>
+          <button class="menu-item">View</button>
+          <button class="menu-item">Insert</button>
+          <button class="menu-item">Format</button>
+        </div>
+
+        <!-- Controls Toolbar Row -->
+        <div class="editor-toolbar">
+          <button class="tool-btn" (click)="formatText('undo')" title="Undo">
+            <i class="ph ph-arrow-u-up-left"></i>
+          </button>
+          <button class="tool-btn" (click)="formatText('redo')" title="Redo">
+            <i class="ph ph-arrow-u-up-right"></i>
+          </button>
+
+          <div class="tool-divider"></div>
+
+          <select [(ngModel)]="activeFont" class="tool-select font-select">
+            <option value="Segoe UI">Segoe UI</option>
+            <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
+            <option value="Arial">Arial</option>
+            <option value="Inter">Inter</option>
+          </select>
+
+          <select [(ngModel)]="activeFontSize" class="tool-select size-select">
+            <option value="13px">13px</option>
+            <option value="14px">14px</option>
+            <option value="15px">15px</option>
+            <option value="16px">16px</option>
+            <option value="18px">18px</option>
+          </select>
+
+          <select [(ngModel)]="activeFormat" class="tool-select format-select">
+            <option value="Paragraph">Paragraph</option>
+            <option value="Heading 1">Heading 1</option>
+            <option value="Heading 2">Heading 2</option>
+          </select>
+
+          <div class="tool-divider"></div>
+
+          <button class="tool-btn text-bold" (click)="formatText('bold')" title="Bold">B</button>
+          <button class="tool-btn text-italic" (click)="formatText('italic')" title="Italic">I</button>
+          <button class="tool-btn text-underline" (click)="formatText('underline')" title="Underline">U</button>
+          <button class="tool-btn text-strike" (click)="formatText('strikeThrough')" title="Strikethrough">S</button>
+
+          <div class="tool-divider"></div>
+
+          <button class="tool-btn" (click)="formatText('justifyLeft')" title="Align Left">
+            <i class="ph ph-text-align-left"></i>
+          </button>
+          <button class="tool-btn" (click)="formatText('insertUnorderedList')" title="Bullet List">
+            <i class="ph ph-list-bullets"></i>
+          </button>
+          <button class="tool-btn" (click)="formatText('insertOrderedList')" title="Numbered List">
+            <i class="ph ph-list-numbers"></i>
+          </button>
+        </div>
+
+        <!-- Editable Area -->
+        <div class="editor-textarea-box">
+          <textarea [(ngModel)]="loginScreenText" class="rich-textarea" rows="4"></textarea>
+        </div>
+      </div>
+
+      <!-- Preview Modal if toggled -->
+      <div class="login-preview-box" *ngIf="showTextPreview">
+        <div class="preview-tag">Live Login Screen Banner Preview</div>
+        <p class="preview-text-rendered">{{ loginScreenText }}</p>
+      </div>
+    </div>
+  </div>
+</div>
