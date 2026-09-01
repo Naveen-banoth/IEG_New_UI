@@ -8,10 +8,12 @@ import { EmailAccountItem } from '../../../core/models/administration.model';
 export { EmailAccountItem };
 
 
+import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-user-toolbar.component';
+
 @Component({
   selector: 'app-email-setup',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TopUserToolbarComponent],
   templateUrl: './email-setup.component.html',
   styleUrl: './email-setup.component.scss'
 })

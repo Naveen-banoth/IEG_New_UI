@@ -1,27 +1,31 @@
 <div class="test-services-container">
-  <!-- BREADCRUMB NAVIGATION -->
-  <nav class="test-breadcrumb-nav" aria-label="Breadcrumb">
-    <ol class="breadcrumb-list">
-      <li class="breadcrumb-item">
-        <a routerLink="/ist" class="crumb-link">
-          <i class="ph ph-house-simple"></i>
-          <span>Home</span>
-        </a>
-      </li>
-      <li class="breadcrumb-separator"><i class="ph ph-caret-right"></i></li>
-      <li class="breadcrumb-item">
-        <a routerLink="/test-services" class="crumb-link">
-          <i class="ph ph-flask"></i>
-          <span>Test Services</span>
-        </a>
-      </li>
-      <li class="breadcrumb-separator"><i class="ph ph-caret-right"></i></li>
-      <li class="breadcrumb-item active" aria-current="page">
-        <i class="ph" [ngClass]="moduleIcon"></i>
-        <span>{{ moduleDisplayName }}</span>
-      </li>
-    </ol>
-  </nav>
+  <!-- BREADCRUMB NAVIGATION & UTILITY TOOLBAR -->
+  <div class="test-top-bar">
+    <nav class="test-breadcrumb-nav" aria-label="Breadcrumb">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <a routerLink="/ist" class="crumb-link">
+            <i class="ph ph-house-simple"></i>
+            <span>Home</span>
+          </a>
+        </li>
+        <li class="breadcrumb-separator"><i class="ph ph-caret-right"></i></li>
+        <li class="breadcrumb-item">
+          <a routerLink="/test-services" class="crumb-link">
+            <i class="ph ph-flask"></i>
+            <span>Test Services</span>
+          </a>
+        </li>
+        <li class="breadcrumb-separator"><i class="ph ph-caret-right"></i></li>
+        <li class="breadcrumb-item active" aria-current="page">
+          <i class="ph" [ngClass]="moduleIcon"></i>
+          <span>{{ moduleDisplayName }}</span>
+        </li>
+      </ol>
+    </nav>
+
+    <app-top-user-toolbar></app-top-user-toolbar>
+  </div>
 
   <!-- HERO TOP HEADER BANNER -->
   <header class="test-services-hero">

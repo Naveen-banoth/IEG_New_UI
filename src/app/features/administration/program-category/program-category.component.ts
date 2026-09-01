@@ -5,10 +5,12 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { AdminProgramCategoryService } from '../../../core/services/admin-program-category.service';
 import { ProgramCategoryItem, ProgramOption, ProductOption, ApplicationTypeOption } from '../../../core/models/administration.model';
 
+import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-user-toolbar.component';
+
 @Component({
   selector: 'app-program-category',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TopUserToolbarComponent],
   templateUrl: './program-category.component.html',
   styleUrl: './program-category.component.scss'
 })

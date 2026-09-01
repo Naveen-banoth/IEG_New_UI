@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule, NavigationEnd } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
 
+import { TopUserToolbarComponent } from '../../layout/top-user-toolbar/top-user-toolbar.component';
+
 @Component({
   selector: 'app-application-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TopUserToolbarComponent],
   templateUrl: './application-detail.component.html',
   styleUrl: './application-detail.component.css'
 })

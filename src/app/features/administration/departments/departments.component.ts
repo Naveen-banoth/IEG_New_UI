@@ -8,10 +8,12 @@ import { DepartmentItem } from '../../../core/models/administration.model';
 export { DepartmentItem };
 
 
+import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-user-toolbar.component';
+
 @Component({
   selector: 'app-departments',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TopUserToolbarComponent],
   templateUrl: './departments.component.html',
   styleUrl: './departments.component.scss'
 })
