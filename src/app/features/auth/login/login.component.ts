@@ -27,12 +27,17 @@ export class LoginComponent implements OnInit {
   currentbuildversion = 'v25R1.1';
   message = '';
   showPassword = false;
+  showPasswordText = false;
   onDisableMessage = 'This feature is not available, please contact administrator';
 
   loginForm = new FormGroup({
     username: new FormControl('internal@gmail.com', [Validators.required]),
     password: new FormControl('')
   });
+
+  togglePasswordVisibility(): void {
+    this.showPasswordText = !this.showPasswordText;
+  }
 
   constructor(
     private route: ActivatedRoute,
