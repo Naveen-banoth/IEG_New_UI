@@ -114,6 +114,36 @@ export class TestServicesComponent implements OnInit {
     return selCount > 0 && selCount < list.length;
   });
 
+  // Category-Scoped Statistics Signals
+  public activeCategoryItemsSignal = computed(() => {
+    const cat = this.selectedCategorySignal();
+    if (cat === 'ALL') return this.testItemsSignal();
+    return this.testItemsSignal().filter(t => t.category === cat);
+  });
+  public categoryTotalCountSignal = computed(() => this.activeCategoryItemsSignal().length);
+  public categorySuccessCountSignal = computed(() => this.activeCategoryItemsSignal().filter(t => t.status === 'SUCCESS' && t.matched).length);
+  public categoryFailedCountSignal = computed(() => this.activeCategoryItemsSignal().filter(t => t.status === 'FAILED' || (t.status === 'SUCCESS' && !t.matched)).length);
+  public categorySuccessRateSignal = computed(() => {
+    const total = this.categoryTotalCountSignal();
+    return total === 0 ? 0 : Math.round((this.categorySuccessCountSignal() / total) * 100);
+  });
+
+  public get activeCategoryItems(): DetailedTestItem[] { return this.activeCategoryItemsSignal(); }
+  public get categoryTotalCount(): number { return this.categoryTotalCountSignal(); }
+  public get categorySuccessCount(): number { return this.categorySuccessCountSignal(); }
+  public get categoryFailedCount(): number { return this.categoryFailedCountSignal(); }
+  public get categorySuccessRate(): number { return this.categorySuccessRateSignal(); }
+
+  public get activeCategoryLabel(): string {
+    const cat = this.dynamicCategories.find(c => c.key === this.selectedCategory);
+    return cat ? cat.label : this.selectedCategory;
+  }
+
+  public getCategoryCount(categoryKey: string): number {
+    if (categoryKey === 'ALL') return this.testItemsSignal().length;
+    return this.testItemsSignal().filter(t => t.category === categoryKey).length;
+  }
+
   // ==================== GETTERS & SETTERS FOR TEMPLATES & BINDINGS ====================
   public get testItems(): DetailedTestItem[] { return this.testItemsSignal(); }
   public set testItems(val: DetailedTestItem[]) { this.testItemsSignal.set(val); this.notifyStateChange(); }
@@ -598,10 +628,9 @@ export class TestServicesComponent implements OnInit {
 
   // ==================== STOP / CANCEL EXECUTION ====================
   public stopExecution(): void {
-    if (!this.isRunningAll && !this.isRunningSelected) return;
     this.cancelRequested = true;
     this.isStopping = true;
-    this.addLog('warn', '🛑 Stop execution requested! Halting remaining API calls...');
+    this.addLog('warn', '🛑 Stop execution requested! Halting remaining API calls immediately...');
 
     // Revert any pending queued items back to IDLE
     this.testItems.forEach(item => {
@@ -609,6 +638,7 @@ export class TestServicesComponent implements OnInit {
         item.status = 'IDLE';
       }
     });
+    this.notifyStateChange();
   }
 
   // ==================== TEST SUITE EXECUTION ====================
@@ -618,23 +648,25 @@ export class TestServicesComponent implements OnInit {
     this.cancelRequested = false;
     this.isStopping = false;
     const startTime = performance.now();
+    const targets = this.activeCategoryItems;
+    const isCategoryScoped = this.selectedCategory !== 'ALL';
 
     this.addLog('info', '=======================================================');
     this.addLog(
       'info',
-      `STARTING ${this.activeModule} TEST SUITE (${this.executionMode.toUpperCase()} MODE)`
+      `STARTING ${isCategoryScoped ? (this.activeCategoryLabel + ' (' + targets.length + ')') : this.activeModule} TEST SUITE (${this.executionMode.toUpperCase()} MODE)`
     );
     this.addLog('info', '=======================================================');
 
     console.log(
       `%c=======================================================\n` +
-      `  STARTING ${this.activeModule} API SUITE EXECUTION (${this.executionMode.toUpperCase()})\n` +
+      `  STARTING ${isCategoryScoped ? this.activeCategoryLabel : this.activeModule} API SUITE EXECUTION (${this.executionMode.toUpperCase()})\n` +
       `=======================================================`,
       'color: #06b6d4; font-weight: bold; font-size: 15px;'
     );
 
-    // Set all items to PENDING as they enter the run queue
-    this.testItems.forEach(t => {
+    // Set all target items to PENDING as they enter the run queue
+    targets.forEach(t => {
       t.status = 'PENDING';
       t.response = undefined;
       t.error = undefined;
@@ -653,8 +685,8 @@ export class TestServicesComponent implements OnInit {
       }
 
       if (!this.cancelRequested) {
-        // Execute all other endpoints concurrently at the same time
-        const concurrentItems = this.testItems.filter(item => {
+        // Execute target endpoints concurrently at the same time
+        const concurrentItems = targets.filter(item => {
           if (this.activeModule === 'SUPERADMIN' && (item.id === 'SA-AUTH-6' || item.id === 'SA-AUTH-12')) {
             return false;
           }
@@ -668,8 +700,8 @@ export class TestServicesComponent implements OnInit {
         );
       }
 
-      // Execute logout at the end if Superadmin
-      if (this.activeModule === 'SUPERADMIN' && !this.cancelRequested) {
+      // Execute logout at the end if Superadmin on full run
+      if (this.activeModule === 'SUPERADMIN' && !isCategoryScoped && !this.cancelRequested) {
         const logoutItem = this.testItems.find(t => t.id === 'SA-AUTH-12');
         if (logoutItem) {
           await this.executeSingleTest(logoutItem);
@@ -684,7 +716,7 @@ export class TestServicesComponent implements OnInit {
         }
       }
 
-      for (const item of this.testItems) {
+      for (const item of targets) {
         if (this.cancelRequested) {
           this.addLog('warn', 'Execution halted by user request.');
           break;
@@ -693,7 +725,7 @@ export class TestServicesComponent implements OnInit {
         await this.executeSingleTest(item);
       }
 
-      if (this.activeModule === 'SUPERADMIN' && !this.cancelRequested) {
+      if (this.activeModule === 'SUPERADMIN' && !isCategoryScoped && !this.cancelRequested) {
         const logoutItem = this.testItems.find(t => t.id === 'SA-AUTH-12');
         if (logoutItem) {
           await this.executeSingleTest(logoutItem);
@@ -703,7 +735,7 @@ export class TestServicesComponent implements OnInit {
 
     // Clean up any remaining PENDING items back to IDLE if execution was stopped
     if (this.cancelRequested) {
-      this.testItems.forEach(t => {
+      targets.forEach(t => {
         if (t.status === 'PENDING') {
           t.status = 'IDLE';
         }
@@ -715,16 +747,16 @@ export class TestServicesComponent implements OnInit {
     this.isStopping = false;
     this.notifyStateChange();
 
-    const total = this.testItems.length;
-    const passed = this.testItems.filter(t => t.status === 'SUCCESS' && t.matched).length;
-    const failed = this.testItems.filter(t => t.status === 'FAILED' || (t.status === 'SUCCESS' && !t.matched)).length;
+    const total = targets.length;
+    const passed = targets.filter(t => t.status === 'SUCCESS' && t.matched).length;
+    const failed = targets.filter(t => t.status === 'FAILED' || (t.status === 'SUCCESS' && !t.matched)).length;
 
-    const summaryMsg = `${this.activeModule} ${this.cancelRequested ? 'STOPPED' : 'COMPLETE'}: Total ${total} | Passed: ${passed} | Failed/Issues: ${failed} | Time: ${this.totalDuration}ms`;
+    const summaryMsg = `${isCategoryScoped ? this.activeCategoryLabel : this.activeModule} ${this.cancelRequested ? 'STOPPED' : 'COMPLETE'}: Total ${total} | Passed: ${passed} | Failed/Issues: ${failed} | Time: ${this.totalDuration}ms`;
     this.addLog(failed === 0 && !this.cancelRequested ? 'success' : 'warn', summaryMsg);
 
     console.log(
       `%c=======================================================\n` +
-      `  ${this.activeModule} TEST SUITE SUMMARY REPORT\n` +
+      `  ${isCategoryScoped ? this.activeCategoryLabel : this.activeModule} TEST SUITE SUMMARY REPORT\n` +
       `  Total APIs Tested: ${total}\n` +
       `  Passed / Matched:  ${passed}\n` +
       `  Failed / Issues:   ${failed}\n` +
@@ -737,7 +769,7 @@ export class TestServicesComponent implements OnInit {
     );
 
     console.table(
-      this.testItems.map(t => ({
+      targets.map(t => ({
         ID: t.id,
         API_Name: t.apiName,
         Method: t.method,
@@ -824,6 +856,12 @@ export class TestServicesComponent implements OnInit {
 
   // ==================== SINGLE API EXECUTION ====================
   public async executeSingleTest(item: DetailedTestItem): Promise<void> {
+    if (this.cancelRequested) {
+      if (item.status === 'PENDING' || item.status === 'RUNNING') {
+        item.status = 'IDLE';
+      }
+      return;
+    }
     item.status = 'RUNNING';
     this.notifyStateChange();
     const start = performance.now();

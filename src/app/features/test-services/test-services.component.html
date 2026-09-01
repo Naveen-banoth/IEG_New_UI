@@ -75,26 +75,27 @@
       </button>
 
       <!-- RUN SELECTED (BATCH) BUTTON -->
-      <button type="button" class="btn-primary-run-selected" *ngIf="selectedCount > 0"
-        [disabled]="isRunningSelected || isRunningAll" (click)="runSelectedTests()"
+      <button type="button" class="btn-primary-run-selected" *ngIf="selectedCount > 0 && !isRunningAll && !isRunningSelected"
+        (click)="runSelectedTests()"
         title="Execute only selected endpoints in {{ executionMode }} mode">
-        <i class="ph" [ngClass]="isRunningSelected ? 'ph-spinner ph-spin' : 'ph-play-circle'"></i>
-        <span>{{ isRunningSelected ? 'Running Selected...' : ('Run Selected (' + selectedCount + ')') }}</span>
+        <i class="ph ph-play-circle"></i>
+        <span>Run Selected ({{ selectedCount }})</span>
       </button>
 
-      <!-- RUN ALL BUTTON -->
-      <button class="btn-primary-run-all" [disabled]="isRunningAll || isRunningSelected" (click)="runAllTests()"
-        title="Execute all endpoints in {{ executionMode }} mode">
-        <i class="ph" [ngClass]="isRunningAll ? 'ph-spinner ph-spin' : 'ph-play-circle'"></i>
-        <span>{{ isRunningAll ? 'Executing Suite...' : ('Run All ' + moduleDisplayName + ' Tests') }}</span>
+      <!-- RUN ALL / RUN CATEGORY BUTTON -->
+      <button class="btn-primary-run-all" *ngIf="!isRunningAll && !isRunningSelected" (click)="runAllTests()"
+        title="Execute endpoints in {{ executionMode }} mode">
+        <i class="ph ph-play-circle"></i>
+        <span *ngIf="selectedCategory === 'ALL'">Run All {{ moduleDisplayName }} Tests ({{ totalCount }})</span>
+        <span *ngIf="selectedCategory !== 'ALL'">Run {{ activeCategoryLabel }} ({{ categoryTotalCount }})</span>
       </button>
 
-      <!-- STOP EXECUTION BUTTON -->
+      <!-- STOP EXECUTION BUTTON (ACTIVE & CLICKABLE DURING EXECUTION) -->
       <button type="button" class="btn-stop-execution" *ngIf="isRunningAll || isRunningSelected"
-        (click)="stopExecution()" [disabled]="isStopping"
+        (click)="stopExecution()"
         title="Stop ongoing API test execution immediately">
         <i class="ph" [ngClass]="isStopping ? 'ph-spinner ph-spin' : 'ph-stop-circle'"></i>
-        <span>{{ isStopping ? 'Stopping...' : 'Stop Execution' }}</span>
+        <span>{{ isStopping ? 'Stopping Execution...' : 'Stop Execution' }}</span>
       </button>
     </div>
   </header>
@@ -103,20 +104,24 @@
   <section class="test-params-card">
     <div class="params-card-header">
       <div class="params-title-group">
-        <i class="ph ph-gear-six"></i>
-        <h3>Active Suite Context &amp; Environment</h3>
+        <h2 class="params-title">
+          <i class="ph ph-sliders-horizontal"></i>
+          <span>Execution Context &amp; Global Test Parameters</span>
+        </h2>
+        <span class="params-badge">
+          <i class="ph ph-check-circle"></i>
+          <span>Ready</span>
+        </span>
       </div>
-      <div class="params-actions">
-        <span class="env-pill"><i class="ph ph-desktop"></i> API: http://localhost:4074/</span>
-      </div>
+      <span class="params-hint">Auto-injected into API test requests across all suites</span>
     </div>
 
-    <div class="params-card-body">
-      <!-- Superadmin Parameters Grid -->
+    <div class="params-body">
+      <!-- SuperAdmin Parameters Grid -->
       <div class="params-chips-grid" *ngIf="activeModule === 'SUPERADMIN'">
         <div class="param-chip">
           <span class="chip-label">Target Area:</span>
-          <span class="chip-val">Super Admin Master Management</span>
+          <span class="chip-val">Super Admin Master Suite</span>
         </div>
         <div class="param-chip">
           <span class="chip-label">Domains:</span>
@@ -136,11 +141,11 @@
       <div class="params-chips-grid" *ngIf="activeModule === 'ADMINISTRATION'">
         <div class="param-chip">
           <span class="chip-label">Target Area:</span>
-          <span class="chip-val">Administration Portal Management</span>
+          <span class="chip-val">Organization Administration</span>
         </div>
         <div class="param-chip">
           <span class="chip-label">Domains:</span>
-          <span class="chip-val">Settings, Products, Instructions, System Logs</span>
+          <span class="chip-val">Users, Product Setup, Instructions, Logs</span>
         </div>
         <div class="param-chip">
           <span class="chip-label">Total Endpoints:</span>
@@ -156,11 +161,11 @@
       <div class="params-chips-grid" *ngIf="activeModule === 'COMMON'">
         <div class="param-chip">
           <span class="chip-label">Target Area:</span>
-          <span class="chip-val">Common Services &amp; Workflow Policies</span>
+          <span class="chip-val">Platform Common Services</span>
         </div>
         <div class="param-chip">
           <span class="chip-label">Domains:</span>
-          <span class="chip-val">Alerts, Screen Controls, Reviews, Files, Lookups</span>
+          <span class="chip-val">Lookups, Documents, Notifications</span>
         </div>
         <div class="param-chip">
           <span class="chip-label">Total Endpoints:</span>
@@ -176,7 +181,7 @@
       <div class="params-chips-grid" *ngIf="activeModule === 'EAP'">
         <div class="param-chip">
           <span class="chip-label">Target Area:</span>
-          <span class="chip-val">Early Access Programs (EAP)</span>
+          <span class="chip-val">Expanded Access Programs (EAP)</span>
         </div>
         <div class="param-chip">
           <span class="chip-label">Domains:</span>
@@ -236,7 +241,7 @@
       <div class="params-chips-grid" *ngIf="activeModule === 'UM'">
         <div class="param-chip">
           <span class="chip-label">Target Area:</span>
-          <span class="chip-val">User Management &amp; Activity Logs</span>
+          <span class="chip-val">User Management (UM) Module</span>
         </div>
         <div class="param-chip">
           <span class="chip-label">Domains:</span>
@@ -259,8 +264,8 @@
     <div class="stat-card total-card">
       <div class="stat-icon"><i class="ph ph-list-checks"></i></div>
       <div class="stat-info">
-        <span class="stat-label">Total APIs</span>
-        <span class="stat-value">{{ totalCount }}</span>
+        <span class="stat-label">{{ selectedCategory === 'ALL' ? 'Total APIs' : (activeCategoryLabel + ' APIs') }}</span>
+        <span class="stat-value">{{ categoryTotalCount }}</span>
       </div>
     </div>
 
@@ -268,7 +273,7 @@
       <div class="stat-icon"><i class="ph ph-check-circle"></i></div>
       <div class="stat-info">
         <span class="stat-label">Passed / Matched</span>
-        <span class="stat-value">{{ successCount }}</span>
+        <span class="stat-value">{{ categorySuccessCount }}</span>
       </div>
     </div>
 
@@ -276,7 +281,7 @@
       <div class="stat-icon"><i class="ph ph-x-circle"></i></div>
       <div class="stat-info">
         <span class="stat-label">Failed / Issues</span>
-        <span class="stat-value">{{ failedCount }}</span>
+        <span class="stat-value">{{ categoryFailedCount }}</span>
       </div>
     </div>
 
@@ -284,7 +289,7 @@
       <div class="stat-icon"><i class="ph ph-chart-pie"></i></div>
       <div class="stat-info">
         <span class="stat-label">Pass Rate</span>
-        <span class="stat-value">{{ successRate }}%</span>
+        <span class="stat-value">{{ categorySuccessRate }}%</span>
       </div>
     </div>
 
@@ -305,7 +310,7 @@
         (click)="selectedCategory = cat.key">
         <i class="ph {{ cat.icon }}"></i>
         <span>{{ cat.label }}</span>
-        <span class="cat-pill" *ngIf="cat.key === 'ALL'">{{ totalCount }}</span>
+        <span class="cat-pill">{{ getCategoryCount(cat.key) }}</span>
       </button>
     </div>
 
