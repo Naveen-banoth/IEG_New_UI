@@ -20,7 +20,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { PageIndex: 1, PageSize: 10 },
       expectedData: 'Array of user grants applications',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -32,7 +32,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { SearchText: '' },
       expectedData: 'Filtered grants applications list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -44,7 +44,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Target audience summary for grant',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -56,7 +56,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ApplicationID: '1' },
       expectedData: 'Filtered target audience records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -68,7 +68,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Audience dropdown options',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -80,7 +80,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ApplicationID: '1', AUDIENCE_TYPE_ID: '1', COUNT: 100 },
       expectedData: 'Created audience record ID',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -92,7 +92,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { RecordID: '1', ApplicationID: '1', COUNT: 150 },
       expectedData: 'Updated audience record confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -104,7 +104,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Delete audience confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -116,7 +116,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Grant delivery format options',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -128,7 +128,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Therapeutic area category options',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -140,7 +140,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ApplicationID: '1', DELIVERY_FORMAT_ID: '1' },
       expectedData: 'Created delivery format confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -152,7 +152,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of educational assessments',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -164,7 +164,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ApplicationID: '1', ASSESSMENT_TYPE: 'Pre-Test', STATUS: '1' },
       expectedData: 'Created assessment confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -176,7 +176,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { RecordID: '1', ApplicationID: '1', ASSESSMENT_TYPE: 'Post-Test' },
       expectedData: 'Updated assessment confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -188,7 +188,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Delete assessment confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -200,7 +200,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'CME application details for editing',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -212,7 +212,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { APPLICATION_NAME: 'CME Educational Symposium 2026', STATUS: '1' },
       expectedData: 'Created CME application confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -224,7 +224,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { RecordID: '1', APPLICATION_NAME: 'CME Symposium 2026 (Updated)' },
       expectedData: 'Updated CME application confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -238,7 +238,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of funding sponsors for grant',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -250,7 +250,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ApplicationID: '1' },
       expectedData: 'Filtered sponsors list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -262,7 +262,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Sponsor form dropdowns',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -274,7 +274,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Authorized signee record',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -286,7 +286,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ApplicationID: '1', SPONSOR_NAME: 'Global Health Fund', STATUS: '1' },
       expectedData: 'Created sponsor confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -298,7 +298,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { RecordID: '1', ApplicationID: '1', SPONSOR_NAME: 'Global Health Fund Inc' },
       expectedData: 'Updated sponsor confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -310,7 +310,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Delete sponsor confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -322,7 +322,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Set default sponsor confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -334,7 +334,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { RecordID: '1', ApplicationID: '1', SIGNEE_NAME: 'Dr. Robert Miller' },
       expectedData: 'Updated signee confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -346,7 +346,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Delete signee confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -358,7 +358,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Set default signee confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -372,7 +372,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of GM budget fund categories',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -384,7 +384,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of Sponsor budget fund categories',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -396,7 +396,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of Charitable budget fund categories',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -408,7 +408,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { FundCategoryId: '1' },
       expectedData: 'List of budget subcategories',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -420,7 +420,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Sponsor budget line items summary',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -432,7 +432,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Total calculated budget amount',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -444,7 +444,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Delete budget line item confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -456,7 +456,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Updated budget status confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -468,7 +468,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Delete charitable budget confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -480,7 +480,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Updated charitable budget status confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -492,7 +492,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Delete GM budget confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -504,7 +504,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Updated GM budget status confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -518,7 +518,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of grants study team members',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -530,7 +530,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ApplicationID: '1' },
       expectedData: 'Filtered grants study team records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -542,7 +542,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Study team dropdown master records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -554,7 +554,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ApplicationID: '1', USER_NAME: 'Dr. Michael Chen', ROLE_ID: '1' },
       expectedData: 'Created study team member confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -566,7 +566,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { RecordID: '1', ApplicationID: '1', USER_NAME: 'Dr. Michael Chen' },
       expectedData: 'Updated study team member confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -578,7 +578,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Delete study team member confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -590,7 +590,7 @@ export function getGrantsTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Grants milestone tracking items',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {

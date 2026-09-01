@@ -57,10 +57,21 @@ export const SUPERADMIN_VALIDATE_LOGI_PAYLOAD = {
 export const SUPERADMIN_INSERT_ORG_PAYLOAD = {
   CODE: 'TestOr1003',
   NAME: 'Test Organization 1.0.0.3',
-  CREATED_DATE: '2020-08-11',
-  LAST_UPDATED_DATE: '2020-08-11',
-  LICENCE_END_DATE: '2026-08-27T13:41:41.927Z',
-  LICENCE_END_DATES: '2026-8-27',
+  CREATED_DATE: '2026-08-11',
+  LAST_UPDATED_DATE: '2026-08-11',
+  LICENCE_END_DATE: '2027-08-27T00:00:00.000Z',
+  LICENCE_END_DATES: '2027-8-27',
+  LICENCE_END_DATEO: {
+    Day: 27,
+    Month: 8,
+    Year: 2027,
+    Hours: 0,
+    Minutes: 0,
+    Seconds: 0,
+    IsEndDate: true,
+    HasValue: true,
+    IsDateModified: true
+  },
   EAP: true,
   GRANTS: true,
   IST: true,
@@ -72,28 +83,181 @@ export const SUPERADMIN_INSERT_ORG_PAYLOAD = {
   DATAPEROID_IN_YEARS: 0,
   AUTHTYPE: 'MED',
   TIMEZONE: 'UTC',
-  IS_ANALYTICS_CONFIGURED: true,
-  LOGI_URL: 'https://analytics-sandbox.scimaxmi.com:8443/composer/',
-  LOGI_CLIENTID: 'c6abd469-464d-4a9f-8a5a-542100104eae',
-  LOGI_CLIENT_SECRET: 'KNW7XSJaqUjp70ap1MfNSxsRaOf9zoTvNizQ',
-  LOGI_SUPERVISOR_USERNAME: 'supervisor',
-  LOGI_SUPERVISOR_PASSWORD: 'Techsol@123',
-  LOGI_ADMIN_USERNAME: '',
-  LOGI_ADMIN_PASSWORD: '',
-  LOGI_ADMIN_ACCESSTOKEN: '',
-  IS_ORG_ACCOUNT_IN_LOGI: false,
-  CANREFRESH: false,
-  IST_DISPLAY_NAME: 'Investigator Sponsored Trial',
-  EAP_DISPLAY_NAME: 'Expanded Access Program',
-  GRANTS_DISPLAY_NAME: 'Grants',
-  CME_DISPLAY_NAME: 'Continuing Medical Education',
-  CHARITY_DISPLAY_NAME: 'Charitable',
-  SPONSERSHIP_DISPLAY_NAME: 'Sponsorship',
-  IST_ANALYTICS_NAME: 'IST',
-  EAP_ANALYTICS_NAME: 'EAP',
-  CME_ANALYTICS_NAME: 'CME',
-  CHARITABLE_ANALYTICS_NAME: 'CHR',
-  SPONSORSHIP_ANALYTICS_NAME: 'SPO'
+  IS_ANALYTICS_CONFIGURED: false,
+  AUTHENTICATIONSLST: [],
+  STATUS: '1',
+  PROGENABLED: '1'
+};
+
+export const SUPERADMIN_UPDATE_ORG_PAYLOAD = {
+  ID: '1',
+  CODE: 'TEST_ORG_01',
+  NAME: 'Test Organization Updated',
+  STATUS: '1',
+  PROGENABLED: '1',
+  AUTHTYPE: 'MED',
+  TIMEZONE: 'UTC',
+  IS_ANALYTICS_CONFIGURED: false,
+  AUTHENTICATIONSLST: [],
+  LICENCE_END_DATEO: {
+    Day: 27,
+    Month: 8,
+    Year: 2027,
+    Hours: 0,
+    Minutes: 0,
+    Seconds: 0,
+    IsEndDate: true,
+    HasValue: true,
+    IsDateModified: true
+  },
+  LICENCE_END_DATES: '2027-8-27'
+};
+
+export const SUPERADMIN_INSERT_SUPPORT_USER_PAYLOAD = {
+  FIRST_NAME: 'Support',
+  LAST_NAME: 'Tester',
+  EMAIL: 'support.tester@scimaxglobal.com',
+  USER_TYPE: 'S',
+  Status: true,
+  CreatedUserType: 'SUPERADMIN',
+  ORGANIZATION_ID: '1',
+  RECORD_STATE: 101
+};
+
+export const SUPERADMIN_INSERT_SAML_PAYLOAD = {
+  AUTH_NAME: 'SAML SSO Test',
+  AUTH_TYPE_CODE: 'SAML',
+  ISSUER_URL: 'https://sts.windows.net/test-tenant/',
+  METADATA_URL: 'https://login.microsoftonline.com/federationmetadata/2007-06/federationmetadata.xml'
+};
+
+export const SUPERADMIN_INSERT_LDAP_PAYLOAD = {
+  AUTH_NAME: 'Corporate LDAP Test',
+  AUTH_TYPE_CODE: 'LDAP',
+  SERVER_NAME: 'ldap.example.com',
+  PORT: '389'
+};
+
+export const SUPERADMIN_INSERT_EMAIL_AUTH_PAYLOAD = {
+  AUTH_NAME: 'Direct Email Auth Test',
+  AUTH_TYPE_CODE: 'EMAIL'
+};
+
+export const SUPERADMIN_DEPT_SEARCH_PAYLOAD = {
+  CODE: '',
+  NAME: '',
+  STATUS: '-1'
+};
+
+export const SUPERADMIN_INSERT_DEPT_PAYLOAD = {
+  CODE: 'TEST_DEPT',
+  NAME: 'Test Department Auto',
+  STATUS: 1,
+  RECORD_STATE: 101,
+  ORGANIZATION_ID: '1',
+  CREATED_DATE: '2026-08-11T00:00:00.000Z',
+  LAST_UPDATED_DATE: '2026-08-11T00:00:00.000Z'
+};
+
+export const SUPERADMIN_UPDATE_DEPT_PAYLOAD = {
+  ID: '1',
+  CODE: 'TEST_DEPT',
+  NAME: 'Test Department Updated',
+  STATUS: 1,
+  RECORD_STATE: 101,
+  ORGANIZATION_ID: '1',
+  CREATED_DATE: '2026-08-11T00:00:00.000Z',
+  LAST_UPDATED_DATE: '2026-08-11T00:00:00.000Z'
+};
+
+export const SUPERADMIN_ROLE_SEARCH_PAYLOAD = {
+  Role_Name: '',
+  Record_State: 101,
+  HasStatus: true
+};
+
+export const SUPERADMIN_INSERT_ROLE_PAYLOAD = {
+  Role_Name: 'Test Super Admin Role',
+  Status: true,
+  HasIST: true,
+  HasEAP: true,
+  HasGRANTS: true,
+  HasCME: true,
+  HasCharity: true,
+  HasSponsership: true,
+  HasAnalytics: false,
+  lstGen: [],
+  lstIST: [],
+  lstEAP: [],
+  lstGrants: [],
+  lstAnalytics: []
+};
+
+export const SUPERADMIN_UPDATE_ROLE_PAYLOAD = {
+  Role_ID: '1',
+  Role_Name: 'Test Super Admin Role Updated',
+  Status: true,
+  HasIST: true,
+  HasEAP: true,
+  HasGRANTS: true,
+  HasCME: true,
+  HasCharity: true,
+  HasSponsership: true,
+  HasAnalytics: false,
+  lstGen: [],
+  lstIST: [],
+  lstEAP: [],
+  lstGrants: [],
+  lstAnalytics: []
+};
+
+export const SUPERADMIN_ASSIGN_ROLE_PRIVILEGES_PAYLOAD = [
+  {
+    ROLE_ID: '1',
+    FEATURE_ID: '102',
+    PERMISSION_ID: 1,
+    ACCESS_LEVEL: 1,
+    RECORD_STATE: 101,
+    ORGANIZATION_ID: '1',
+    isExisting: false,
+    CREATED_DATE: '2026-08-11T00:00:00.000Z',
+    LAST_UPDATED_DATE: '2026-08-11T00:00:00.000Z'
+  }
+];
+
+export const SUPERADMIN_USER_SEARCH_PAYLOAD = {
+  CODE: '',
+  TITLE: '',
+  EMAIL: '',
+  DEPARTMENT_ID: '',
+  ROLEID: '',
+  Status: true,
+  RECORD_STATE: 101,
+  ORGANIZATION_ID: '1'
+};
+
+export const SUPERADMIN_INSERT_USER_PAYLOAD = {
+  FIRST_NAME: 'Test',
+  LAST_NAME: 'User',
+  EMAIL: 'test.user@scimaxglobal.com',
+  CODE: 'dummy',
+  USER_TYPE: 'I',
+  Status: true,
+  CreatedUserType: 'SUPERADMIN',
+  ORGANIZATION_ID: '1',
+  AUTH_ID: '0',
+  RECORD_STATE: 1
+};
+
+export const SUPERADMIN_UPDATE_USER_PAYLOAD = {
+  ID: '1',
+  FIRST_NAME: 'Super',
+  LAST_NAME: 'Admin',
+  EMAIL: 'superadmin@scimaxglobal.com',
+  Status: true,
+  CreatedUserType: 'SUPERADMIN',
+  ORGANIZATION_ID: '1',
+  RECORD_STATE: 1
 };
 
 export function getSuperAdminTestItems(
@@ -123,7 +287,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { orgCode: '' },
       expectedData: 'Configuration object containing apiURL, baseUrl, Themes',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -135,7 +299,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'FrameworkResponse containing build version string in Data',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -147,7 +311,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { EMAIL: credentials.username, ORGANIZATION_ID: null },
       expectedData: 'AUTHENTICATIONS object or null if standard auth',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -159,7 +323,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { CODE: credentials.username, ORGCODE: null },
       expectedData: 'User details with UserLoginType or USER_TYPE',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -177,7 +341,7 @@ export function getSuperAdminTestItems(
         Version: credentials.version
       },
       expectedData: 'USERS verification object indicating active sessions or password validity',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -195,7 +359,7 @@ export function getSuperAdminTestItems(
         Version: credentials.version
       },
       expectedData: 'User credentials response with Token, UserID, and Authenticated User',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -207,7 +371,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'Session verification response with active status true/false',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -219,7 +383,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'Array of system timezone strings/objects',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -231,7 +395,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'Currency configuration string / FrameworkResponse',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -243,7 +407,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { userId: context.loggedInUserId },
       expectedData: 'Object with user roles list, profile details, and timezone',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -255,7 +419,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { userId: context.loggedInUserId, browser: credentials.browser },
       expectedData: 'FrameworkResponse confirming remote session termination',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -267,7 +431,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { Reason: 'Test execution complete', Browser: credentials.browser, Version: credentials.version, UserId: context.loggedInUserId },
       expectedData: 'FrameworkResponse confirming successful logout',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -281,7 +445,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { CODE: '', NAME: '', Status: '-1' },
       expectedData: 'Array of ORGANIZATION records with CODE, NAME, STATUS, PROGENABLED',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -289,11 +453,11 @@ export function getSuperAdminTestItems(
       category: 'ORGANIZATION',
       categoryLabel: 'Organizations',
       apiName: 'Fetch All Organizations List',
-      endpoint: 'api/organization/getorganizatoins',
+      endpoint: 'api/organization/getorganizatoins/-1',
       method: 'GET',
-      payload: null,
+      payload: { name: '-1' },
       expectedData: 'Array of ORGANIZATION records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -305,7 +469,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'Array of user-accessible organizations',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -317,7 +481,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { id: context.firstOrgId },
       expectedData: 'ORGANIZATION details with modules, currencies, licensing data',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -329,7 +493,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { id: context.firstOrgId },
       expectedData: 'MastersDataLists with currencies, account email lists (MasterData1..7)',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -341,7 +505,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'Object with LogiComposerURL, ClientID, ClientSecret, Username',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -353,7 +517,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'Array of AUTHENTICATIONS default providers',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -365,7 +529,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'MastersDataLists with departments (MasterData1) and roles (MasterData2)',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -375,21 +539,21 @@ export function getSuperAdminTestItems(
       apiName: 'Support Users Advanced Search for Org',
       endpoint: 'api/appuser/getadvsearch',
       method: 'POST',
-      payload: { TITLE: '', EMAIL: '', DEPARTMENT_ID: '', ROLEID: '', RECORD_STATE: 101, ORGANIZATION_ID: context.firstOrgId },
+      payload: { TITLE: '', EMAIL: '', DEPARTMENT_ID: '', ROLEID: '', RECORD_STATE: 101, Status: true, ORGANIZATION_ID: context.firstOrgId },
       expectedData: 'Array of USERS records associated with the organization',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
       id: 'SA-ORG-10',
       category: 'ORGANIZATION',
       categoryLabel: 'Organizations',
-      apiName: 'Get FDA Debarment Check List',
-      endpoint: 'api/organization/GetDebarmentList',
+      apiName: 'Fetch Users By Type & Org ID',
+      endpoint: 'api/appuser/getusersbyid/{type}/{orgid}',
       method: 'GET',
-      payload: null,
-      expectedData: 'FrameworkResponse containing debarment entries',
-      status: 'PENDING',
+      payload: { type: 'S', orgId: context.firstOrgId },
+      expectedData: 'Array of USERS entities filtered by type and organization',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -401,7 +565,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: insertOrgPayload,
       expectedData: 'FrameworkResponse confirming organization creation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -411,9 +575,9 @@ export function getSuperAdminTestItems(
       apiName: 'Update Organization',
       endpoint: 'api/organization/UpdateOrganization',
       method: 'POST',
-      payload: { ID: context.firstOrgId, CODE: 'TEST_ORG_01', NAME: 'Test Organization 01 Updated', STATUS: '1', PROGENABLED: '1' },
+      payload: { ID: context.firstOrgId, CODE: 'TEST_ORG_01', NAME: 'Test Organization Updated', STATUS: '1', PROGENABLED: '1', AUTHTYPE: 'MED', TIMEZONE: 'UTC' },
       expectedData: 'FrameworkResponse confirming organization update',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -423,9 +587,9 @@ export function getSuperAdminTestItems(
       apiName: 'Insert Support User',
       endpoint: 'api/appuser/insert',
       method: 'POST',
-      payload: { FIRST_NAME: 'Support', LAST_NAME: 'Tester', EMAIL: 'support.tester@scimaxglobal.com', ORGANIZATION_ID: context.firstOrgId, RECORD_STATE: 101 },
+      payload: { FIRST_NAME: 'Support', LAST_NAME: 'Tester', EMAIL: 'support.tester@scimaxglobal.com', USER_TYPE: 'S', Status: true, CreatedUserType: 'SUPERADMIN', ORGANIZATION_ID: context.firstOrgId, RECORD_STATE: 101 },
       expectedData: 'FrameworkResponse confirming support user creation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -437,7 +601,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { OrgId: context.firstOrgId, OrgName: 'Default Org' },
       expectedData: 'FrameworkResponse confirming dashboard sync trigger',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -449,7 +613,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { OrgId: context.firstOrgId, OrgName: 'Default Org' },
       expectedData: 'FrameworkResponse confirming Logi refresh',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -461,19 +625,19 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: validateLogiPayload,
       expectedData: 'FrameworkResponse or boolean validation output',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
       id: 'SA-ORG-17',
       category: 'ORGANIZATION',
       categoryLabel: 'Organizations',
-      apiName: 'Update Debarment Block Status',
-      endpoint: 'api/organization/UpdateDebarmentBlockStatus',
-      method: 'POST',
-      payload: { debarmentId: '1', isBlocked: false },
-      expectedData: 'FrameworkResponse confirming block status update',
-      status: 'PENDING',
+      apiName: 'Check Internal Users Limit',
+      endpoint: 'api/appuser/checkinternalusers/{OrgID}',
+      method: 'GET',
+      payload: { orgId: context.firstOrgId },
+      expectedData: 'Boolean response indicating if user limit is within quota',
+      status: 'IDLE',
       matched: false
     },
 
@@ -487,7 +651,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'Array of AUTHENTICATIONS types (SAML, LDAP, EMAIL, etc.)',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -499,7 +663,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { AuthName: '', AuthType: '-1', Status: '-1' },
       expectedData: 'Array of AUTHENTICATIONS summary records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -511,7 +675,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { AuthId: context.firstAuthId },
       expectedData: 'AUTHENTICATIONS detailed configuration object',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -523,7 +687,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { orgId: context.firstOrgId },
       expectedData: 'Array of mapped AUTHENTICATIONS for organization',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -535,7 +699,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { AUTH_NAME: 'SAML SSO Test', AUTH_TYPE_CODE: 'SAML', ISSUER_URL: 'https://sts.windows.net/test-tenant/', METADATA_URL: 'https://login.microsoftonline.com/federationmetadata/2007-06/federationmetadata.xml' },
       expectedData: 'FrameworkResponse confirming SAML configuration saved',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -547,7 +711,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { AUTH_NAME: 'Corporate LDAP Test', AUTH_TYPE_CODE: 'LDAP', SERVER_NAME: 'ldap.example.com', PORT: '389' },
       expectedData: 'FrameworkResponse confirming LDAP configuration saved',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -559,7 +723,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { AUTH_NAME: 'Direct Email Auth Test', AUTH_TYPE_CODE: 'EMAIL' },
       expectedData: 'FrameworkResponse confirming Email authentication configuration saved',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -567,11 +731,11 @@ export function getSuperAdminTestItems(
       category: 'AUTHENTICATION',
       categoryLabel: 'Auth Config',
       apiName: 'Upload / Update Authentication Metadata',
-      endpoint: 'api/configuration/upload',
+      endpoint: 'api/configuration/upload?id={id}',
       method: 'POST',
-      payload: { AuthId: context.firstAuthId, ConfigData: 'Sample Metadata Content' },
+      payload: { AuthId: context.firstAuthId, ConfigData: '<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata"></EntityDescriptor>' },
       expectedData: 'FrameworkResponse or object confirming metadata upload',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -585,7 +749,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'SmtpConfiguration object with EmailID, SMTPHost, SMTPPort',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -597,7 +761,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'Array of SMTP configuration historical revisions',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -609,7 +773,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { EmailConfigID: 'C4F5E8A6-2A65-472B-AB7F-C5F39C057768' },
       expectedData: 'SMTP configuration object for specific revision',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -621,7 +785,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { EmailID: 'miqtesting12.gsuite@scimaxglobal123.com', EmailPwd: 'Techsol@321', SMTPHost: 'smtp.gmail.com', SMTPPort: '587', SMTPSSL: '4' },
       expectedData: 'FrameworkResponse with test connection result',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -633,7 +797,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { MicrosoftClientID: 'sample-client-id', MicrosoftClientSecret: 'sample-secret', MicrosoftTenantID: 'sample-tenant-id', EmailID: 'admin@scimaxglobal.com' },
       expectedData: 'FrameworkResponse with Graph API connection test result',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -645,7 +809,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: smtpPayload,
       expectedData: 'FrameworkResponse or object confirming SMTP configuration insert',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -659,7 +823,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { Category: 'Organization', Name: '', StartDate: '', EndDate: '' },
       expectedData: 'Array of audit log records with RevisionNum, category, UserName',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -671,7 +835,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { RelatedPkId: context.firstOrgId, CatergoryType: 'Organization' },
       expectedData: 'Revision history list for specified audit log item',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -683,7 +847,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { versionIDs: [], categories: 'Organization' },
       expectedData: 'Array of detailed audit field comparison values',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -697,7 +861,7 @@ export function getSuperAdminTestItems(
       method: 'POST',
       payload: { CODE: '', NAME: '', STATUS: '-1' },
       expectedData: 'Array of DEPARTMENT records with CODE, NAME, STATUS',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -709,7 +873,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { name: '-1', id: '-1' },
       expectedData: 'Array of all system departments',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -721,7 +885,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { id: context.firstDeptId },
       expectedData: 'DEPARTMENT object with department details',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -731,9 +895,9 @@ export function getSuperAdminTestItems(
       apiName: 'Insert Department',
       endpoint: 'api/department/insert',
       method: 'POST',
-      payload: { CODE: 'TEST_DEPT', NAME: 'Test Department', STATUS: 1 },
+      payload: { CODE: 'TEST_DEPT', NAME: 'Test Department Auto', STATUS: 1, RECORD_STATE: 101, ORGANIZATION_ID: context.firstOrgId },
       expectedData: 'FrameworkResponse confirming department insert',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -743,9 +907,9 @@ export function getSuperAdminTestItems(
       apiName: 'Update Department',
       endpoint: 'api/department/update',
       method: 'POST',
-      payload: { ID: context.firstDeptId, CODE: 'TEST_DEPT', NAME: 'Test Department Updated', STATUS: 1 },
+      payload: { ID: context.firstDeptId, CODE: 'TEST_DEPT', NAME: 'Test Department Updated', STATUS: 1, RECORD_STATE: 101, ORGANIZATION_ID: context.firstOrgId },
       expectedData: 'FrameworkResponse confirming department update',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -755,9 +919,9 @@ export function getSuperAdminTestItems(
       apiName: 'Delete Department',
       endpoint: 'api/department/delete/{id}',
       method: 'GET',
-      payload: { id: '9999' },
+      payload: { id: context.firstDeptId },
       expectedData: 'FrameworkResponse confirming department deletion',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -769,9 +933,9 @@ export function getSuperAdminTestItems(
       apiName: 'Role Advanced Search (Grid)',
       endpoint: 'api/role/getadvsearch',
       method: 'POST',
-      payload: { ROLE_NAME: '', STATUS: '-1' },
+      payload: { Role_Name: '', Record_State: 101, HasStatus: true },
       expectedData: 'Array of ROLE records with ROLE_NAME, STATUS, CODE',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -783,7 +947,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { name: '-1' },
       expectedData: 'Array of system roles',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -795,7 +959,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'Array of active role entities',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -807,7 +971,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { id: context.firstRoleId },
       expectedData: 'ROLE object with role attributes and permissions',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -819,7 +983,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'Array of MODULE objects for permissions matrix',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -831,7 +995,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { id: context.firstRoleId },
       expectedData: 'Array of ROLE_PRIVILEGE records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -841,9 +1005,24 @@ export function getSuperAdminTestItems(
       apiName: 'Insert Role',
       endpoint: 'api/role/insert',
       method: 'POST',
-      payload: { ROLE_NAME: 'Test Super Admin Role', ROLE_CODE: 'TEST_ROLE', STATUS: 1 },
+      payload: {
+        Role_Name: 'Test Super Admin Role',
+        Status: true,
+        HasIST: true,
+        HasEAP: true,
+        HasGRANTS: true,
+        HasCME: true,
+        HasCharity: true,
+        HasSponsership: true,
+        HasAnalytics: false,
+        lstGen: [],
+        lstIST: [],
+        lstEAP: [],
+        lstGrants: [],
+        lstAnalytics: []
+      },
       expectedData: 'FrameworkResponse confirming role creation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -853,9 +1032,25 @@ export function getSuperAdminTestItems(
       apiName: 'Update Role',
       endpoint: 'api/role/update',
       method: 'POST',
-      payload: { ID: context.firstRoleId, ROLE_NAME: 'Test Super Admin Role Updated', ROLE_CODE: 'TEST_ROLE', STATUS: 1 },
+      payload: {
+        Role_ID: context.firstRoleId,
+        Role_Name: 'Test Super Admin Role Updated',
+        Status: true,
+        HasIST: true,
+        HasEAP: true,
+        HasGRANTS: true,
+        HasCME: true,
+        HasCharity: true,
+        HasSponsership: true,
+        HasAnalytics: false,
+        lstGen: [],
+        lstIST: [],
+        lstEAP: [],
+        lstGrants: [],
+        lstAnalytics: []
+      },
       expectedData: 'FrameworkResponse confirming role update',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -865,9 +1060,9 @@ export function getSuperAdminTestItems(
       apiName: 'Assign Role Privileges',
       endpoint: 'api/role/insertroleprivilege',
       method: 'POST',
-      payload: [{ ROLE_ID: context.firstRoleId, PRIVILEGE_ID: '1', MODULE_ID: '1', STATUS: 1 }],
+      payload: [{ ROLE_ID: context.firstRoleId, FEATURE_ID: '102', PERMISSION_ID: 1, ACCESS_LEVEL: 1, RECORD_STATE: 101, ORGANIZATION_ID: context.firstOrgId, isExisting: false }],
       expectedData: 'FrameworkResponse confirming privilege assignment',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -876,10 +1071,10 @@ export function getSuperAdminTestItems(
       categoryLabel: 'Roles & Privs',
       apiName: 'Delete Role',
       endpoint: 'api/role/delete/{id}',
-      method: 'DELETE',
-      payload: { id: '9999' },
+      method: 'GET',
+      payload: { id: context.firstRoleId },
       expectedData: 'FrameworkResponse confirming role deletion',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -891,9 +1086,9 @@ export function getSuperAdminTestItems(
       apiName: 'Users Advanced Search (Grid)',
       endpoint: 'api/appuser/getadvsearch',
       method: 'POST',
-      payload: { CODE: '', TITLE: '', EMAIL: '', DEPARTMENT_ID: '', ROLEID: '', STATUS: '-1', RECORD_STATE: 101 },
+      payload: { CODE: '', TITLE: '', EMAIL: '', DEPARTMENT_ID: '', ROLEID: '', Status: true, RECORD_STATE: 101, ORGANIZATION_ID: context.firstOrgId },
       expectedData: 'Array of user accounts',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -905,7 +1100,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { id: context.loggedInUserId },
       expectedData: 'USERS entity with user profile details',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -915,9 +1110,9 @@ export function getSuperAdminTestItems(
       apiName: 'Fetch Support User By ID',
       endpoint: 'api/appuser/getsupportuserbyid/{id}',
       method: 'GET',
-      payload: { id: '1' },
+      payload: { id: context.firstUserId },
       expectedData: 'Support user details object',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -929,7 +1124,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: null,
       expectedData: 'Array of internal system USERS',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -939,9 +1134,20 @@ export function getSuperAdminTestItems(
       apiName: 'Insert User',
       endpoint: 'api/appuser/insert',
       method: 'POST',
-      payload: { FIRST_NAME: 'Test', LAST_NAME: 'User', EMAIL: 'test.user@scimaxglobal.com', CODE: 'test.user@scimaxglobal.com', USER_TYPE: 'U', ORGANIZATION_ID: context.firstOrgId, STATUS: 1 },
+      payload: {
+        FIRST_NAME: 'Test',
+        LAST_NAME: 'User',
+        EMAIL: 'test.user@scimaxglobal.com',
+        CODE: 'dummy',
+        USER_TYPE: 'I',
+        Status: true,
+        CreatedUserType: 'SUPERADMIN',
+        ORGANIZATION_ID: context.firstOrgId,
+        AUTH_ID: '0',
+        RECORD_STATE: 1
+      },
       expectedData: 'FrameworkResponse confirming user creation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -951,9 +1157,18 @@ export function getSuperAdminTestItems(
       apiName: 'Update User',
       endpoint: 'api/appuser/update',
       method: 'POST',
-      payload: { ID: context.loggedInUserId, FIRST_NAME: 'Super', LAST_NAME: 'Admin', EMAIL: 'superadmin@scimaxglobal.com', STATUS: 1 },
+      payload: {
+        ID: context.firstUserId,
+        FIRST_NAME: 'Super',
+        LAST_NAME: 'Admin',
+        EMAIL: 'superadmin@scimaxglobal.com',
+        Status: true,
+        CreatedUserType: 'SUPERADMIN',
+        ORGANIZATION_ID: context.firstOrgId,
+        RECORD_STATE: 1
+      },
       expectedData: 'FrameworkResponse confirming user update',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -965,7 +1180,7 @@ export function getSuperAdminTestItems(
       method: 'GET',
       payload: { userId: context.loggedInUserId, orgId: context.firstOrgId },
       expectedData: 'FrameworkResponse confirming email dispatch',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -975,9 +1190,9 @@ export function getSuperAdminTestItems(
       apiName: 'Delete User',
       endpoint: 'api/appuser/delete/{id}',
       method: 'GET',
-      payload: { id: '9999' },
+      payload: { id: context.firstUserId },
       expectedData: 'FrameworkResponse confirming user deletion',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     }
   ];

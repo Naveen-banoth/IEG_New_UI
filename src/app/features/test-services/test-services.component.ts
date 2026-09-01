@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -16,6 +16,7 @@ import {
   CategoryTab,
   ConsoleLogEntry,
   DetailedTestItem,
+  ExecutionMode,
   TestContextIds,
   TestModuleType
 } from './test-services.types';
@@ -50,15 +51,134 @@ import { TopUserToolbarComponent } from '../../layout/top-user-toolbar/top-user-
 })
 export class TestServicesComponent implements OnInit {
   public activeModule: TestModuleType = 'SUPERADMIN';
-  public testItems: DetailedTestItem[] = [];
-  public consoleLogs: ConsoleLogEntry[] = [];
-  public isRunningAll = false;
-  public selectedCategory: string = 'ALL';
-  public filterStatus: string = 'ALL';
-  public searchQuery: string = '';
-  public activeTab: 'cards' | 'logs' = 'cards';
-  public autoRunOnLoad: boolean = true;
-  public totalDuration: number = 0;
+
+  // ==================== REACTIVE ANGULAR SIGNALS ====================
+  public testItemsSignal = signal<DetailedTestItem[]>([]);
+  public isRunningAllSignal = signal<boolean>(false);
+  public isRunningSelectedSignal = signal<boolean>(false);
+  public isStoppingSignal = signal<boolean>(false);
+  public selectedCategorySignal = signal<string>('ALL');
+  public filterStatusSignal = signal<string>('ALL');
+  public searchQuerySignal = signal<string>('');
+  public activeTabSignal = signal<'cards' | 'logs'>('cards');
+  public autoRunOnLoadSignal = signal<boolean>(localStorage.getItem('test_autorun_enabled') === 'true');
+  public executionModeSignal = signal<ExecutionMode>((localStorage.getItem('test_execution_mode') as ExecutionMode) || 'sequential');
+  public totalDurationSignal = signal<number>(0);
+  public consoleLogsSignal = signal<ConsoleLogEntry[]>([]);
+
+  private cancelRequested = false;
+
+  // ==================== COMPUTED SIGNALS ====================
+  public filteredItemsSignal = computed(() => {
+    const items = this.testItemsSignal();
+    const cat = this.selectedCategorySignal();
+    const status = this.filterStatusSignal();
+    const query = this.searchQuerySignal().toLowerCase().trim();
+
+    return items.filter(item => {
+      const matchCat = cat === 'ALL' || item.category === cat;
+      const matchStatus =
+        status === 'ALL' ||
+        (status === 'SUCCESS' && item.status === 'SUCCESS' && item.matched) ||
+        (status === 'FAILED' && (item.status === 'FAILED' || (item.status === 'SUCCESS' && !item.matched))) ||
+        (status === 'PENDING' && (item.status === 'PENDING' || item.status === 'RUNNING')) ||
+        (status === 'IDLE' && item.status === 'IDLE');
+
+      const matchSearch =
+        !query ||
+        item.apiName.toLowerCase().includes(query) ||
+        item.endpoint.toLowerCase().includes(query) ||
+        item.method.toLowerCase().includes(query);
+
+      return matchCat && matchStatus && matchSearch;
+    });
+  });
+
+  public totalCountSignal = computed(() => this.testItemsSignal().length);
+  public successCountSignal = computed(() => this.testItemsSignal().filter(t => t.status === 'SUCCESS' && t.matched).length);
+  public failedCountSignal = computed(() => this.testItemsSignal().filter(t => t.status === 'FAILED' || (t.status === 'SUCCESS' && !t.matched)).length);
+  public pendingCountSignal = computed(() => this.testItemsSignal().filter(t => t.status === 'PENDING' || t.status === 'RUNNING').length);
+  public successRateSignal = computed(() => {
+    const total = this.totalCountSignal();
+    return total === 0 ? 0 : Math.round((this.successCountSignal() / total) * 100);
+  });
+  public selectedItemsSignal = computed(() => this.testItemsSignal().filter(t => t.selected));
+  public selectedCountSignal = computed(() => this.selectedItemsSignal().length);
+  public allFilteredSelectedSignal = computed(() => {
+    const list = this.filteredItemsSignal();
+    return list.length > 0 && list.every(item => item.selected);
+  });
+  public isSomeFilteredSelectedSignal = computed(() => {
+    const list = this.filteredItemsSignal();
+    const selCount = list.filter(item => item.selected).length;
+    return selCount > 0 && selCount < list.length;
+  });
+
+  public activeCategoryLabelSignal = computed(() => {
+    const key = this.selectedCategorySignal();
+    if (key === 'ALL') return 'All Services';
+    const found = this.dynamicCategories.find(c => c.key === key);
+    return found ? found.label : key;
+  });
+  public get activeCategoryLabel(): string {
+    return this.activeCategoryLabelSignal();
+  }
+
+  // ==================== GETTERS & SETTERS FOR TEMPLATES & BINDINGS ====================
+  public get testItems(): DetailedTestItem[] { return this.testItemsSignal(); }
+  public set testItems(val: DetailedTestItem[]) { this.testItemsSignal.set(val); this.notifyStateChange(); }
+
+  public get filteredItems(): DetailedTestItem[] { return this.filteredItemsSignal(); }
+  public get totalCount(): number { return this.totalCountSignal(); }
+  public get successCount(): number { return this.successCountSignal(); }
+  public get failedCount(): number { return this.failedCountSignal(); }
+  public get pendingCount(): number { return this.pendingCountSignal(); }
+  public get successRate(): number { return this.successRateSignal(); }
+  public get selectedItems(): DetailedTestItem[] { return this.selectedItemsSignal(); }
+  public get selectedCount(): number { return this.selectedCountSignal(); }
+  public get allFilteredSelected(): boolean { return this.allFilteredSelectedSignal(); }
+  public get isSomeFilteredSelected(): boolean { return this.isSomeFilteredSelectedSignal(); }
+
+  public get isRunningAll(): boolean { return this.isRunningAllSignal(); }
+  public set isRunningAll(v: boolean) { this.isRunningAllSignal.set(v); this.cdr.markForCheck(); }
+
+  public get isRunningSelected(): boolean { return this.isRunningSelectedSignal(); }
+  public set isRunningSelected(v: boolean) { this.isRunningSelectedSignal.set(v); this.cdr.markForCheck(); }
+
+  public get isStopping(): boolean { return this.isStoppingSignal(); }
+  public set isStopping(v: boolean) { this.isStoppingSignal.set(v); this.cdr.markForCheck(); }
+
+  public get selectedCategory(): string { return this.selectedCategorySignal(); }
+  public set selectedCategory(v: string) { this.selectedCategorySignal.set(v); this.cdr.markForCheck(); }
+
+  public get filterStatus(): string { return this.filterStatusSignal(); }
+  public set filterStatus(v: string) { this.filterStatusSignal.set(v); this.cdr.markForCheck(); }
+
+  public get searchQuery(): string { return this.searchQuerySignal(); }
+  public set searchQuery(v: string) { this.searchQuerySignal.set(v); this.cdr.markForCheck(); }
+
+  public get activeTab(): 'cards' | 'logs' { return this.activeTabSignal(); }
+  public set activeTab(v: 'cards' | 'logs') { this.activeTabSignal.set(v); this.cdr.markForCheck(); }
+
+  public get autoRunOnLoad(): boolean { return this.autoRunOnLoadSignal(); }
+  public set autoRunOnLoad(v: boolean) { this.autoRunOnLoadSignal.set(v); }
+
+  public get executionMode(): ExecutionMode { return this.executionModeSignal(); }
+  public set executionMode(v: ExecutionMode) { this.executionModeSignal.set(v); }
+
+  public get totalDuration(): number { return this.totalDurationSignal(); }
+  public set totalDuration(v: number) { this.totalDurationSignal.set(v); this.cdr.markForCheck(); }
+
+  public get consoleLogs(): ConsoleLogEntry[] { return this.consoleLogsSignal(); }
+  public set consoleLogs(v: ConsoleLogEntry[]) { this.consoleLogsSignal.set(v); this.cdr.markForCheck(); }
+
+  /**
+   * Triggers an immediate reactive state update and forces Angular change detection
+   */
+  public notifyStateChange(): void {
+    this.testItemsSignal.update(items => [...items]);
+    this.cdr.detectChanges();
+  }
 
   // Swagger Global Auth State
   public isAuthModalOpen: boolean = false;
@@ -163,6 +283,7 @@ export class TestServicesComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private cdr: ChangeDetectorRef,
     private superTestRunner: SuperAdminTestRunnerService,
     private adminTestRunner: AdminTestRunnerService,
     private commonTestRunner: CommonTestRunnerService,
@@ -279,7 +400,7 @@ export class TestServicesComponent implements OnInit {
         break;
     }
 
-    if (triggerAutoRun) {
+    if (triggerAutoRun && this.autoRunOnLoad) {
       setTimeout(() => {
         this.runAllTests();
       }, 250);
@@ -381,80 +502,260 @@ export class TestServicesComponent implements OnInit {
     this.testItems = getUmTestItems(this.contextIds);
   }
 
-  // ==================== TEST EXECUTION ====================
+  // ==================== TOGGLE & CONFIGURATION HANDLERS ====================
+  public toggleAutoRunOnLoad(): void {
+    this.autoRunOnLoad = !this.autoRunOnLoad;
+    localStorage.setItem('test_autorun_enabled', String(this.autoRunOnLoad));
+    this.addLog(
+      'info',
+      `Auto-Run on Suite Load is now ${this.autoRunOnLoad ? 'ENABLED' : 'DISABLED (Manual Start)'}.`
+    );
+  }
+
+  public setExecutionMode(mode: ExecutionMode): void {
+    this.executionMode = mode;
+    localStorage.setItem('test_execution_mode', mode);
+    this.addLog(
+      'info',
+      `Execution Mode set to: ${mode === 'parallel' ? 'PARALLEL (Test multiple at a time)' : 'SEQUENTIAL (One by one)'}.`
+    );
+  }
+
+  public toggleExecutionMode(): void {
+    const nextMode: ExecutionMode = this.executionMode === 'sequential' ? 'parallel' : 'sequential';
+    this.setExecutionMode(nextMode);
+  }
+
+  // ==================== MULTI-SELECTION & BATCH HELPERS ====================
+  public toggleItemSelection(item: DetailedTestItem, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    item.selected = !item.selected;
+    this.notifyStateChange();
+  }
+
+  public toggleSelectAllFiltered(): void {
+    const target = !this.allFilteredSelected;
+    this.filteredItems.forEach(item => {
+      item.selected = target;
+    });
+    this.notifyStateChange();
+  }
+
+  public selectAllFiltered(): void {
+    this.filteredItems.forEach(item => {
+      item.selected = true;
+    });
+    this.notifyStateChange();
+    this.addLog('info', `Selected all ${this.filteredItems.length} filtered APIs.`);
+  }
+
+  public selectFailedOnly(): void {
+    let count = 0;
+    this.filteredItems.forEach(item => {
+      const isFailed = item.status === 'FAILED' || (item.status === 'SUCCESS' && !item.matched);
+      item.selected = isFailed;
+      if (isFailed) count++;
+    });
+    this.notifyStateChange();
+    this.addLog('info', `Selected ${count} failed / issue APIs.`);
+  }
+
+  public deselectAll(): void {
+    this.testItems.forEach(item => {
+      item.selected = false;
+    });
+    this.notifyStateChange();
+    this.addLog('info', 'Cleared all selections.');
+  }
+
+  public invertSelection(): void {
+    this.filteredItems.forEach(item => {
+      item.selected = !item.selected;
+    });
+    this.notifyStateChange();
+    this.addLog('info', 'Inverted API selection.');
+  }
+
+  // ==================== URL COPY HANDLERS ====================
+  public copyApiUrl(item: DetailedTestItem, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    const cleanEndpoint = item.endpoint.startsWith('/') ? item.endpoint.substring(1) : item.endpoint;
+    navigator.clipboard.writeText(cleanEndpoint);
+    item.copiedUrl = true;
+    setTimeout(() => {
+      item.copiedUrl = false;
+    }, 2000);
+    this.addLog('info', `Copied API URL: ${cleanEndpoint}`);
+  }
+
+  public copyFullApiUrl(item: DetailedTestItem, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    const cleanEndpoint = item.endpoint.startsWith('/') ? item.endpoint.substring(1) : item.endpoint;
+    const fullUrl = `http://localhost:4074/${cleanEndpoint}`;
+    navigator.clipboard.writeText(fullUrl);
+    item.copiedUrl = true;
+    setTimeout(() => {
+      item.copiedUrl = false;
+    }, 2000);
+    this.addLog('info', `Copied Full API URL: ${fullUrl}`);
+  }
+
+  // ==================== STOP / CANCEL EXECUTION ====================
+  public stopExecution(): void {
+    if (!this.isRunningAll && !this.isRunningSelected) return;
+    this.cancelRequested = true;
+    this.isStopping = true;
+    this.addLog('warn', '🛑 Stop execution requested! Halting remaining API calls...');
+
+    // Revert any pending queued items back to IDLE
+    this.testItems.forEach(item => {
+      if (item.status === 'PENDING') {
+        item.status = 'IDLE';
+      }
+    });
+  }
+
+  // ==================== TEST SUITE EXECUTION ====================
   public async runAllTests(): Promise<void> {
-    if (this.isRunningAll) return;
+    if (this.isRunningAll || this.isRunningSelected) return;
+    const targetItems = this.selectedCategory === 'ALL' ? this.testItems : this.filteredItems;
+    if (targetItems.length === 0) {
+      this.addLog('warn', 'No API endpoints available in the active category to execute.');
+      return;
+    }
+
     this.isRunningAll = true;
+    this.cancelRequested = false;
+    this.isStopping = false;
     const startTime = performance.now();
 
+    const scopeLabel = this.selectedCategory === 'ALL' ? `${this.activeModule} SUITE` : `${this.activeModule} - ${this.activeCategoryLabel}`;
+
     this.addLog('info', '=======================================================');
-    this.addLog('info', `STARTING ${this.activeModule} API TEST RUNNER`);
+    this.addLog(
+      'info',
+      `STARTING ${scopeLabel} (${this.executionMode.toUpperCase()} MODE - ${targetItems.length} APIs)`
+    );
     this.addLog('info', '=======================================================');
 
     console.log(
       `%c=======================================================\n` +
-      `  STARTING ${this.activeModule} API SUITE EXECUTION\n` +
+      `  STARTING ${scopeLabel} EXECUTION (${this.executionMode.toUpperCase()})\n` +
       `=======================================================`,
       'color: #06b6d4; font-weight: bold; font-size: 15px;'
     );
 
-    // Reset status
-    this.testItems.forEach(t => {
+    // Set all target items to PENDING as they enter the run queue
+    targetItems.forEach(t => {
       t.status = 'PENDING';
       t.response = undefined;
       t.error = undefined;
       t.matched = false;
       t.durationMs = undefined;
     });
+    this.notifyStateChange();
 
-    // Execute login first if Superadmin so downstream calls have valid session & tokens
-    if (this.activeModule === 'SUPERADMIN') {
-      const loginItem = this.testItems.find(t => t.id === 'SA-AUTH-6');
-      if (loginItem) {
-        await this.executeSingleTest(loginItem);
+    if (this.executionMode === 'parallel') {
+      // Parallel execution: If Superadmin, ensure login first for session tokens
+      if (this.activeModule === 'SUPERADMIN' && !this.cancelRequested) {
+        const loginItem = this.testItems.find(t => t.id === 'SA-AUTH-6');
+        if (loginItem && (targetItems.includes(loginItem) || !sessionStorage.getItem('token'))) {
+          await this.executeSingleTest(loginItem);
+        }
+      }
+
+      if (!this.cancelRequested) {
+        // Execute all other endpoints concurrently at the same time
+        const concurrentItems = targetItems.filter(item => {
+          if (this.activeModule === 'SUPERADMIN' && (item.id === 'SA-AUTH-6' || item.id === 'SA-AUTH-12')) {
+            return false;
+          }
+          return true;
+        });
+
+        await Promise.all(
+          concurrentItems.map(item =>
+            this.cancelRequested ? Promise.resolve() : this.executeSingleTest(item)
+          )
+        );
+      }
+
+      // Execute logout at the end if Superadmin and in scope
+      if (this.activeModule === 'SUPERADMIN' && !this.cancelRequested) {
+        const logoutItem = targetItems.find(t => t.id === 'SA-AUTH-12');
+        if (logoutItem) {
+          await this.executeSingleTest(logoutItem);
+        }
+      }
+    } else {
+      // Sequential execution: One after another in order
+      if (this.activeModule === 'SUPERADMIN' && !this.cancelRequested) {
+        const loginItem = this.testItems.find(t => t.id === 'SA-AUTH-6');
+        if (loginItem && (targetItems.includes(loginItem) || !sessionStorage.getItem('token'))) {
+          await this.executeSingleTest(loginItem);
+        }
+      }
+
+      for (const item of targetItems) {
+        if (this.cancelRequested) {
+          this.addLog('warn', 'Execution halted by user request.');
+          break;
+        }
+        if (this.activeModule === 'SUPERADMIN' && (item.id === 'SA-AUTH-6' || item.id === 'SA-AUTH-12')) continue;
+        await this.executeSingleTest(item);
+      }
+
+      if (this.activeModule === 'SUPERADMIN' && !this.cancelRequested) {
+        const logoutItem = targetItems.find(t => t.id === 'SA-AUTH-12');
+        if (logoutItem) {
+          await this.executeSingleTest(logoutItem);
+        }
       }
     }
 
-    // Execute all tests
-    for (const item of this.testItems) {
-      if (this.activeModule === 'SUPERADMIN' && (item.id === 'SA-AUTH-6' || item.id === 'SA-AUTH-12')) continue;
-      await this.executeSingleTest(item);
-    }
-
-    // Execute logout at the very end if Superadmin
-    if (this.activeModule === 'SUPERADMIN') {
-      const logoutItem = this.testItems.find(t => t.id === 'SA-AUTH-12');
-      if (logoutItem) {
-        await this.executeSingleTest(logoutItem);
-      }
+    // Clean up any remaining PENDING items back to IDLE if execution was stopped
+    if (this.cancelRequested) {
+      targetItems.forEach(t => {
+        if (t.status === 'PENDING') {
+          t.status = 'IDLE';
+        }
+      });
     }
 
     this.totalDuration = Math.round(performance.now() - startTime);
     this.isRunningAll = false;
+    this.isStopping = false;
+    this.notifyStateChange();
 
-    const total = this.testItems.length;
-    const passed = this.testItems.filter(t => t.status === 'SUCCESS' && t.matched).length;
-    const failed = total - passed;
+    const total = targetItems.length;
+    const passed = targetItems.filter(t => t.status === 'SUCCESS' && t.matched).length;
+    const failed = targetItems.filter(t => t.status === 'FAILED' || (t.status === 'SUCCESS' && !t.matched)).length;
 
-    const summaryMsg = `${this.activeModule} EXECUTION COMPLETE: Total ${total} | Passed: ${passed} | Failed/Issues: ${failed} | Time: ${this.totalDuration}ms`;
-    this.addLog(failed === 0 ? 'success' : 'warn', summaryMsg);
+    const summaryMsg = `${scopeLabel} ${this.cancelRequested ? 'STOPPED' : 'COMPLETE'}: Total ${total} | Passed: ${passed} | Failed/Issues: ${failed} | Time: ${this.totalDuration}ms`;
+    this.addLog(failed === 0 && !this.cancelRequested ? 'success' : 'warn', summaryMsg);
 
     console.log(
       `%c=======================================================\n` +
-      `  ${this.activeModule} TEST SUITE SUMMARY REPORT\n` +
+      `  ${scopeLabel} SUMMARY REPORT\n` +
       `  Total APIs Tested: ${total}\n` +
       `  Passed / Matched:  ${passed}\n` +
       `  Failed / Issues:   ${failed}\n` +
       `  Total Duration:    ${this.totalDuration}ms\n` +
-      `  Suite Status:      ${failed === 0 ? 'ALL PASSED' : 'COMPLETED WITH ' + failed + ' ISSUES'}\n` +
+      `  Suite Status:      ${this.cancelRequested ? 'STOPPED BY USER' : (failed === 0 ? 'ALL PASSED' : 'COMPLETED WITH ' + failed + ' ISSUES')}\n` +
       `=======================================================`,
-      failed === 0
+      failed === 0 && !this.cancelRequested
         ? 'color: #10b981; font-weight: bold; font-size: 14px;'
         : 'color: #f59e0b; font-weight: bold; font-size: 14px;'
     );
 
     console.table(
-      this.testItems.map(t => ({
+      targetItems.map(t => ({
         ID: t.id,
         API_Name: t.apiName,
         Method: t.method,
@@ -466,8 +767,83 @@ export class TestServicesComponent implements OnInit {
     );
   }
 
+  // ==================== BATCH / SELECTED APIS EXECUTION ====================
+  public async runSelectedTests(): Promise<void> {
+    if (this.isRunningAll || this.isRunningSelected) return;
+    const targets = this.selectedItems;
+    if (targets.length === 0) {
+      this.addLog('warn', 'No APIs selected. Please check at least one API checkbox to run.');
+      return;
+    }
+
+    this.isRunningSelected = true;
+    this.cancelRequested = false;
+    this.isStopping = false;
+    const startTime = performance.now();
+
+    this.addLog('info', '=======================================================');
+    this.addLog(
+      'info',
+      `RUNNING ${targets.length} SELECTED APIs (${this.executionMode.toUpperCase()} MODE)`
+    );
+    this.addLog('info', '=======================================================');
+
+    // Set targets to PENDING
+    targets.forEach(t => {
+      t.status = 'PENDING';
+      t.response = undefined;
+      t.error = undefined;
+      t.matched = false;
+      t.durationMs = undefined;
+    });
+    this.notifyStateChange();
+
+    if (this.executionMode === 'parallel') {
+      // Parallel batch: Run all selected at the same time
+      await Promise.all(
+        targets.map(item =>
+          this.cancelRequested ? Promise.resolve() : this.executeSingleTest(item)
+        )
+      );
+    } else {
+      // Sequential batch: Run one by one
+      for (const item of targets) {
+        if (this.cancelRequested) {
+          this.addLog('warn', 'Batch execution halted by user request.');
+          break;
+        }
+        await this.executeSingleTest(item);
+      }
+    }
+
+    // Clean up any remaining PENDING items back to IDLE if stopped
+    if (this.cancelRequested) {
+      targets.forEach(t => {
+        if (t.status === 'PENDING') {
+          t.status = 'IDLE';
+        }
+      });
+    }
+
+    const batchDuration = Math.round(performance.now() - startTime);
+    this.isRunningSelected = false;
+    this.isStopping = false;
+    this.notifyStateChange();
+
+    const total = targets.length;
+    const passed = targets.filter(t => t.status === 'SUCCESS' && t.matched).length;
+    const failed = targets.filter(t => t.status === 'FAILED' || (t.status === 'SUCCESS' && !t.matched)).length;
+
+    this.addLog(
+      failed === 0 && !this.cancelRequested ? 'success' : 'warn',
+      `Selected Batch ${this.cancelRequested ? 'Stopped' : 'Finished'}: ${total} APIs | Passed: ${passed} | Failed: ${failed} | Duration: ${batchDuration}ms`
+    );
+  }
+
+  // ==================== SINGLE API EXECUTION ====================
   public async executeSingleTest(item: DetailedTestItem): Promise<void> {
     item.status = 'RUNNING';
+    this.notifyStateChange();
     const start = performance.now();
 
     try {
@@ -501,10 +877,12 @@ export class TestServicesComponent implements OnInit {
       item.durationMs = Math.round(performance.now() - start);
       item.statusCode = 200;
       item.status = 'SUCCESS';
+      item.matched = true;
       item.response = res;
 
       this.logToConsole(item);
       this.addLog('success', `[${item.category}] ${item.apiName} => 200 OK (${item.durationMs}ms)`);
+      this.notifyStateChange();
 
     } catch (err: any) {
       item.durationMs = Math.round(performance.now() - start);
@@ -516,6 +894,7 @@ export class TestServicesComponent implements OnInit {
 
       this.logToConsole(item);
       this.addLog('error', `[${item.category}] ${item.apiName} => FAILED (${item.statusCode}): ${err?.message || 'Unknown error'}`);
+      this.notifyStateChange();
     }
   }
 
@@ -552,48 +931,9 @@ Matched: NO
     }
   }
 
-  public get filteredItems(): DetailedTestItem[] {
-    return this.testItems.filter(item => {
-      const matchCat = this.selectedCategory === 'ALL' || item.category === this.selectedCategory;
-      const matchStatus =
-        this.filterStatus === 'ALL' ||
-        (this.filterStatus === 'SUCCESS' && item.status === 'SUCCESS' && item.matched) ||
-        (this.filterStatus === 'FAILED' && (item.status === 'FAILED' || (item.status === 'SUCCESS' && !item.matched))) ||
-        (this.filterStatus === 'PENDING' && (item.status === 'PENDING' || item.status === 'RUNNING'));
-
-      const matchSearch =
-        !this.searchQuery.trim() ||
-        item.apiName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        item.endpoint.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        item.method.toLowerCase().includes(this.searchQuery.toLowerCase());
-
-      return matchCat && matchStatus && matchSearch;
-    });
-  }
-
-  public get totalCount(): number {
-    return this.testItems.length;
-  }
-
-  public get successCount(): number {
-    return this.testItems.filter(t => t.status === 'SUCCESS' && t.matched).length;
-  }
-
-  public get failedCount(): number {
-    return this.testItems.filter(t => t.status === 'FAILED' || (t.status === 'SUCCESS' && !t.matched)).length;
-  }
-
-  public get pendingCount(): number {
-    return this.testItems.filter(t => t.status === 'PENDING' || t.status === 'RUNNING').length;
-  }
-
-  public get successRate(): number {
-    if (this.totalCount === 0) return 0;
-    return Math.round((this.successCount / this.totalCount) * 100);
-  }
-
   public toggleExpand(item: DetailedTestItem): void {
     item.expanded = !item.expanded;
+    this.notifyStateChange();
   }
 
   public toggleEditPayload(item: DetailedTestItem): void {

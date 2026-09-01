@@ -20,7 +20,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { Status: 'ALL', PageIndex: 1, PageSize: 10 },
       expectedData: 'Array of IST applications',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -32,7 +32,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { SearchText: '', Status: '-1' },
       expectedData: 'Filtered applications summary list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -44,7 +44,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Master dropdowns for IST general form',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -56,7 +56,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { PageIndex: 1, PageSize: 10 },
       expectedData: 'User-specific IST applications',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -68,7 +68,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { SearchText: '' },
       expectedData: 'Filtered personal applications',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -80,7 +80,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Audit change log history',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -92,7 +92,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Submission validation status or error list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -104,7 +104,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { APPLICATION_NAME: 'IST Oncology Study Phase II', STATUS: '1' },
       expectedData: 'Created general info confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -116,7 +116,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { APPLICATION_ID: '1', APPLICATION_NAME: 'IST Oncology Study Phase II (Updated)' },
       expectedData: 'Updated general info confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -128,7 +128,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { APPLICATION_ID: '1', ORGANIZATION_ID: '1' },
       expectedData: 'Saved organization association',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -142,7 +142,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Master roles & org dropdowns for study team',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -154,7 +154,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Search master records for study team',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -166,7 +166,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'List of study team members',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -178,7 +178,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ApplicationID: '1' },
       expectedData: 'Filtered study team member records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -190,7 +190,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Study team record details for editing',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -202,7 +202,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ApplicationID: '1', USER_NAME: 'Dr. Sarah Connor', ROLE_ID: '1' },
       expectedData: 'Created study team member confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -214,7 +214,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { RecordID: '1', ApplicationID: '1', USER_NAME: 'Dr. Sarah Connor' },
       expectedData: 'Updated study team confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -226,7 +226,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Review board / IRB details for application',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -238,7 +238,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ApplicationID: '1', BOARD_NAME: 'Institutional Review Board' },
       expectedData: 'Created review board record',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -250,7 +250,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { RecordID: '1', ApplicationID: '1', BOARD_NAME: 'IRB Ethics Committee' },
       expectedData: 'Updated review board record',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -264,7 +264,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Trial activities & seminars list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -276,7 +276,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Activity master options',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -288,7 +288,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ApplicationID: '1' },
       expectedData: 'Filtered activities list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -300,7 +300,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'List of publications for trial',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -312,7 +312,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Publication master dropdown values',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -324,7 +324,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ApplicationID: '1' },
       expectedData: 'Filtered publications list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -336,7 +336,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Site evaluation summary details',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -348,7 +348,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ApplicationID: '1' },
       expectedData: 'Filtered site evaluation list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -362,7 +362,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Requests summary master metadata',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -374,7 +374,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Summary of drug / fund requests',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -386,7 +386,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ApplicationID: '1' },
       expectedData: 'Filtered request list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -398,7 +398,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Product request options',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -410,7 +410,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Fund request options',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -422,7 +422,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ApplicationID: '1', PRODUCT_ID: '1', QUANTITY: 50 },
       expectedData: 'Created product request confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -434,7 +434,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { RecordID: '1', ApplicationID: '1', QUANTITY: 80 },
       expectedData: 'Updated product request confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -446,7 +446,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Product request record for editing',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -458,7 +458,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ApplicationID: '1', AMOUNT: 40000, CURRENCY_ID: 'USD' },
       expectedData: 'Created fund request confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -470,7 +470,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { RecordID: '1', ApplicationID: '1', AMOUNT: 45000 },
       expectedData: 'Updated fund request confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -482,7 +482,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Approval result confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -494,7 +494,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Rejection confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -506,7 +506,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Allocation result confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -518,7 +518,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Return request confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -530,7 +530,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Withdrawal confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -542,7 +542,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Close confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -554,7 +554,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Milestone tracking list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -566,7 +566,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ApplicationID: '1' },
       expectedData: 'Filtered milestones list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -578,7 +578,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Milestone record for editing',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -590,7 +590,7 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ApplicationID: '1', MILESTONE_NAME: 'Protocol IRB Approval', STATUS: '1' },
       expectedData: 'Created milestone confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {

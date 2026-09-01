@@ -59,7 +59,12 @@ export class SuperAdminAuthenticationService {
    * POST api/configuration/insertldap
    */
   insertLDAP(model: any): Observable<any> {
-    return this.http.post<any>(`${serviceConstants.apiURL}api/configuration/insertldap`, model, httpOptions);
+    if (model instanceof FormData) {
+      return this.http.post<any>(`${serviceConstants.apiURL}api/configuration/insertldap`, model);
+    }
+    const formData = new FormData();
+    formData.append('ScreenData', JSON.stringify(model));
+    return this.http.post<any>(`${serviceConstants.apiURL}api/configuration/insertldap`, formData);
   }
 
   /**
@@ -72,9 +77,11 @@ export class SuperAdminAuthenticationService {
 
   /**
    * Upload / Update Authentication Configuration Metadata
-   * POST api/configuration/upload
+   * POST api/configuration/upload?id={id}
    */
-  uploadAuth(model: any): Observable<any> {
-    return this.http.post<any>(`${serviceConstants.apiURL}api/configuration/upload`, model, httpOptions);
+  uploadAuth(data: FormData | any, authId: string = '1'): Observable<any> {
+    const id = (typeof data === 'object' && !(data instanceof FormData) && data?.AuthId) ? data.AuthId : authId;
+    const formData = data instanceof FormData ? data : new FormData();
+    return this.http.post<any>(`${serviceConstants.apiURL}api/configuration/upload?id=${id}`, formData);
   }
 }
