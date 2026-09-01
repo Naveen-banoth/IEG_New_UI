@@ -82,11 +82,11 @@
         <span>{{ isRunningSelected ? 'Running Selected...' : ('Run Selected (' + selectedCount + ')') }}</span>
       </button>
 
-      <!-- RUN ALL / CATEGORY BUTTON -->
-      <button class="btn-primary-run-all" [disabled]="isRunningAll || isRunningSelected || filteredItems.length === 0" (click)="runAllTests()"
-        [title]="'Execute ' + (selectedCategory === 'ALL' ? ('all ' + moduleDisplayName) : activeCategoryLabel) + ' endpoints in ' + executionMode + ' mode'">
+      <!-- RUN ALL BUTTON -->
+      <button class="btn-primary-run-all" [disabled]="isRunningAll || isRunningSelected" (click)="runAllTests()"
+        title="Execute all endpoints in {{ executionMode }} mode">
         <i class="ph" [ngClass]="isRunningAll ? 'ph-spinner ph-spin' : 'ph-play-circle'"></i>
-        <span>{{ isRunningAll ? 'Executing...' : (selectedCategory === 'ALL' ? ('Run All ' + moduleDisplayName + ' Tests (' + totalCount + ')') : ('Run ' + activeCategoryLabel + ' Tests (' + filteredItems.length + ')')) }}</span>
+        <span>{{ isRunningAll ? 'Executing Suite...' : ('Run All ' + moduleDisplayName + ' Tests') }}</span>
       </button>
 
       <!-- STOP EXECUTION BUTTON -->
