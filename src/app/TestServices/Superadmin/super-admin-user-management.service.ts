@@ -16,7 +16,7 @@ export class SuperAdminUserManagementService {
    * Search / List departments for grid
    * POST api/department/getadvsearch
    */
-  getDeptAdvSearch(search: any = { CODE: '', NAME: '', STATUS: '-1' }): Observable<any[]> {
+  getDeptAdvSearch(search: any): Observable<any[]> {
     return this.http.post<any[]>(`${serviceConstants.apiURL}api/department/getadvsearch`, search, httpOptions);
   }
 
@@ -24,10 +24,8 @@ export class SuperAdminUserManagementService {
    * Fetch departments by name/id
    * GET api/department/getdepartments/{name}/{id}
    */
-  getDepartments(name: string = '-1', id: string = '-1'): Observable<any[]> {
-    const n = name || '-1';
-    const i = id || '-1';
-    return this.http.get<any[]>(`${serviceConstants.apiURL}api/department/getdepartments/${n}/${i}`, httpOptions);
+  getDepartments(name: string, id: string): Observable<any[]> {
+    return this.http.get<any[]>(`${serviceConstants.apiURL}api/department/getdepartments/${name}/${id}`, httpOptions);
   }
 
   /**
@@ -35,8 +33,7 @@ export class SuperAdminUserManagementService {
    * GET api/department/getdepartmentbyid/{id}
    */
   getDepartmentById(id: string): Observable<any> {
-    const deptId = id || '1';
-    return this.http.get<any>(`${serviceConstants.apiURL}api/department/getdepartmentbyid/${deptId}`, httpOptions);
+    return this.http.get<any>(`${serviceConstants.apiURL}api/department/getdepartmentbyid/${id}`, httpOptions);
   }
 
   /**
@@ -60,8 +57,7 @@ export class SuperAdminUserManagementService {
    * GET api/department/delete/{id}
    */
   deleteDepartment(id: string): Observable<any> {
-    const deptId = id || '9999';
-    return this.http.get<any>(`${serviceConstants.apiURL}api/department/delete/${deptId}`, httpOptions);
+    return this.http.get<any>(`${serviceConstants.apiURL}api/department/delete/${id}`, httpOptions);
   }
 
   // ==================== ROLE APIS ====================
@@ -70,7 +66,7 @@ export class SuperAdminUserManagementService {
    * Search / List roles for grid
    * POST api/role/getadvsearch
    */
-  getRoleAdvSearch(search: any = { ROLE_NAME: '', STATUS: '-1' }): Observable<any[]> {
+  getRoleAdvSearch(search: any): Observable<any[]> {
     return this.http.post<any[]>(`${serviceConstants.apiURL}api/role/getadvsearch`, search, httpOptions);
   }
 
@@ -78,9 +74,8 @@ export class SuperAdminUserManagementService {
    * Fetch roles list
    * GET api/role/getroles/{name}
    */
-  getRoles(name: string = '-1'): Observable<any[]> {
-    const param = name || '-1';
-    return this.http.get<any[]>(`${serviceConstants.apiURL}api/role/getroles/${param}`, httpOptions);
+  getRoles(name: string): Observable<any[]> {
+    return this.http.get<any[]>(`${serviceConstants.apiURL}api/role/getroles/${name}`, httpOptions);
   }
 
   /**
@@ -96,8 +91,7 @@ export class SuperAdminUserManagementService {
    * GET api/role/getrolebyid/{id}
    */
   getRoleById(id: string): Observable<any> {
-    const roleId = id || '1';
-    return this.http.get<any>(`${serviceConstants.apiURL}api/role/getrolebyid/${roleId}`, httpOptions);
+    return this.http.get<any>(`${serviceConstants.apiURL}api/role/getrolebyid/${id}`, httpOptions);
   }
 
   /**
@@ -113,8 +107,7 @@ export class SuperAdminUserManagementService {
    * GET api/role/getroleprivileges/{id}
    */
   getRolePrivileges(id: string): Observable<any[]> {
-    const roleId = id || '1';
-    return this.http.get<any[]>(`${serviceConstants.apiURL}api/role/getroleprivileges/${roleId}`, httpOptions);
+    return this.http.get<any[]>(`${serviceConstants.apiURL}api/role/getroleprivileges/${id}`, httpOptions);
   }
 
   /**
@@ -143,11 +136,10 @@ export class SuperAdminUserManagementService {
 
   /**
    * Delete role
-   * DELETE api/role/delete/{id}
+   * GET api/role/delete/{id}
    */
   deleteRole(id: string): Observable<any> {
-    const roleId = id || '9999';
-    return this.http.delete<any>(`${serviceConstants.apiURL}api/role/delete/${roleId}`, httpOptions);
+    return this.http.get<any>(`${serviceConstants.apiURL}api/role/delete/${id}`, httpOptions);
   }
 
   // ==================== USER APIS ====================
@@ -157,8 +149,7 @@ export class SuperAdminUserManagementService {
    * GET api/appuser/getuserbyid/{id}
    */
   getUserById(id: string): Observable<any> {
-    const userId = id || '1';
-    return this.http.get<any>(`${serviceConstants.apiURL}api/appuser/getuserbyid/${userId}`, httpOptions);
+    return this.http.get<any>(`${serviceConstants.apiURL}api/appuser/getuserbyid/${id}`, httpOptions);
   }
 
   /**
@@ -166,8 +157,7 @@ export class SuperAdminUserManagementService {
    * GET api/appuser/getsupportuserbyid/{id}
    */
   getSupportUserById(id: string): Observable<any> {
-    const supId = id || '1';
-    return this.http.get<any>(`${serviceConstants.apiURL}api/appuser/getsupportuserbyid/${supId}`, httpOptions);
+    return this.http.get<any>(`${serviceConstants.apiURL}api/appuser/getsupportuserbyid/${id}`, httpOptions);
   }
 
   /**
@@ -199,9 +189,23 @@ export class SuperAdminUserManagementService {
    * GET api/appuser/resenduseremail/{userId}/{orgId}
    */
   resendUserEmail(userId: string, orgId: string): Observable<any> {
-    const uId = userId || '1';
-    const oId = orgId || '1';
-    return this.http.get<any>(`${serviceConstants.apiURL}api/appuser/resenduseremail/${uId}/${oId}`, httpOptions);
+    return this.http.get<any>(`${serviceConstants.apiURL}api/appuser/resenduseremail/${userId}/${orgId}`, httpOptions);
+  }
+
+  /**
+   * Check internal users quota limit
+   * GET api/appuser/checkinternalusers/{OrgID}
+   */
+  checkInternalUsers(orgId: string): Observable<boolean> {
+    return this.http.get<boolean>(`${serviceConstants.apiURL}api/appuser/checkinternalusers/${orgId}`, httpOptions);
+  }
+
+  /**
+   * Fetch users by type and organization ID
+   * GET api/appuser/getusersbyid/{type}/{orgid}
+   */
+  getUsersByType(type: string, orgId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${serviceConstants.apiURL}api/appuser/getusersbyid/${type}/${orgId}`, httpOptions);
   }
 
   /**
@@ -209,7 +213,6 @@ export class SuperAdminUserManagementService {
    * GET api/appuser/delete/{id}
    */
   deleteUser(id: string): Observable<any> {
-    const uId = id || '9999';
-    return this.http.get<any>(`${serviceConstants.apiURL}api/appuser/delete/${uId}`, httpOptions);
+    return this.http.get<any>(`${serviceConstants.apiURL}api/appuser/delete/${id}`, httpOptions);
   }
 }

@@ -24,7 +24,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { CODE: '', NAME: '', STATUS: '-1' },
       expectedData: 'Array of DEPARTMENT records with CODE, NAME, STATUS',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -36,7 +36,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: { name: '-1', id: '-1' },
       expectedData: 'Array of department items',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -48,7 +48,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: { id: context.firstDeptId },
       expectedData: 'Department details object',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -60,7 +60,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { CODE: 'TEST_ADM_DEPT', NAME: 'Test Administration Dept', STATUS: 1, PARENT_ID: '' },
       expectedData: 'Success confirmation response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -72,7 +72,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { ID: context.firstDeptId, CODE: 'TEST_ADM_DEPT', NAME: 'Test Administration Dept Updated', STATUS: 1 },
       expectedData: 'Success confirmation response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -84,7 +84,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { ROLE_NAME: '', STATUS: '-1' },
       expectedData: 'Array of ROLE records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -96,7 +96,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of system modules for permission matrix',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -108,7 +108,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: { id: context.firstRoleId },
       expectedData: 'Array of privileges assigned to the role',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -120,7 +120,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { ROLE_NAME: 'Test Admin Role', ROLE_CODE: 'TEST_ADM_ROLE', STATUS: 1 },
       expectedData: 'Success confirmation response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -132,7 +132,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { ID: context.firstRoleId, ROLE_NAME: 'Test Admin Role Updated', ROLE_CODE: 'TEST_ADM_ROLE', STATUS: 1 },
       expectedData: 'Success confirmation response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -144,7 +144,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { CODE: '', TITLE: '', EMAIL: '', DEPARTMENT_ID: '', ROLEID: '', STATUS: '-1', RECORD_STATE: 101 },
       expectedData: 'Array of user accounts',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -156,7 +156,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'MastersDataLists containing department & role lists',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -168,7 +168,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of internal users',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -180,7 +180,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { FIRST_NAME: 'Admin', LAST_NAME: 'Tester', EMAIL: 'admin.tester@scimaxglobal.com', TITLE: 'Admin Tester', STATUS: 1, RECORD_STATE: 101 },
       expectedData: 'Success confirmation response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -192,7 +192,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { ID: context.firstUserId, FIRST_NAME: 'Admin', LAST_NAME: 'Tester Updated', EMAIL: 'admin.tester@scimaxglobal.com', STATUS: 1 },
       expectedData: 'Success confirmation response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -204,7 +204,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of timezone definitions',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -216,7 +216,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { timezone: '(UTC-05:00) Eastern Time (US & Canada)' },
       expectedData: 'Success response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -228,7 +228,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { Currency: 'USD ($)' },
       expectedData: 'Success response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -240,7 +240,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Currency configuration',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -256,7 +256,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { OrgID: '', UserID: '', EmailID: '' },
       expectedData: 'Array of configured organization email accounts',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -268,7 +268,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: { id: 'C4F5E8A6-2A65-472B-AB7F-C5F39C057768' },
       expectedData: 'Email configuration record',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -287,7 +287,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
         EmailServerStatus: true
       },
       expectedData: 'Success confirmation response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -306,7 +306,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
         SMTPSSL: '1'
       },
       expectedData: 'Success confirmation response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -323,7 +323,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
         SMTPSSL: '1'
       },
       expectedData: 'SMTP connection verification result',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -340,7 +340,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
         IMAPSSL: '1'
       },
       expectedData: 'IMAP connection verification result',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -357,7 +357,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
         EmailID: 'admin@scimaxglobal.com'
       },
       expectedData: 'Graph API send test result',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -374,7 +374,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
         EmailID: 'admin@scimaxglobal.com'
       },
       expectedData: 'Graph API read test result',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -390,7 +390,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of Program Category items',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -402,7 +402,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { NAME: '', PROGRAM_ID: '-1', STATUS: '-1' },
       expectedData: 'Array of filtered Program Category items',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -414,7 +414,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { NAME: 'Test Oncology Category', PROGRAM_ID: '2', DESCRIPTION: 'Test category description', RECORD_STATE: 1 },
       expectedData: 'Success confirmation response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -426,7 +426,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { ID: context.firstProgId, NAME: 'Test Oncology Category Updated', PROGRAM_ID: '2', RECORD_STATE: 1 },
       expectedData: 'Success confirmation response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -438,7 +438,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of Product records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -450,7 +450,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { CODE: '', NAME: '', STATUS: '-1' },
       expectedData: 'Array of filtered Product records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -462,7 +462,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Masters data with Therapeutic Area dropdowns',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -474,7 +474,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { CODE: 'PRD-TEST-99', NAME: 'Test Product Molecule', THERAPEUTIC_AREA_ID: '1', STATUS: 1 },
       expectedData: 'Success confirmation response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -486,7 +486,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { ID: context.firstProductId, CODE: 'PRD-TEST-99', NAME: 'Test Product Molecule Updated', STATUS: 1 },
       expectedData: 'Success confirmation response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -498,7 +498,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of network location records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -510,7 +510,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of lookup master records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -522,7 +522,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of hierarchical lookup records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -534,7 +534,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of modules supporting lookup lists',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -546,7 +546,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of review & approval title definitions',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -562,7 +562,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of application modules',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -574,7 +574,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { QUESTION: '', MODULE_ID: '-1', STATUS: '-1' },
       expectedData: 'Array of FAQ records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -586,7 +586,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { ModuleId: '-1' },
       expectedData: 'Array of notification email templates',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -598,7 +598,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of autocode configuration modules',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -610,7 +610,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { ModuleId: '-1' },
       expectedData: 'Array of auto-code ID rule configurations',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -622,7 +622,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Registration form field configuration schema',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -634,7 +634,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of Application Types',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -646,7 +646,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { Name: '', Status: '-1' },
       expectedData: 'Array of RFP search summary records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -658,7 +658,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { Name: '', Status: '-1' },
       expectedData: 'Array of RFI search summary records',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -674,7 +674,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of custom themes and CSS styles',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -686,7 +686,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { ModuleId: '-1', UserId: '-1', OperationType: '-1', StartDate: '', EndDate: '' },
       expectedData: 'Array of administrative audit events',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -698,7 +698,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { UserName: '', FromDate: '', ToDate: '', Status: '-1' },
       expectedData: 'Array of user login activity entries',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -710,7 +710,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'POST',
       payload: { DashboardId: '-1' },
       expectedData: 'Array of dashboard visual widgets details',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -722,7 +722,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'User accessible dashboards list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -738,7 +738,7 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Array of modules with policy versioning',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {

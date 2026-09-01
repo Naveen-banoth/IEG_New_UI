@@ -14,19 +14,16 @@ export class SuperAdminOrganizationService {
    * Search / List organizations for Super Admin Grid
    * POST api/organization/getadvsearch
    */
-  getAdvSearch(search: { CODE?: string; NAME?: string; Status?: string }): Observable<any[]> {
+  getAdvSearch(search: any): Observable<any[]> {
     return this.http.post<any[]>(`${serviceConstants.apiURL}api/organization/getadvsearch`, search, httpOptions);
   }
 
   /**
    * Fetch all organizations
-   * GET api/organization/getorganizatoins
+   * GET api/organization/getorganizatoins/{name}
    */
-  getOrganizations(name: string = ''): Observable<any[]> {
-    if (name && name !== '-1') {
-      return this.http.get<any[]>(`${serviceConstants.apiURL}api/organization/getorganizatoins/${name}`, httpOptions);
-    }
-    return this.http.get<any[]>(`${serviceConstants.apiURL}api/organization/getorganizatoins`, httpOptions);
+  getOrganizations(name: string): Observable<any[]> {
+    return this.http.get<any[]>(`${serviceConstants.apiURL}api/organization/getorganizatoins/${name}`, httpOptions);
   }
 
   /**
@@ -42,8 +39,7 @@ export class SuperAdminOrganizationService {
    * GET api/organization/getorganizationbyid/{id}
    */
   getOrganizationById(id: string): Observable<any> {
-    const orgId = id || '1';
-    return this.http.get<any>(`${serviceConstants.apiURL}api/organization/getorganizationbyid/${orgId}`, httpOptions);
+    return this.http.get<any>(`${serviceConstants.apiURL}api/organization/getorganizationbyid/${id}`, httpOptions);
   }
 
   /**
@@ -51,8 +47,7 @@ export class SuperAdminOrganizationService {
    * GET api/organization/GetMasterScreenData/{id}
    */
   getMasterScreenData(id: string): Observable<any> {
-    const orgId = id || '1';
-    return this.http.get<any>(`${serviceConstants.apiURL}api/organization/GetMasterScreenData/${orgId}`, httpOptions);
+    return this.http.get<any>(`${serviceConstants.apiURL}api/organization/GetMasterScreenData/${id}`, httpOptions);
   }
 
   /**
@@ -83,14 +78,7 @@ export class SuperAdminOrganizationService {
    * Search / List support users under a specific organization
    * POST api/appuser/getadvsearch
    */
-  getSupportUsersAdvSearch(search: {
-    TITLE?: string;
-    EMAIL?: string;
-    DEPARTMENT_ID?: string;
-    ROLEID?: string;
-    RECORD_STATE?: number;
-    ORGANIZATION_ID?: string;
-  }): Observable<any[]> {
+  getSupportUsersAdvSearch(search: any): Observable<any[]> {
     return this.http.post<any[]>(`${serviceConstants.apiURL}api/appuser/getadvsearch`, search, httpOptions);
   }
 
@@ -99,51 +87,41 @@ export class SuperAdminOrganizationService {
    * GET api/appuser/getusersbyid/{type}/{orgid}
    */
   getUsersByType(type: string, orgId: string): Observable<any[]> {
-    const t = type || 'S';
-    const oId = orgId || '1';
-    return this.http.get<any[]>(`${serviceConstants.apiURL}api/appuser/getusersbyid/${t}/${oId}`, httpOptions);
-  }
-
-  /**
-   * Fetch FDA Debarment list
-   * GET api/organization/GetDebarmentList
-   */
-  getDebarmentList(): Observable<any> {
-    return this.http.get<any>(`${serviceConstants.apiURL}api/organization/GetDebarmentList`, httpOptions);
-  }
-
-  /**
-   * Update Debarment Block Status
-   * POST api/organization/UpdateDebarmentBlockStatus?debarmentId=...&isBlocked=...
-   */
-  updateDebarmentBlockStatus(debarmentId: string, isBlocked: boolean): Observable<any> {
-    return this.http.post<any>(
-      `${serviceConstants.apiURL}api/organization/UpdateDebarmentBlockStatus?debarmentId=${debarmentId}&isBlocked=${isBlocked}`,
-      {},
-      httpOptions
-    );
+    return this.http.get<any[]>(`${serviceConstants.apiURL}api/appuser/getusersbyid/${type}/${orgId}`, httpOptions);
   }
 
   /**
    * Insert / Create new Organization
    * POST api/organization/InsertOrganization
    */
-  insertOrganization(model: any): Observable<any> {
-    if (model instanceof FormData) {
-      return this.http.post<any>(`${serviceConstants.apiURL}api/organization/InsertOrganization`, model);
+  insertOrganization(data: FormData | any): Observable<any> {
+    if (data instanceof FormData) {
+      if (!data.has('FileType')) {
+        data.append('FileType', 'IMAGE');
+      }
+      return this.http.post<any>(`${serviceConstants.apiURL}api/organization/InsertOrganization`, data);
     }
-    return this.http.post<any>(`${serviceConstants.apiURL}api/organization/InsertOrganization`, model, httpOptions);
+    const formData = new FormData();
+    formData.append('ScreenData', JSON.stringify(data));
+    formData.append('FileType', 'IMAGE');
+    return this.http.post<any>(`${serviceConstants.apiURL}api/organization/InsertOrganization`, formData);
   }
 
   /**
    * Update existing Organization
    * POST api/organization/UpdateOrganization
    */
-  updateOrganization(model: any): Observable<any> {
-    if (model instanceof FormData) {
-      return this.http.post<any>(`${serviceConstants.apiURL}api/organization/UpdateOrganization`, model);
+  updateOrganization(data: FormData | any): Observable<any> {
+    if (data instanceof FormData) {
+      if (!data.has('FileType')) {
+        data.append('FileType', 'IMAGE');
+      }
+      return this.http.post<any>(`${serviceConstants.apiURL}api/organization/UpdateOrganization`, data);
     }
-    return this.http.post<any>(`${serviceConstants.apiURL}api/organization/UpdateOrganization`, model, httpOptions);
+    const formData = new FormData();
+    formData.append('ScreenData', JSON.stringify(data));
+    formData.append('FileType', 'IMAGE');
+    return this.http.post<any>(`${serviceConstants.apiURL}api/organization/UpdateOrganization`, formData);
   }
 
   /**

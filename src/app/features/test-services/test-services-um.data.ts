@@ -20,7 +20,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { Category: 'Organization', Name: '', StartDate: '', EndDate: '' },
       expectedData: 'Audit records array or response model',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -32,7 +32,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { versionIDs: ['1'], categories: 'Organization' },
       expectedData: 'Revision field changes detail',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -44,7 +44,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Array of historical revisions',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -56,7 +56,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ModuleName: 'IST', PageIndex: 1, PageSize: 10 },
       expectedData: 'Activity log records list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -68,7 +68,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Timeline of activities for application',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -80,7 +80,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ModuleName: 'IST' },
       expectedData: 'Multi-criteria activity summary dataset',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -92,7 +92,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'List of users who triggered activities',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -104,7 +104,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Application identifiers list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -116,7 +116,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Grant types array',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -128,7 +128,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Screen names list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -142,7 +142,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Array of users in system',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -154,7 +154,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Master dropdowns for user filtering',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -166,7 +166,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { USER_NAME: '', STATUS: '-1' },
       expectedData: 'Filtered users list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -178,7 +178,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Array of internal system users',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -190,7 +190,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'User profile model',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -202,7 +202,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Support user details',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -214,7 +214,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { USER_NAME: 'test.developer', EMAIL: 'test.developer@ieg.com', STATUS: '1' },
       expectedData: 'Created user confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -226,7 +226,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { USER_ID: '1', USER_NAME: 'test.developer', STATUS: '1' },
       expectedData: 'Updated user confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -238,7 +238,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Delete user confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -250,7 +250,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { USER_ID: '1', ROLE_IDS: ['1'] },
       expectedData: 'Assigned roles confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -262,7 +262,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { USER_NAME: 'support.lead', EMAIL: 'support.lead@ieg.com' },
       expectedData: 'Created support user confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -276,7 +276,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Array of active departments',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -288,7 +288,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { CODE: '', NAME: '', STATUS: '-1' },
       expectedData: 'Filtered departments array',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -300,7 +300,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { CODE: 'CLIN-DEV', NAME: 'Clinical Development', STATUS: '1' },
       expectedData: 'Created department confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -312,7 +312,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { DEPT_ID: '1', CODE: 'CLIN-DEV', NAME: 'Clinical Development Operations' },
       expectedData: 'Updated department confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -324,7 +324,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Delete department confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -336,7 +336,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Array of system roles',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -348,7 +348,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ROLE_NAME: '', STATUS: '-1' },
       expectedData: 'Filtered roles dataset',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -360,7 +360,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Modules list for permission matrix',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -372,7 +372,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ROLE_NAME: 'Clinical Reviewer', STATUS: '1' },
       expectedData: 'Created role confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -384,7 +384,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ROLE_ID: '1', ROLE_NAME: 'Senior Clinical Reviewer' },
       expectedData: 'Updated role confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -396,7 +396,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Delete role confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -408,7 +408,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ROLE_ID: '1', MODULE_ID: '1', PRIVILEGE_ID: '1' },
       expectedData: 'Saved privilege mapping',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -422,7 +422,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Array of organizations',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -434,7 +434,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { NAME: '', STATUS: '-1' },
       expectedData: 'Filtered organizations list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -446,7 +446,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Storage mapping metadata for org',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -458,7 +458,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { CODE: 'ORG-APEX', NAME: 'Apex Therapeutics Inc', STATUS: '1' },
       expectedData: 'Created organization confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -470,7 +470,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'POST',
       payload: { ORGANIZATION_ID: '1', CODE: 'ORG-APEX', NAME: 'Apex Therapeutics Global Inc' },
       expectedData: 'Updated organization confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -482,7 +482,7 @@ export function getUmTestItems(context: TestContextIds): DetailedTestItem[] {
       method: 'GET',
       payload: null,
       expectedData: 'Delete organization confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     }
   ];

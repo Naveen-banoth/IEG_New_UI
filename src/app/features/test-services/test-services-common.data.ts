@@ -21,7 +21,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Array of application types or valid response payload',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -33,7 +33,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Array of placeholder tags for notifications',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -45,7 +45,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Array of available trigger events',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -57,7 +57,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of configured SMTP email servers',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -69,7 +69,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Summary list of alerts rules',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -81,7 +81,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Single alert configuration model',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -105,7 +105,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
         IsSystemNotification: true
       },
       expectedData: 'Save status confirmation object',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -117,7 +117,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Assignment confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -129,7 +129,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of in-app notifications for active user',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -141,7 +141,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Integer or count wrapper object of unread notifications',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -155,7 +155,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Array of system modules',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -167,7 +167,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of screens in module',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -179,7 +179,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ModuleId: '1', ScreenName: '' },
       expectedData: 'Filtered screens list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -191,7 +191,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Dynamic form controls metadata',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -203,7 +203,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Extended controls configuration',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -215,7 +215,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Response controls definitions',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -227,7 +227,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Array of screen form controls',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -239,7 +239,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ScreenId: '1', ApplicationId: '1' },
       expectedData: 'Saved screen responses object',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -251,7 +251,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ScreenId: '1', ApplicationId: '1', RowId: '1' },
       expectedData: 'Single row screen response data',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -263,7 +263,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Extended screen values list',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -275,7 +275,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { UserID: '1', ScreenName: 'IST_GRID', Columns: ['ID', 'NAME', 'STATUS'] },
       expectedData: 'Saved user column preference confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -289,7 +289,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of review workflow rounds for application',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -301,7 +301,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Review type options (Internal, Scientific, Budget)',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -313,7 +313,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { Status: 'ALL', PageIndex: 1, PageSize: 10 },
       expectedData: 'List of reviews assigned to current user',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -325,7 +325,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Count of pending reviews',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -337,7 +337,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of documents attached for review',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -349,7 +349,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Array of review document links',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -361,7 +361,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Detailed review document descriptor',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -373,7 +373,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of potential reviewers',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -385,7 +385,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Owner details object',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -397,7 +397,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Permission indicators for ownership transfer',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -409,7 +409,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Review model for editing',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -421,7 +421,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Validation status check response',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -433,7 +433,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ApplicationID: '1', REVIEW_NAME: 'Scientific Advisory Review', STATUS: '1' },
       expectedData: 'Created review confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -445,7 +445,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { RecordID: '1', ApplicationID: '1', REVIEW_NAME: 'Scientific Review (Round 2)' },
       expectedData: 'Updated review confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -457,7 +457,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Delete review confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -469,7 +469,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Started review confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -481,7 +481,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Cancelled review confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -493,7 +493,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { RecordID: '1', NEW_OWNER_ID: '1' },
       expectedData: 'Changed owner confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -505,7 +505,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ReviewerID: '1', STATUS: 'APPROVED', COMMENTS: 'Approved with minor remarks' },
       expectedData: 'Updated status confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -517,7 +517,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ReviewID: '1', OrderList: [{ ReviewerID: '1', Order: 1 }] },
       expectedData: 'Updated order confirmation',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
 
@@ -531,7 +531,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Array of attachment classification categories',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -543,7 +543,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Array of module application types',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -555,7 +555,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of screens mapped for attachment uploads',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -567,7 +567,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'Summary list of files for application',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -579,7 +579,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'POST',
       payload: { ApplicationID: '1', PageIndex: 1, PageSize: 10 },
       expectedData: 'Search result dataset of attachments',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {
@@ -591,7 +591,7 @@ export function getCommonTestItems(context: TestContextIds): DetailedTestItem[] 
       method: 'GET',
       payload: null,
       expectedData: 'List of transaction-level file attachments',
-      status: 'PENDING',
+      status: 'IDLE',
       matched: false
     },
     {

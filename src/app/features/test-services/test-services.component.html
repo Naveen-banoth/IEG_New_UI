@@ -51,6 +51,22 @@
         <span>All Suites</span>
       </a>
 
+      <!-- AUTO-RUN TOGGLE SWITCH BUTTON -->
+      <button type="button" class="btn-toggle-switch" [class.is-active]="autoRunOnLoad"
+        (click)="toggleAutoRunOnLoad()"
+        title="Toggle whether test suite runs automatically on module switch or waits for manual trigger">
+        <i class="ph" [ngClass]="autoRunOnLoad ? 'ph-lightning' : 'ph-hand-pointing'"></i>
+        <span>Auto-Run: <strong>{{ autoRunOnLoad ? 'ON' : 'OFF (Manual)' }}</strong></span>
+      </button>
+
+      <!-- EXECUTION MODE TOGGLE BUTTON -->
+      <button type="button" class="btn-toggle-switch mode-toggle" [class.is-parallel]="executionMode === 'parallel'"
+        (click)="toggleExecutionMode()"
+        title="Toggle execution mode: Sequential (One by one) vs Parallel (Multiple at a time)">
+        <i class="ph" [ngClass]="executionMode === 'parallel' ? 'ph-stack' : 'ph-arrows-down-up'"></i>
+        <span>Mode: <strong>{{ executionMode === 'parallel' ? 'Parallel (At a time)' : 'Sequential' }}</strong></span>
+      </button>
+
       <!-- AUTH BUTTON -->
       <button class="btn-auth-toggle" [class.is-auth]="isAuthorized" (click)="openAuthModal()"
         title="Manage Bearer Token & Authentication">
@@ -58,10 +74,27 @@
         <span>{{ isAuthorized ? 'Authorized' : 'Authorize' }}</span>
       </button>
 
-      <button class="btn-primary-run-all" [disabled]="isRunningAll" (click)="runAllTests()"
-        title="Execute all endpoints sequentially in test runner">
+      <!-- RUN SELECTED (BATCH) BUTTON -->
+      <button type="button" class="btn-primary-run-selected" *ngIf="selectedCount > 0"
+        [disabled]="isRunningSelected || isRunningAll" (click)="runSelectedTests()"
+        title="Execute only selected endpoints in {{ executionMode }} mode">
+        <i class="ph" [ngClass]="isRunningSelected ? 'ph-spinner ph-spin' : 'ph-play-circle'"></i>
+        <span>{{ isRunningSelected ? 'Running Selected...' : ('Run Selected (' + selectedCount + ')') }}</span>
+      </button>
+
+      <!-- RUN ALL / CATEGORY BUTTON -->
+      <button class="btn-primary-run-all" [disabled]="isRunningAll || isRunningSelected || filteredItems.length === 0" (click)="runAllTests()"
+        [title]="'Execute ' + (selectedCategory === 'ALL' ? ('all ' + moduleDisplayName) : activeCategoryLabel) + ' endpoints in ' + executionMode + ' mode'">
         <i class="ph" [ngClass]="isRunningAll ? 'ph-spinner ph-spin' : 'ph-play-circle'"></i>
-        <span>{{ isRunningAll ? 'Executing Suite...' : ('Run All ' + moduleDisplayName + ' Tests') }}</span>
+        <span>{{ isRunningAll ? 'Executing...' : (selectedCategory === 'ALL' ? ('Run All ' + moduleDisplayName + ' Tests (' + totalCount + ')') : ('Run ' + activeCategoryLabel + ' Tests (' + filteredItems.length + ')')) }}</span>
+      </button>
+
+      <!-- STOP EXECUTION BUTTON -->
+      <button type="button" class="btn-stop-execution" *ngIf="isRunningAll || isRunningSelected"
+        (click)="stopExecution()" [disabled]="isStopping"
+        title="Stop ongoing API test execution immediately">
+        <i class="ph" [ngClass]="isStopping ? 'ph-spinner ph-spin' : 'ph-stop-circle'"></i>
+        <span>{{ isStopping ? 'Stopping...' : 'Stop Execution' }}</span>
       </button>
     </div>
   </header>
@@ -293,7 +326,8 @@
           <option value="ALL">All Statuses</option>
           <option value="SUCCESS">Passed Only</option>
           <option value="FAILED">Failed / Issues Only</option>
-          <option value="PENDING">Pending / Running</option>
+          <option value="PENDING">Running / Pending</option>
+          <option value="IDLE">Untested (Not Run)</option>
         </select>
       </div>
 
@@ -311,6 +345,39 @@
         </button>
       </div>
     </div>
+
+    <!-- BATCH MULTI-SELECT & QUICK SELECTION BAR -->
+    <div class="batch-selection-toolbar">
+      <div class="selection-master-group">
+        <label class="master-checkbox-label" title="Toggle selection of all filtered APIs">
+          <input type="checkbox" [checked]="allFilteredSelected" [indeterminate]="isSomeFilteredSelected"
+            (change)="toggleSelectAllFiltered()" />
+          <span class="custom-chk"></span>
+          <span class="chk-label">Select All ({{ filteredItems.length }})</span>
+        </label>
+        <span class="selected-badge" *ngIf="selectedCount > 0">
+          <i class="ph ph-check-square"></i> {{ selectedCount }} of {{ totalCount }} Selected
+        </span>
+      </div>
+
+      <div class="selection-actions-group">
+        <button type="button" class="btn-select-pill" (click)="selectFailedOnly()"
+          title="Select all failed or mismatched APIs for re-testing">
+          <i class="ph ph-warning-circle"></i>
+          <span>Select Failed Only ({{ failedCount }})</span>
+        </button>
+        <button type="button" class="btn-select-pill" (click)="invertSelection()"
+          title="Invert current selection of filtered APIs">
+          <i class="ph ph-arrows-left-right"></i>
+          <span>Invert Selection</span>
+        </button>
+        <button type="button" class="btn-select-pill btn-clear-sel" *ngIf="selectedCount > 0"
+          (click)="deselectAll()" title="Clear all checked selections">
+          <i class="ph ph-x"></i>
+          <span>Clear Selection</span>
+        </button>
+      </div>
+    </div>
   </section>
 
   <!-- ==================== TAB 1: API CARDS VIEW ==================== -->
@@ -318,6 +385,7 @@
     <div class="cards-list">
       <div *ngFor="let item of filteredItems" class="api-card"
         [attr.data-method]="item.method"
+        [class.card-selected]="item.selected"
         [class.card-success]="item.status === 'SUCCESS' && item.matched"
         [class.card-failed]="item.status === 'FAILED' || (item.status === 'SUCCESS' && !item.matched)"
         [class.card-running]="item.status === 'RUNNING'" [class.card-pending]="item.status === 'PENDING'">
@@ -325,13 +393,30 @@
         <!-- CARD TOP ROW -->
         <div class="card-header-bar" (click)="toggleExpand(item)">
           <div class="header-meta-group">
+            <!-- ITEM SELECTION CHECKBOX -->
+            <div class="card-select-cell" (click)="$event.stopPropagation()">
+              <label class="item-checkbox-label" title="Select this API for batch testing">
+                <input type="checkbox" [checked]="item.selected" (change)="toggleItemSelection(item, $event)" />
+                <span class="custom-chk"></span>
+              </label>
+            </div>
+
             <span class="method-badge" [attr.data-method]="item.method">{{ item.method }}</span>
             <div class="name-endpoint-box">
               <div class="api-title-row">
                 <h4 class="api-name">{{ item.apiName }}</h4>
                 <span class="category-pill-sm">{{ item.categoryLabel }}</span>
               </div>
-              <code class="endpoint-code">{{ item.endpoint }}</code>
+              <div class="endpoint-line" (click)="$event.stopPropagation()">
+                <code class="endpoint-code" (click)="copyApiUrl(item, $event)"
+                  title="Click to copy endpoint URL">{{ item.endpoint }}</code>
+                <button type="button" class="btn-copy-url-icon" (click)="copyApiUrl(item, $event)"
+                  [class.is-copied]="item.copiedUrl"
+                  [title]="item.copiedUrl ? 'Copied to clipboard!' : 'Copy API URL'">
+                  <i class="ph" [ngClass]="item.copiedUrl ? 'ph-check-bold' : 'ph-copy'"></i>
+                  <span class="copy-hint" *ngIf="item.copiedUrl">Copied!</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -368,8 +453,8 @@
                 <i class="ph ph-pencil-simple-line"></i>
               </button>
 
-              <button class="btn-icon btn-run-single" [disabled]="item.status === 'RUNNING' || isRunningAll"
-                (click)="executeSingleTest(item)" title="Run this single API">
+              <button class="btn-icon btn-run-single" [disabled]="item.status === 'RUNNING' || isRunningAll || isRunningSelected"
+                (click)="executeSingleTest(item)" title="Run this single API endpoint">
                 <i class="ph" [ngClass]="item.status === 'RUNNING' ? 'ph-spinner ph-spin' : 'ph-play'"></i>
               </button>
 
@@ -403,12 +488,24 @@
             <div class="detail-block">
               <div class="block-header">
                 <h5>Request Details</h5>
-                <button *ngIf="item.payload" class="btn-copy-sm" (click)="copyJson(getEffectivePayload(item))"
-                  title="Copy Request JSON">
-                  <i class="ph ph-copy"></i> Copy
-                </button>
+                <div class="req-actions-row">
+                  <button type="button" class="btn-copy-sm" (click)="copyFullApiUrl(item, $event)"
+                    title="Copy full URL: http://localhost:4074/{{ item.endpoint }}">
+                    <i class="ph" [ngClass]="item.copiedUrl ? 'ph-check text-success' : 'ph-link'"></i>
+                    <span>Copy Full URL</span>
+                  </button>
+                  <button *ngIf="item.payload" class="btn-copy-sm" (click)="copyJson(getEffectivePayload(item))"
+                    title="Copy Request Payload JSON">
+                    <i class="ph ph-copy"></i>
+                    <span>Copy Body</span>
+                  </button>
+                </div>
               </div>
               <div class="code-block">
+                <div class="full-url-preview">
+                  <span class="url-label">Endpoint URL:</span>
+                  <code (click)="copyFullApiUrl(item, $event)" title="Click to copy full URL">http://localhost:4074/{{ item.endpoint }}</code>
+                </div>
                 <pre>{{ (getEffectivePayload(item) ? (getEffectivePayload(item) | json) : 'No payload (GET / Empty)') }}</pre>
               </div>
             </div>
@@ -425,7 +522,8 @@
                   </span>
                   <button *ngIf="item.response" class="btn-copy-sm" (click)="copyJson(item.response)"
                     title="Copy Response JSON">
-                    <i class="ph ph-copy"></i> Copy
+                    <i class="ph ph-copy"></i>
+                    <span>Copy</span>
                   </button>
                 </div>
               </div>

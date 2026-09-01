@@ -1,5 +1,7 @@
 export type TestModuleType = 'SUPERADMIN' | 'ADMINISTRATION' | 'COMMON' | 'EAP' | 'IST' | 'GRANTS' | 'UM';
 
+export type ExecutionMode = 'sequential' | 'parallel';
+
 export interface DetailedTestItem {
   id: string;
   category: string;
@@ -9,13 +11,15 @@ export interface DetailedTestItem {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE';
   payload: any;
   expectedData: string;
-  status: 'PENDING' | 'RUNNING' | 'SUCCESS' | 'FAILED';
+  status: 'IDLE' | 'PENDING' | 'RUNNING' | 'SUCCESS' | 'FAILED';
   statusCode?: number | string;
   response?: any;
   error?: any;
   matched: boolean;
   durationMs?: number;
   expanded?: boolean;
+  selected?: boolean;
+  copiedUrl?: boolean;
   customPayloadJson?: string;
   isEditingPayload?: boolean;
   jsonValidationError?: string | null;
