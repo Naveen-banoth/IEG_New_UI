@@ -12,6 +12,7 @@ import {
   SUPERADMIN_CREDENTIALS,
   SUPERADMIN_INSERT_ORG_PAYLOAD,
   SUPERADMIN_UPDATE_ORG_PAYLOAD,
+  SUPERADMIN_REFRESH_ORG_PAYLOAD,
   SUPERADMIN_SMTP_PAYLOAD,
   SUPERADMIN_VALIDATE_LOGI_PAYLOAD,
   getSuperAdminTestItems
@@ -40,7 +41,7 @@ export class SuperAdminTestRunnerService {
 
   public context: TestContextIds = {
     loggedInUserId: '1EA31513E4C24BD1B27F5DB4096655BC',
-    firstOrgId: '1',
+    firstOrgId: 'ae16f95d-494f-4937-ab44-2e05bf736ee4',
     firstAuthId: '1',
     firstDeptId: '1',
     firstRoleId: '1',
@@ -252,8 +253,8 @@ export class SuperAdminTestRunnerService {
       case 'SA-ORG-12':
         res = await firstValueFrom(this.orgService.updateOrganization({
           ...SUPERADMIN_UPDATE_ORG_PAYLOAD,
-          ID: context.firstOrgId,
-          ...(effective || {})
+          ...(effective || {}),
+          ID: effective?.ID || context.firstOrgId
         }));
         item.matched = res !== undefined;
         break;
@@ -275,12 +276,21 @@ export class SuperAdminTestRunnerService {
       }
 
       case 'SA-ORG-14':
-        res = await firstValueFrom(this.orgService.syncDashboards(effective || { OrgId: context.firstOrgId, OrgName: 'Default Org' }));
+        res = await firstValueFrom(this.orgService.syncDashboards({
+          OrgId: effective?.OrgId || context.firstOrgId || '45146f52-8dba-4510-af2c-be2b191ec365',
+          OrgName: effective?.OrgName || 'Test Organization 1.0.0.3',
+          ...(effective || {})
+        }));
         item.matched = res !== undefined;
         break;
 
       case 'SA-ORG-15':
-        res = await firstValueFrom(this.orgService.refreshOrg(effective || { OrgId: context.firstOrgId, OrgName: 'Default Org' }));
+        res = await firstValueFrom(this.orgService.refreshOrg({
+          ...SUPERADMIN_REFRESH_ORG_PAYLOAD,
+          ...(effective || {}),
+          OrgId: effective?.OrgId || context.firstOrgId || '45146f52-8dba-4510-af2c-be2b191ec365',
+          OrgName: effective?.OrgName || SUPERADMIN_REFRESH_ORG_PAYLOAD.OrgName
+        }));
         item.matched = res !== undefined;
         break;
 

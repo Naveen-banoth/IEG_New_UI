@@ -67,9 +67,9 @@
         <span>Mode: <strong>{{ executionMode === 'parallel' ? 'Parallel (At a time)' : 'Sequential' }}</strong></span>
       </button>
 
-      <!-- AUTH BUTTON -->
-      <button class="btn-auth-toggle" [class.is-auth]="isAuthorized" (click)="openAuthModal()"
-        title="Manage Bearer Token & Authentication">
+      <!-- AUTH BUTTON (RED when Unauthorized, GREEN when Authorized) -->
+      <button class="btn-auth-toggle" [class.is-auth]="isAuthorized" [class.is-unauth]="!isAuthorized" (click)="openAuthModal()"
+        [title]="isAuthorized ? 'Authorized: Bearer token is set and active' : 'Unauthorized: Click to configure Bearer token'">
         <i class="ph" [ngClass]="isAuthorized ? 'ph-lock-key-open' : 'ph-lock-key'"></i>
         <span>{{ isAuthorized ? 'Authorized' : 'Authorize' }}</span>
       </button>

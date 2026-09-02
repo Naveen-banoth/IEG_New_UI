@@ -25,6 +25,8 @@ import {
   SUPERADMIN_CATEGORIES,
   SUPERADMIN_CREDENTIALS,
   SUPERADMIN_INSERT_ORG_PAYLOAD,
+  SUPERADMIN_UPDATE_ORG_PAYLOAD,
+  SUPERADMIN_REFRESH_ORG_PAYLOAD,
   SUPERADMIN_SMTP_PAYLOAD,
   SUPERADMIN_VALIDATE_LOGI_PAYLOAD,
   getSuperAdminTestItems
@@ -287,11 +289,13 @@ export class TestServicesComponent implements OnInit {
   public readonly testSmtpPayload = SUPERADMIN_SMTP_PAYLOAD;
   public readonly testValidateLogiPayload = SUPERADMIN_VALIDATE_LOGI_PAYLOAD;
   public readonly testInsertOrgPayload = SUPERADMIN_INSERT_ORG_PAYLOAD;
+  public readonly testUpdateOrgPayload = SUPERADMIN_UPDATE_ORG_PAYLOAD;
+  public readonly testRefreshOrgPayload = SUPERADMIN_REFRESH_ORG_PAYLOAD;
 
   // Shared Context / State IDs for dynamic test chained data
   public contextIds: TestContextIds = {
     loggedInUserId: '1EA31513E4C24BD1B27F5DB4096655BC',
-    firstOrgId: '1',
+    firstOrgId: 'ae16f95d-494f-4937-ab44-2e05bf736ee4',
     firstAuthId: '1',
     firstDeptId: '1',
     firstRoleId: '1',
