@@ -25,7 +25,7 @@ export interface GrantsApiTestResult {
 export class GrantsTestRunnerService {
   public context: TestContextIds = {
     loggedInUserId: '1EA31513E4C24BD1B27F5DB4096655BC',
-    firstOrgId: '1',
+    firstOrgId: 'ae16f95d-494f-4937-ab44-2e05bf736ee4',
     firstAuthId: '1',
     firstDeptId: '1',
     firstRoleId: '1',
