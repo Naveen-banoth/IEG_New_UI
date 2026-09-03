@@ -76,5 +76,49 @@ export class CommonSummaryService {
       httpOptions
     );
   }
+
+  /**
+   * Get grid columns definition
+   * GET api/common/GetColumns/{moduleId}/{isAllApplications}
+   */
+  getColumns(moduleId: string = '2', isAllApplications: boolean = true): Observable<any> {
+    return this.http.get<any>(
+      `${serviceConstants.apiURL}api/common/GetColumns/${moduleId}/${isAllApplications}`,
+      httpOptions
+    );
+  }
+
+  /**
+   * Get user preferences for grid columns
+   * GET api/common/GetUserPreferencesColumns
+   */
+  getUserPreferencesColumns(): Observable<any> {
+    return this.http.get<any>(
+      `${serviceConstants.apiURL}api/common/GetUserPreferencesColumns`,
+      httpOptions
+    );
+  }
+
+  /**
+   * Get application status list for a module
+   * GET api/gmapp/getstatus/{moduleId}
+   */
+  getStatusList(moduleId: string = '2'): Observable<any> {
+    return this.http.get<any>(
+      `${serviceConstants.apiURL}api/gmapp/getstatus/${moduleId}`,
+      httpOptions
+    );
+  }
+
+  /**
+   * Get application types for search filter
+   * GET api/apptypes/getallappforsearch/{moduleId}/{filter}
+   */
+  getAllAppForSearch(moduleId: string = '2', filter: string = '-1'): Observable<any> {
+    return this.http.get<any>(
+      `${serviceConstants.apiURL}api/apptypes/getallappforsearch/${moduleId}/${filter}`,
+      httpOptions
+    );
+  }
 }
 

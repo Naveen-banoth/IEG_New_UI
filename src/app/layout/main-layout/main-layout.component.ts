@@ -2,12 +2,20 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { filter, Subscription } from 'rxjs';
 import { LocalDbService } from '../../core/services/local-db.service';
 import { PermissionService } from '../../core/services/permission.service';
 import { AuthService } from '../../core/services/auth.service';
+import {
+  SuperAdminAuthService,
+  CommonSummaryService,
+  CommonAlertsNotificationsService,
+  IstGeneralInfoService
+} from '../../TestServices';
 import { ModulePermission, UserProfile } from '../../core/models/permissions.model';
 import { PermissionManagerComponent } from '../permission-manager/permission-manager.component';
+import { serviceConstants, httpOptions } from '../../constants/service.constants';
 
 @Component({
   selector: 'app-main-layout',
@@ -96,9 +104,14 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   }
 
   constructor(
+    private http: HttpClient,
     private localDb: LocalDbService,
     private permissionService: PermissionService,
     private authService: AuthService,
+    private superAdminAuth: SuperAdminAuthService,
+    private commonSummary: CommonSummaryService,
+    private alertsNotifications: CommonAlertsNotificationsService,
+    private istGeneralInfo: IstGeneralInfoService,
     private router: Router
   ) {}
 
@@ -110,6 +123,13 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       })
     );
 
+    const userDetails = this.authService.getUserDetails();
+    const userType = userDetails?.USER_TYPE || (this.currentUser?.role === 'Super Admin' ? 'A' : 'I');
+    const orgCode = this.authService.getOrgCode() || 'scimax';
+
+    // Trigger after-login background calls directly via TestServices
+    this.initPostLoginData(userType, orgCode);
+
     this.sub.add(
       this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(() => {
         this.checkRouteState();
@@ -117,6 +137,70 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     );
 
     this.checkRouteState();
+  }
+
+  private initPostLoginData(userType: string, orgCode: string): void {
+    // 1. Session verification: GET api/appuser/checksession
+    this.superAdminAuth.checkSession().subscribe({
+      next: (res) => console.log('Session verified:', res),
+      error: (err) => console.warn('Session check fallback:', err)
+    });
+
+    if (userType !== 'A') {
+      // 2. Column Configurations: GET api/common/GetColumns/2/true
+      this.commonSummary.getColumns('2', true).subscribe({
+        next: (res) => console.log('Columns loaded:', res ? 'OK' : 'Empty'),
+        error: (err) => console.warn('GetColumns fallback:', err)
+      });
+
+      // 3. User Preferences: GET api/common/GetUserPreferencesColumns
+      this.commonSummary.getUserPreferencesColumns().subscribe({
+        next: (res) => console.log('User preferences loaded:', res ? 'OK' : 'Empty'),
+        error: (err) => console.warn('GetUserPreferencesColumns fallback:', err)
+      });
+
+      // 4. Application Statuses: GET api/gmapp/getstatus/2
+      this.commonSummary.getStatusList('2').subscribe({
+        next: (res) => console.log('Status list loaded:', res ? 'OK' : 'Empty'),
+        error: (err) => console.warn('GetStatus fallback:', err)
+      });
+
+      // 5. IST Applications List: GET api/ISTGeneralInfo/GetApplicationsList
+      this.http.get(`${serviceConstants.apiURL}api/ISTGeneralInfo/GetApplicationsList`, httpOptions).subscribe({
+        next: (res: any) => console.log('Applications list loaded:', res ? 'OK' : 'Empty'),
+        error: (err) => {
+          this.istGeneralInfo.getApplicationsList().subscribe({
+            next: (postRes: any) => console.log('Applications list fallback loaded:', postRes ? 'OK' : 'Empty'),
+            error: (pErr) => console.warn('GetApplicationsList fallback:', pErr)
+          });
+        }
+      });
+
+      // 6. Search App Types: GET api/apptypes/getallappforsearch/2/-1
+      this.commonSummary.getAllAppForSearch('2', '-1').subscribe({
+        next: (res) => console.log('App search master loaded:', res ? 'OK' : 'Empty'),
+        error: (err) => console.warn('GetAllAppForSearch fallback:', err)
+      });
+
+      // 7. Notification Count: GET api/Notifications/NotificationCount
+      this.alertsNotifications.getNotificationCount().subscribe({
+        next: (res) => console.log('Notification count loaded:', res ? 'OK' : 'Empty'),
+        error: (err) => console.warn('NotificationCount fallback:', err)
+      });
+    }
+
+    // 8. Logo & Build version
+    if (orgCode) {
+      this.superAdminAuth.getLogo(orgCode).subscribe({
+        next: (res) => console.log('Org Logo loaded:', res ? 'OK' : 'Empty'),
+        error: (err) => console.warn('Logo download fallback:', err)
+      });
+    }
+
+    this.superAdminAuth.getBuildVersion().subscribe({
+      next: (res) => console.log('Build version verified:', res?.Data || res),
+      error: (err) => console.warn('Build version fallback:', err)
+    });
   }
 
   ngOnDestroy(): void {
@@ -154,4 +238,3 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     }
   }
 }
-

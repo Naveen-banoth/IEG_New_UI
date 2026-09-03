@@ -13,13 +13,14 @@
         <!-- Brand Header -->
         <header class="login-info__brand">
           <div class="login-info__logo" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hexagon w-5 h-5">
+            <!-- <img *ngIf="src" [src]="src" alt="Logo" class="w-8 h-8 object-contain rounded-lg" (error)="src = 'assets/images/logo1.png'" /> -->
+            <svg *ngIf="!src" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hexagon w-5 h-5">
               <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
             </svg>
           </div>
           <div class="login-info__brand-copy">
             <p class="login-info__brand-kicker">Secure clinical platform</p>
-            <h1 class="login-info__brand-title">SCIMAX</h1>
+            <h1 class="login-info__brand-title">{{ orgName }}</h1>
           </div>
         </header>
 
@@ -38,7 +39,8 @@
             </div>
           </header>
           
-          <div class="login-info__compliance-card-body login-info__compliance-html">
+          <div *ngIf="DynamicContent" class="login-info__compliance-card-body login-info__compliance-html" [innerHTML]="DynamicContent"></div>
+          <div *ngIf="!DynamicContent" class="login-info__compliance-card-body login-info__compliance-html">
             <p>Scimax maintains HIPAA compliance in the United States. HIPAA compliance involves fulfilling the requirements of the Health Insurance Portability and Accountability Act of 1996, its subsequent amendments, and related legislation such as the Health Information Technology for Economic and Clinical Health (HITECH) Act.</p>
             <p>Protected health information (PHI) handled in Scimax is safeguarded under the HIPAA Privacy Rule. Access is limited to authorized users for permitted treatment, payment, and healthcare operations, with role-based controls that keep investigator, sponsor, and operations teams within their approved scope.</p>
             <p>The HIPAA Security Rule guides how Scimax protects electronic PHI. Platform controls include encrypted transport (TLS), encrypted storage for sensitive records, unique user authentication, session timeouts, and audit logging of access and key administrative actions.</p>

@@ -19,11 +19,52 @@ export class SuperAdminAuthService {
   }
 
   /**
+   * Apply dynamic CSS variables from Theme configuration
+   */
+  applyTheme(theme: any): void {
+    if (typeof document === 'undefined' || !document.documentElement || !theme) return;
+    const root = document.documentElement;
+    if (theme.HEADER_COLOR) root.style.setProperty('--header_color', theme.HEADER_COLOR);
+    if (theme.NAV_HOVER_BG) root.style.setProperty('--nav_hover_bg', theme.NAV_HOVER_BG);
+    if (theme.BUTTON_BORDER_COLOR) root.style.setProperty('--button_border-Color', theme.BUTTON_BORDER_COLOR);
+    if (theme.BUTTON_HOVER_COLOR) root.style.setProperty('--button_hover_color', theme.BUTTON_HOVER_COLOR);
+    if (theme.BUTTON_TEXT_COLOR) root.style.setProperty('--button_text_color', theme.BUTTON_TEXT_COLOR);
+    if (theme.LOGIN_BG_COLOR) root.style.setProperty('--login_bg_color', theme.LOGIN_BG_COLOR);
+    if (theme.LOGIN_BUTTON_COLOR) root.style.setProperty('--login_button_color', theme.LOGIN_BUTTON_COLOR);
+    if (theme.LOGIN_BUTTON_HOVER) root.style.setProperty('--login_button_hover', theme.LOGIN_BUTTON_HOVER);
+    if (theme.LOGIN_BTN_TEXT_COLOR) root.style.setProperty('--login_btn_text_color', theme.LOGIN_BTN_TEXT_COLOR);
+  }
+
+  /**
    * Fetch current IEG build version
    * GET api/appuser/fetchiegbuildversion
    */
   getBuildVersion(): Observable<any> {
     return this.http.get(`${serviceConstants.apiURL}api/appuser/fetchiegbuildversion`, httpOptions);
+  }
+
+  /**
+   * Negotiate SignalR Hub connection
+   * POST medrionhub/negotiate?negotiateVersion=1
+   */
+  negotiateHub(negotiateVersion: number = 1): Observable<any> {
+    return this.http.post(`${serviceConstants.apiURL}medrionhub/negotiate?negotiateVersion=${negotiateVersion}`, {}, httpOptions);
+  }
+
+  /**
+   * Download organization logo image
+   * GET api/appuser/downloadifle/{orgCode}
+   */
+  getLogo(orgCode: string): Observable<any> {
+    return this.http.get(`${serviceConstants.apiURL}api/appuser/downloadifle/${encodeURIComponent(orgCode)}`, httpOptions);
+  }
+
+  /**
+   * Get Windows TimeZone ID from IANA timezone string
+   * POST api/appuser/GetWindowsTimeZoneFromIANA/[object%20Object]
+   */
+  getWindowsTimeZoneFromIANA(timeZone: { value: string; label: string }): Observable<any> {
+    return this.http.post(`${serviceConstants.apiURL}api/appuser/GetWindowsTimeZoneFromIANA/[object%20Object]`, timeZone, httpOptions);
   }
 
   /**
