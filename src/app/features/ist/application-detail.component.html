@@ -8,10 +8,10 @@
       
       <div class="title-meta">
         <div class="title-row">
-          <h2 class="app-title">{{ applicationTitle }}</h2>
+          <h2 class="app-title">{{ applicationTitle() }}</h2>
           <span class="type-pill">IST</span>
         </div>
-        <span class="subtitle-meta">&bull; Viewing &bull; {{ appId }}</span>
+        <span class="subtitle-meta">&bull; Viewing &bull; {{ appId() }}</span>
       </div>
     </div>
 
@@ -40,21 +40,25 @@
   <div class="detail-body">
     <!-- LEFT STEPPER WIZARD SIDEBAR -->
     <aside class="stepper-sidebar">
-      <a 
-        *ngFor="let step of steps" 
-        class="step-item"
-        [class.completed]="step.id < currentStep"
-        [class.active]="step.id === currentStep"
-        [routerLink]="['/ist/detail', appId, step.path]"
-        routerLinkActive="active"
-        (click)="selectStep(step.id)">
-        
-        <div class="step-badge">
-          <span *ngIf="step.id < currentStep">&#10003;</span>
-          <span *ngIf="step.id >= currentStep">{{ step.id }}</span>
-        </div>
-        <span class="step-title">{{ step.name }}</span>
-      </a>
+      @for (step of steps; track step.id) {
+        <a 
+          class="step-item"
+          [class.completed]="step.id < currentStep()"
+          [class.active]="step.id === currentStep()"
+          [routerLink]="['/ist/detail', appId(), step.path]"
+          routerLinkActive="active"
+          (click)="selectStep(step.id)">
+          
+          <div class="step-badge">
+            @if (step.id < currentStep()) {
+              <span>&#10003;</span>
+            } @else {
+              <span>{{ step.id }}</span>
+            }
+          </div>
+          <span class="step-title">{{ step.name }}</span>
+        </a>
+      }
     </aside>
 
     <!-- RIGHT STEP CONTENT VIEWPORT -->
@@ -65,9 +69,9 @@
 
       <!-- BOTTOM WIZARD BAR -->
       <footer class="wizard-footer">
-        <button class="btn-footer-back" (click)="prevStep()" [disabled]="currentStep === 1">Back</button>
+        <button class="btn-footer-back" (click)="prevStep()" [disabled]="currentStep() === 1">Back</button>
         <button class="btn-footer-continue" (click)="nextStep()">
-          {{ currentStep === 5 ? 'Finish' : 'Continue' }}
+          {{ currentStep() === 5 ? 'Finish' : 'Continue' }}
         </button>
       </footer>
     </main>

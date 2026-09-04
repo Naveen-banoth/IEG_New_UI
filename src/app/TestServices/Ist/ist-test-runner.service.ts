@@ -57,7 +57,7 @@ export class IstTestRunnerService {
     switch (item.id) {
       // 1. GENERAL INFO & APPLICATIONS
       case 'IST-GEN-1':
-        res = await firstValueFrom(this.generalInfoService.getApplicationsList(effective));
+        res = await firstValueFrom(this.generalInfoService.getApplicationsList());
         item.matched = Array.isArray(res);
         break;
 
@@ -72,7 +72,7 @@ export class IstTestRunnerService {
         break;
 
       case 'IST-GEN-4':
-        res = await firstValueFrom(this.generalInfoService.getMyApplicationsList(effective));
+        res = await firstValueFrom(this.generalInfoService.getMyApplicationsList());
         item.matched = Array.isArray(res);
         break;
 

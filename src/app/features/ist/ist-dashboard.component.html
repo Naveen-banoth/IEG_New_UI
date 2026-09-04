@@ -1,169 +1,562 @@
 <div class="screen-container">
-  <!-- EXPANDABLE SEARCH CRITERIA FORM PANEL -->
-  <div class="search-criteria-card">
-    <div class="search-header">
-      <button class="search-toggle-btn" (click)="isSearchOpen = !isSearchOpen">
-        <span class="toggle-icon">{{ isSearchOpen ? '&#8722;' : '+' }}</span>
-        <span>Search Criteria</span>
-      </button>
 
-      <div class="search-actions" *ngIf="isSearchOpen">
-        <button class="btn-blue-search" (click)="applySearch()">Search</button>
-        <button class="btn-outline" (click)="clearSearch()">Clear</button>
-        <button class="btn-outline" (click)="viewAll()">View All</button>
+  <!-- 2. SEARCH & FILTER ROW -->
+  <div class="search-filter-row">
+    <!-- Search Bar Card -->
+    <div class="search-bar-card">
+      <div class="search-input-wrapper">
+        <svg class="search-icon-svg" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" class="search-input-field" [ngModel]="globalSearch()"
+          (ngModelChange)="globalSearch.set($event)" placeholder="Search applications, physicians, products..." />
+        <!-- Cancel / Clear Search Button -->
+        @if (globalSearch()) {
+          <button type="button" class="btn-search-cancel" (click)="globalSearch.set('')"
+            title="Clear search" aria-label="Clear search">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        }
       </div>
     </div>
 
-    <!-- Filter Grid Form -->
-    <div class="search-form-grid" *ngIf="isSearchOpen">
-      <!-- Row 1 -->
-      <div class="form-group">
-        <label>Application ID</label>
-        <input type="text" [(ngModel)]="filterAppId" placeholder="Enter application ID" class="form-input" />
-      </div>
-
-      <div class="form-group">
-        <label>Application Type</label>
-        <select [(ngModel)]="filterAppType" class="form-select">
-          <option value="All">All</option>
-          <option value="IST">IST</option>
-          <option value="EAP">EAP</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Physician Name</label>
-        <input type="text" [(ngModel)]="filterPhysician" placeholder="Enter physician name" class="form-input" />
-      </div>
-
-      <div class="form-group">
-        <label>Therapeutic area</label>
-        <select [(ngModel)]="filterTherapeuticArea" class="form-select">
-          <option value="All">All</option>
-          <option value="Oncology">Oncology</option>
-          <option value="Cardiology">Cardiology</option>
-          <option value="Endocrinology">Endocrinology</option>
-          <option value="Neurology">Neurology</option>
-        </select>
-      </div>
-
-      <!-- Row 2 -->
-      <div class="form-group">
-        <label>Request Type</label>
-        <select [(ngModel)]="filterRequestType" class="form-select">
-          <option value="All">All</option>
-          <option value="New">New</option>
-          <option value="Amendment">Amendment</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Product</label>
-        <select [(ngModel)]="filterProduct" class="form-select">
-          <option value="Select">Select</option>
-          <option value="Product Alpha">Product Alpha</option>
-          <option value="Product Beta">Product Beta</option>
-          <option value="GlucoSense Pro">GlucoSense Pro</option>
-          <option value="NeuroRelief">NeuroRelief</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Study Type</label>
-        <select [(ngModel)]="filterStudyType" class="form-select">
-          <option value="Select">Select</option>
-          <option value="Systematic Review">Systematic Review</option>
-          <option value="Observational">Observational</option>
-          <option value="Registry">Registry</option>
-          <option value="Interventional">Interventional</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Owner</label>
-        <input type="text" [(ngModel)]="filterOwner" placeholder="Enter owner name" class="form-input" />
-      </div>
-
-      <!-- Row 3 -->
-      <div class="form-group">
-        <label>Status</label>
-        <select [(ngModel)]="filterStatus" class="form-select">
-          <option value="All">All</option>
-          <option value="Active">Active</option>
-          <option value="Drafts">Drafts</option>
-          <option value="Completed">Completed</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Submitted from Date</label>
-        <div class="date-input-wrapper">
-          <input type="date" [(ngModel)]="filterFromDate" class="form-input date-picker" />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Submitted to Date</label>
-        <div class="date-input-wrapper">
-          <input type="date" [(ngModel)]="filterToDate" class="form-input date-picker" />
-        </div>
-      </div>
-    </div>
+    <!-- Filter Button Right Side of Search Engine -->
+    <button type="button" class="btn-search-filter-action" [class.active]="isSearchOpen()" (click)="toggleSearch()"
+      title="Advanced Filters">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      <span>Filters</span>
+    </button>
   </div>
 
-  <!-- DATA TABLE CARD -->
-  <div class="table-card">
-    <div class="table-toolbar">
-      <span class="showing-count">Showing 1 to {{ filteredApplications.length }} of {{ applications.length }}</span>
-      
-      <div class="toolbar-actions">
-        <button class="btn-columns">
-          <i class="ph ph-columns" style="font-size: 1.1rem;"></i>
-          <span>Columns</span>
-        </button>
-
-        <div class="status-tabs-pill">
-          <button class="status-tab" [class.active]="activeTab === 'Active'" (click)="activeTab = 'Active'">Active (12)</button>
-          <button class="status-tab" [class.active]="activeTab === 'Drafts'" (click)="activeTab = 'Drafts'">Drafts (3)</button>
-          <button class="status-tab" [class.active]="activeTab === 'Completed'" (click)="activeTab = 'Completed'">Completed (5)</button>
+  <!-- 3. MAIN DATA TABLE CARD WITH MATCHED TOOLBAR -->
+  <div class="grid-content-layout" [class.split-active]="isSplitView()">
+    <div class="table-card">
+      <!-- Table Toolbar matching screenshot -->
+      <div class="table-toolbar">
+        <div class="toolbar-left">
+          <span class="showing-count">Showing 1 to {{ filteredCount() }} of {{ totalCount() }}</span>
         </div>
+
+        <div class="toolbar-right">
+          <!-- Columns Button -->
+          <button type="button" class="btn-columns">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" x2="4" y1="21" y2="14"></line>
+              <line x1="4" x2="4" y1="10" y2="3"></line>
+              <line x1="12" x2="12" y1="21" y2="12"></line>
+              <line x1="12" x2="12" y1="8" y2="3"></line>
+              <line x1="20" x2="20" y1="21" y2="16"></line>
+              <line x1="20" x2="20" y1="12" y2="3"></line>
+              <line x1="1" x2="7" y1="14" y2="14"></line>
+              <line x1="9" x2="15" y1="8" y2="8"></line>
+              <line x1="17" x2="23" y1="16" y2="16"></line>
+            </svg>
+            <span>Columns</span>
+          </button>
+
+          <!-- Status Filter Tabs: Active (23), Drafts (1), Completed -->
+          <div class="status-pills-group">
+            <button type="button" class="status-pill-tab" [class.active]="selectedTab() === 'active'"
+              (click)="setTab('active')">
+              Active ({{ activeCount() }})
+            </button>
+            <button type="button" class="status-pill-tab" [class.active]="selectedTab() === 'draft'"
+              (click)="setTab('draft')">
+              Drafts ({{ draftCount() }})
+            </button>
+            <button type="button" class="status-pill-tab" [class.active]="selectedTab() === 'completed'"
+              (click)="setTab('completed')">
+              Completed
+            </button>
+          </div>
+
+          <!-- Split View Toggle -->
+          <div class="view-mode-toggle-group">
+            <button class="btn-view-toggle" [class.active]="!isSplitView()" (click)="setSplitView(false)"
+              title="Full View">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+              </svg>
+            </button>
+            <button class="btn-view-toggle" [class.active]="isSplitView()" (click)="setSplitView(true)"
+              title="Split View">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                <line x1="15" x2="15" y1="3" y2="21"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Data Table matching reference layout -->
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="th-protocol">PROTOCOL / TITLE</th>
+              <th class="th-appid">APP ID</th>
+              <th class="th-type">TYPE</th>
+              <th class="th-physician">PHYSICIAN NAME</th>
+              <th class="th-owner">OWNER</th>
+              <th class="th-product">PRODUCT</th>
+              <th class="th-status">STATUS</th>
+              <th class="th-submitted">SUBMITTED</th>
+              <th class="th-actions text-center">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of filteredApplications(); track item.appId) {
+              <tr [class.row-selected]="selectedRow()?.appId === item.appId"
+                (click)="selectRow(item)">
+                <td class="col-protocol">
+                  <span class="protocol-title">{{ item.title }}</span>
+                </td>
+                <td class="col-appid">{{ item.appId }}</td>
+                <td class="col-type">{{ item.type || 'IST' }}</td>
+                <td class="col-physician">{{ item.physicianName }}</td>
+                <td class="col-owner">{{ item.owner }}</td>
+                <td class="col-product">{{ item.product || '—' }}</td>
+                <td class="col-status">
+                  <span class="status-pill" [ngClass]="getStatusBadgeClass(item.status)">
+                    {{ getCleanStatus(item.status) }}
+                  </span>
+                </td>
+                <td class="col-submitted">{{ formatSubmittedDate(item.submittedOn) }}</td>
+                <td class="col-actions text-center">
+                  <button type="button" class="btn-edit-pencil" (click)="editApplication(item, $event)"
+                    title="Edit Application">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                      <path d="m15 5 4 4"></path>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="9" class="text-center py-8 text-slate-400">
+                  No applications found matching search criteria.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <div class="table-wrapper">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>PROTOCOL / TITLE</th>
-            <th>APP ID</th>
-            <th>TYPE</th>
-            <th>PHYSICIAN NAME</th>
-            <th>OWNER</th>
-            <th>PRODUCT</th>
-            <th>STUDY TYPE</th>
-            <th>SUBMITTED ON</th>
-            <th class="text-center">ACTION</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of filteredApplications">
-            <td class="col-title">{{ item.title }}</td>
-            <td class="col-appid">{{ item.appId }}</td>
-            <td><span class="type-tag">{{ item.type }}</span></td>
-            <td class="col-text">{{ item.physicianName }}</td>
-            <td class="col-text">{{ item.owner }}</td>
-            <td class="col-text">{{ item.product }}</td>
-            <td class="col-text">{{ item.studyType }}</td>
-            <td class="col-date">{{ item.submittedOn }}</td>
-            <td class="text-center">
-              <!-- Eye Action Icon -> opens detail stepper view -->
-              <a [routerLink]="['/ist/detail', item.appId]" class="action-eye-btn" title="View Application Details">
-                <i class="ph ph-eye" style="font-size: 1.15rem;"></i>
-              </a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <!-- RIGHT: APPLICATION DETAILS SIDE PANEL (SPLIT VIEW) -->
+    @if (isSplitView()) {
+      <aside class="application-details-panel">
+        <header class="details-panel-head">
+          <h6 class="details-panel-title">Application Details</h6>
+          @if (selectedRow()) {
+            <button type="button" class="details-edit-btn" (click)="editApplication(selectedRow())"
+              title="Edit Details">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                <path d="m15 5 4 4"></path>
+              </svg>
+            </button>
+          }
+        </header>
+
+        @if (selectedRow(); as row) {
+          <div class="details-panel-body">
+            <h6 class="details-section-title">General</h6>
+
+            <div class="details-list">
+              <div class="details-row">
+                <span class="details-label">Application ID</span>
+                <span class="details-separator">:</span>
+                <span class="details-value font-mono font-bold">{{ row.appId }}</span>
+              </div>
+
+              <div class="details-row">
+                <span class="details-label">Physician Name</span>
+                <span class="details-separator">:</span>
+                <span class="details-value">{{ row.physicianName }}</span>
+              </div>
+
+              <div class="details-row">
+                <span class="details-label">Study Sponsored</span>
+                <span class="details-separator">:</span>
+                <span class="details-value">{{ row.studySponsored || 'Individual' }}</span>
+              </div>
+
+              <div class="details-row">
+                <span class="details-label">Therapeutic Area</span>
+                <span class="details-separator">:</span>
+                <span class="details-value">{{ row.therapeuticArea || 'Pulmonology' }}</span>
+              </div>
+
+              <div class="details-row">
+                <span class="details-label">Request Type</span>
+                <span class="details-separator">:</span>
+                <span class="details-value">{{ row.requestType || 'Funds' }}</span>
+              </div>
+
+              <div class="details-row">
+                <span class="details-label">Product</span>
+                <span class="details-separator">:</span>
+                <span class="details-value">{{ row.product || '' }}</span>
+              </div>
+
+              <div class="details-row">
+                <span class="details-label">Study Type</span>
+                <span class="details-separator">:</span>
+                <span class="details-value">{{ row.studyType || 'Cohort Study' }}</span>
+              </div>
+
+              <div class="details-row">
+                <span class="details-label">Status</span>
+                <span class="details-separator">:</span>
+                <span class="details-value font-medium">{{ row.status }}</span>
+              </div>
+
+              <div class="details-row">
+                <span class="details-label">Submitted On</span>
+                <span class="details-separator">:</span>
+                <span class="details-value text-slate-500">{{ row.submittedOn }}</span>
+              </div>
+
+              <div class="details-row">
+                <span class="details-label">Last Updated On</span>
+                <span class="details-separator">:</span>
+                <span class="details-value text-slate-500">{{ row.lastUpdatedOn || row.submittedOn }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </aside>
+    }
   </div>
+
+  <!-- ATTRACTIVE CREATE APPLICATION MODAL -->
+  @if (isCreateModalOpen()) {
+    <div class="modal-backdrop-overlay" (click)="closeCreateModal()">
+      <div class="create-app-modal-card" (click)="$event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="modal-card-header">
+          <div class="modal-title-group">
+            <div class="modal-icon-badge">
+              <i class="ph-bold ph-folder-plus"></i>
+            </div>
+            <div>
+              <h4 class="modal-heading">Create New IST Application</h4>
+              <p class="modal-subheading">Initiate a new investigator-sponsored study protocol</p>
+            </div>
+          </div>
+          <button class="modal-close-icon-btn" (click)="closeCreateModal()" aria-label="Close">
+            <i class="ph-bold ph-x"></i>
+          </button>
+        </div>
+
+        <!-- Alerts -->
+        @if (createErrorMessage()) {
+          <div class="modal-alert-error">
+            <i class="ph-bold ph-warning-circle"></i>
+            <span>{{ createErrorMessage() }}</span>
+          </div>
+        }
+
+        @if (createSuccessMessage()) {
+          <div class="modal-alert-success">
+            <i class="ph-bold ph-check-circle"></i>
+            <span>{{ createSuccessMessage() }}</span>
+          </div>
+        }
+
+        <!-- Modal Body -->
+        <div class="modal-card-body">
+          <!-- Section 1: Choose Application Type Preset -->
+          <div class="modal-section-title">
+            <span class="step-badge">1</span>
+            <h6>Select Application Type</h6>
+          </div>
+
+          <div class="app-type-presets-grid">
+            @for (preset of appTypePresets(); track preset.id) {
+              <div class="app-preset-card"
+                [class.active]="newAppType() === preset.id" (click)="newAppType.set(preset.id)">
+                <div class="preset-header">
+                  <div class="preset-icon-box">
+                    <i [class]="'ph-bold ' + preset.icon"></i>
+                  </div>
+                  <span class="preset-tag">{{ preset.tag }}</span>
+                </div>
+                <h6 class="preset-title">{{ preset.title }}</h6>
+                <p class="preset-desc">{{ preset.desc }}</p>
+                <div class="preset-radio-indicator">
+                  @if (newAppType() === preset.id) {
+                    <div class="radio-inner"></div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Section 2: Study Protocol Details -->
+          <div class="modal-section-title mt-4">
+            <span class="step-badge">2</span>
+            <h6>Protocol & Configuration Details</h6>
+          </div>
+
+          <div class="modal-form-grid">
+            <div class="modal-form-group full-width">
+              <label class="modal-label">Study Protocol Title <span class="required-star">*</span></label>
+              <input type="text" class="modal-input" [ngModel]="newAppTitle()" (ngModelChange)="newAppTitle.set($event)"
+                placeholder="e.g. Phase II Multicenter Observational Trial on Pharmacokinetics" />
+            </div>
+
+            <div class="modal-form-group">
+              <label class="modal-label">Principal Investigator / Physician <span class="required-star">*</span></label>
+              <div class="input-with-icon">
+                <i class="ph-bold ph-user modal-field-icon"></i>
+                <input type="text" class="modal-input has-icon" [ngModel]="newAppPhysician()"
+                  (ngModelChange)="newAppPhysician.set($event)" placeholder="e.g. Dr. Jennifer Lawrence" />
+              </div>
+            </div>
+
+            <div class="modal-form-group">
+              <label class="modal-label">Therapeutic Area</label>
+              <select class="modal-select" [ngModel]="newAppTherapeuticArea()"
+                (ngModelChange)="newAppTherapeuticArea.set($event)">
+                <option value="Pulmonology">Pulmonology</option>
+                <option value="Gastroenterology">Gastroenterology</option>
+                <option value="Oncology">Oncology</option>
+                <option value="Cardiology">Cardiology</option>
+                <option value="Neurology">Neurology</option>
+                <option value="Endocrinology">Endocrinology</option>
+                <option value="Hematology">Hematology</option>
+              </select>
+            </div>
+
+            <div class="modal-form-group">
+              <label class="modal-label">Request Type</label>
+              <select class="modal-select" [ngModel]="newAppRequestType()"
+                (ngModelChange)="newAppRequestType.set($event)">
+                <option value="Funds">Funds</option>
+                <option value="Product">Product</option>
+                <option value="Both">Both (Funds & Product)</option>
+              </select>
+            </div>
+
+            <div class="modal-form-group">
+              <label class="modal-label">Product</label>
+              <select class="modal-select" [ngModel]="newAppProduct()" (ngModelChange)="newAppProduct.set($event)">
+                <option value="Ascoril">Ascoril</option>
+                <option value="ORS Powder">ORS Powder</option>
+                <option value="Product Alpha">Product Alpha</option>
+                <option value="Product Beta">Product Beta</option>
+                <option value="HemaCure XL">HemaCure XL</option>
+              </select>
+            </div>
+
+            <div class="modal-form-group">
+              <label class="modal-label">Study Type</label>
+              <select class="modal-select" [ngModel]="newAppStudyType()" (ngModelChange)="newAppStudyType.set($event)">
+                <option value="Cohort Study">Cohort Study</option>
+                <option value="Interventional">Interventional</option>
+                <option value="Observational">Observational</option>
+                <option value="Registry">Registry</option>
+                <option value="Systematic Review">Systematic Review</option>
+              </select>
+            </div>
+
+            <div class="modal-form-group">
+              <label class="modal-label">Grant Currency</label>
+              <select class="modal-select" [ngModel]="newAppCurrency()" (ngModelChange)="newAppCurrency.set($event)">
+                @for (curr of currencyOptions(); track curr.code) {
+                  <option [value]="curr.code">
+                    {{ curr.name }}
+                  </option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-card-footer">
+          <button type="button" class="btn-modal-cancel" (click)="closeCreateModal()">
+            Cancel
+          </button>
+          <button type="button" class="btn-modal-submit" [disabled]="isCreating()" (click)="submitCreateApplication()">
+            @if (isCreating()) {
+              <i class="ph-bold ph-spinner ph-spin"></i>
+            } @else {
+              <i class="ph-bold ph-check"></i>
+            }
+            <span>{{ isCreating() ? 'Creating Application...' : 'Create Application' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- 5. ADVANCED FILTERS MODAL / DRAWER (MATCHING REFERENCE SCREENSHOT) -->
+  @if (isSearchOpen()) {
+    <div class="filter-drawer-backdrop" (click)="toggleSearch()">
+      <div class="advanced-filters-panel" (click)="$event.stopPropagation()">
+        <!-- Header -->
+        <div class="filters-header">
+          <h5 class="filters-title">Advanced Filters</h5>
+          <button type="button" class="btn-close-filter" (click)="toggleSearch()" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Filters Form Body -->
+        <div class="filters-body">
+          <!-- Application ID -->
+          <div class="filter-field-group">
+            <label class="filter-label">Application ID</label>
+            <input type="text" class="filter-input" [ngModel]="filterAppId()" (ngModelChange)="filterAppId.set($event)"
+              placeholder="Enter application ID" />
+          </div>
+
+          <!-- Application Type Pills -->
+          <div class="filter-field-group">
+            <label class="filter-label">Application Type</label>
+            <div class="filter-pills-row">
+              <button type="button" class="filter-pill-btn" [class.active]="filterAppType() === 'EAP'"
+                (click)="toggleAppType('EAP')">
+                EAP
+              </button>
+              <button type="button" class="filter-pill-btn" [class.active]="filterAppType() === 'Grant'"
+                (click)="toggleAppType('Grant')">
+                Grant
+              </button>
+              <button type="button" class="filter-pill-btn" [class.active]="filterAppType() === 'IST'"
+                (click)="toggleAppType('IST')">
+                IST
+              </button>
+            </div>
+          </div>
+
+          <!-- Request Type Pills -->
+          <div class="filter-field-group">
+            <label class="filter-label">Request Type</label>
+            <div class="filter-pills-row">
+              <button type="button" class="filter-pill-btn" [class.active]="filterRequestType() === 'New Request'"
+                (click)="toggleRequestType('New Request')">
+                New Request
+              </button>
+              <button type="button" class="filter-pill-btn" [class.active]="filterRequestType() === 'Amendment'"
+                (click)="toggleRequestType('Amendment')">
+                Amendment
+              </button>
+              <button type="button" class="filter-pill-btn" [class.active]="filterRequestType() === 'Renewal'"
+                (click)="toggleRequestType('Renewal')">
+                Renewal
+              </button>
+            </div>
+          </div>
+
+          <!-- Product Select -->
+          <div class="filter-field-group">
+            <label class="filter-label">Product</label>
+            <select class="filter-select" [ngModel]="filterProduct()" (ngModelChange)="filterProduct.set($event)">
+              <option value="Select">Select</option>
+              @for (opt of productOptions(); track opt) {
+                <option [value]="opt">{{ opt }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Physician Name -->
+          <div class="filter-field-group">
+            <label class="filter-label">Physician Name</label>
+            <input type="text" class="filter-input" [ngModel]="filterPhysician()"
+              (ngModelChange)="filterPhysician.set($event)" placeholder="Enter physician name" />
+          </div>
+
+          <!-- Owner -->
+          <div class="filter-field-group">
+            <label class="filter-label">Owner</label>
+            <input type="text" class="filter-input" [ngModel]="filterOwner()" (ngModelChange)="filterOwner.set($event)"
+              placeholder="Enter owner name" />
+          </div>
+
+          <!-- Therapeutic Area Select -->
+          <div class="filter-field-group">
+            <label class="filter-label">Therapeutic Area</label>
+            <select class="filter-select" [ngModel]="filterTherapeuticArea()"
+              (ngModelChange)="filterTherapeuticArea.set($event)">
+              @for (opt of therapeuticAreaOptions(); track opt) {
+                <option [value]="opt">{{ opt }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Study Type Select -->
+          <div class="filter-field-group">
+            <label class="filter-label">Study Type</label>
+            <select class="filter-select" [ngModel]="filterStudyType()" (ngModelChange)="filterStudyType.set($event)">
+              @for (opt of studyTypeOptions(); track opt) {
+                <option [value]="opt">{{ opt }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Status Select -->
+          <div class="filter-field-group">
+            <label class="filter-label">Status</label>
+            <select class="filter-select" [ngModel]="filterStatus()" (ngModelChange)="filterStatus.set($event)">
+              @for (opt of statusOptions(); track opt) {
+                <option [value]="opt">{{ opt }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Submitted from Date -->
+          <div class="filter-field-group">
+            <label class="filter-label">Submitted from Date</label>
+            <div class="date-input-wrapper">
+              <input type="date" class="filter-input date-picker" [ngModel]="filterFromDate()"
+                (ngModelChange)="filterFromDate.set($event)" placeholder="MM/DD/YYYY" />
+            </div>
+          </div>
+
+          <!-- Submitted to Date -->
+          <div class="filter-field-group">
+            <label class="filter-label">Submitted to Date</label>
+            <div class="date-input-wrapper">
+              <input type="date" class="filter-input date-picker" [ngModel]="filterToDate()"
+                (ngModelChange)="filterToDate.set($event)" placeholder="MM/DD/YYYY" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Action -->
+        <div class="filters-footer">
+          <button type="button" class="btn-filter-reset" (click)="resetFilters()">
+            Reset
+          </button>
+          <button type="button" class="btn-filter-apply" (click)="applySearch(); toggleSearch()">
+            Apply filters
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

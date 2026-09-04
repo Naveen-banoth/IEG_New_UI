@@ -313,82 +313,117 @@
   margin: 0 0.15rem;
 }
 
-/* Module Tabs Card */
-.module-tabs-card {
-  background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  border-radius: 16px;
-  padding: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-}
-
-.tabs-list {
-  display: flex;
+/* Floating Program Navigation Pill Group */
+.program-pills-container {
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
+  background: #ffffff;
+  padding: 0.35rem;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  width: fit-content;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
 }
 
 .mod-tab-dropdown-wrapper {
   position: relative;
 }
 
-.mod-tab-btn {
-  display: block;
-  padding: 0.65rem 1.25rem;
-  border-radius: 12px;
-  font-size: 0.875rem;
-  font-weight: 600;
+.program-pill-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.85rem;
+  font-weight: 500;
   color: #475569;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  cursor: pointer;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
-.mod-tab-btn:hover {
-  background: #f8fafc;
-  color: #0f172a;
-}
-
-.mod-tab-btn.active-tab {
-  background: #ffffff;
-  color: #2563eb;
-  font-weight: 700;
-  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.12);
-  border: 1px solid #bfdbfe;
-}
-
-.disabled-tab {
+.pill-chevron {
+  font-size: 0.8rem;
   color: #94a3b8;
-  cursor: not-allowed;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.program-pill-btn:hover:not(.active) {
+  color: #0f172a;
+  background: #f8fafc;
+}
+
+.program-pill-btn:hover .pill-chevron {
+  color: #475569;
+}
+
+.program-pill-btn.active,
+.program-pill-btn.active-tab {
+  background: linear-gradient(135deg, #3730a3 0%, #4338ca 50%, #3b82f6 100%);
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(67, 56, 202, 0.32);
+}
+
+.program-pill-btn.active .pill-chevron,
+.program-pill-btn.active-tab .pill-chevron {
+  color: #ffffff;
+}
+
+.mod-tab-dropdown-wrapper:hover .pill-chevron {
+  transform: rotate(180deg);
+}
+
+.program-pill-btn.disabled-tab {
+  color: #94a3b8;
+  cursor: default;
 }
 
 .dropdown-menu-card {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% + 6px);
   left: 0;
-  min-width: 200px;
+  min-width: 220px;
   background: #ffffff;
   border: 1px solid rgba(226, 232, 240, 0.9);
   border-radius: 14px;
-  padding: 0.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 0.4rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   z-index: 250;
   animation: fadeInDown 0.15s ease-out;
 }
 
 .dropdown-item {
-  display: block;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.95rem;
+  border-radius: 10px;
   font-size: 0.85rem;
   font-weight: 600;
   color: #334155;
   text-decoration: none;
   transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.dropdown-item-icon {
+  font-size: 1.1rem;
+  color: #3b82f6;
+  flex-shrink: 0;
 }
 
 .dropdown-item:hover {
   background: #f1f5f9;
-  color: #2563eb;
+  color: #1e293b;
 }
 
 .dropdown-item.active-sub-item {

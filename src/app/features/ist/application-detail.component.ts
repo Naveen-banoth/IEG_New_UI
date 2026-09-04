@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule, NavigationEnd } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
@@ -13,9 +13,12 @@ import { TopUserToolbarComponent } from '../../layout/top-user-toolbar/top-user-
   styleUrl: './application-detail.component.css'
 })
 export class ApplicationDetailComponent implements OnInit, OnDestroy {
-  public appId = 'DEMO-2026-008';
-  public applicationTitle = 'Systematic Review of Oncology Outcomes';
-  public currentStep = 2; // Default to step 2 (Study Team)
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+
+  public appId = signal<string>('DEMO-2026-008');
+  public applicationTitle = signal<string>('Systematic Review of Oncology Outcomes');
+  public currentStep = signal<number>(2); // Default to step 2 (Study Team)
 
   public steps = [
     { id: 1, name: 'General Information', path: 'general' },
@@ -27,15 +30,10 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
   private sub = new Subscription();
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
-
   ngOnInit(): void {
     const routeId = this.route.snapshot.paramMap.get('id');
     if (routeId) {
-      this.appId = routeId;
+      this.appId.set(routeId);
     }
 
     this.sub.add(
@@ -55,31 +53,31 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     const currentUrl = this.router.url;
     for (const step of this.steps) {
       if (currentUrl.includes(step.path)) {
-        this.currentStep = step.id;
+        this.currentStep.set(step.id);
         break;
       }
     }
   }
 
   selectStep(stepId: number): void {
-    this.currentStep = stepId;
+    this.currentStep.set(stepId);
     const targetStep = this.steps.find(s => s.id === stepId);
     if (targetStep) {
-      this.router.navigate(['/ist/detail', this.appId, targetStep.path]);
+      this.router.navigate(['/ist/detail', this.appId(), targetStep.path]);
     }
   }
 
   nextStep(): void {
-    if (this.currentStep < 5) {
-      this.selectStep(this.currentStep + 1);
+    if (this.currentStep() < 5) {
+      this.selectStep(this.currentStep() + 1);
     } else {
       this.goBack();
     }
   }
 
   prevStep(): void {
-    if (this.currentStep > 1) {
-      this.selectStep(this.currentStep - 1);
+    if (this.currentStep() > 1) {
+      this.selectStep(this.currentStep() - 1);
     }
   }
 

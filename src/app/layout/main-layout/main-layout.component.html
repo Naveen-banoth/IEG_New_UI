@@ -6,53 +6,65 @@
 
 <div class="layout-wrapper">
   <!-- LEFT ICON SIDEBAR (Collapsible: Slim / Expanded) -->
-  <aside class="left-icon-sidebar" [class.collapsed]="isSidebarCollapsed" [class.expanded]="!isSidebarCollapsed">
+  <aside class="left-icon-sidebar" [class.collapsed]="isSidebarCollapsed()" [class.expanded]="!isSidebarCollapsed()">
     <div class="sidebar-top">
       <!-- Logo + Collapse Toggle Header -->
       <div class="sidebar-header-row">
         <div class="hex-logo">
           <i class="ph ph-diamonds-four" style="font-size: 1.4rem; color: #ffffff;"></i>
         </div>
-        <span class="logo-text-brand" *ngIf="!isSidebarCollapsed">ScimaxIEG</span>
-        <button class="sidebar-collapse-btn" (click)="toggleSidebar()" [title]="isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'">
-          <i class="ph" [class.ph-caret-right]="isSidebarCollapsed" [class.ph-caret-left]="!isSidebarCollapsed"></i>
+        @if (!isSidebarCollapsed()) {
+          <span class="logo-text-brand">ScimaxIEG</span>
+        }
+        <button class="sidebar-collapse-btn" (click)="toggleSidebar()" [title]="isSidebarCollapsed() ? 'Expand Sidebar' : 'Collapse Sidebar'">
+          <i class="ph" [class.ph-caret-right]="isSidebarCollapsed()" [class.ph-caret-left]="!isSidebarCollapsed()"></i>
         </button>
       </div>
 
       <!-- Navigation Items -->
       <div class="nav-items-list">
-        <a routerLink="/ist" routerLinkActive="active" class="icon-nav-item" [title]="isSidebarCollapsed ? 'Applications & Modules' : ''">
+        <a routerLink="/ist" routerLinkActive="active" class="icon-nav-item" [title]="isSidebarCollapsed() ? 'Applications & Modules' : ''">
           <i class="ph ph-squares-four nav-icon"></i>
-          <span class="nav-label" *ngIf="!isSidebarCollapsed">Applications</span>
+          @if (!isSidebarCollapsed()) {
+            <span class="nav-label">Applications</span>
+          }
         </a>
 
-        <a routerLink="/eap" routerLinkActive="active" class="icon-nav-item" [title]="isSidebarCollapsed ? 'Audit & Records' : ''">
+        <a routerLink="/eap" routerLinkActive="active" class="icon-nav-item" [title]="isSidebarCollapsed() ? 'Audit & Records' : ''">
           <i class="ph ph-clipboard-text nav-icon"></i>
-          <span class="nav-label" *ngIf="!isSidebarCollapsed">Audit & Records</span>
+          @if (!isSidebarCollapsed()) {
+            <span class="nav-label">Audit & Records</span>
+          }
         </a>
 
-        <a routerLink="/administration" routerLinkActive="active" class="icon-nav-item" [title]="isSidebarCollapsed ? 'Administration & Settings' : ''">
+        <a routerLink="/administration" routerLinkActive="active" class="icon-nav-item" [title]="isSidebarCollapsed() ? 'Administration & Settings' : ''">
           <i class="ph ph-gear nav-icon"></i>
-          <span class="nav-label" *ngIf="!isSidebarCollapsed">Administration</span>
+          @if (!isSidebarCollapsed()) {
+            <span class="nav-label">Administration</span>
+          }
         </a>
 
-        <a routerLink="/test-services" routerLinkActive="active" class="icon-nav-item" [title]="isSidebarCollapsed ? 'Test Services & API Runner' : ''">
+        <a routerLink="/test-services" routerLinkActive="active" class="icon-nav-item" [title]="isSidebarCollapsed() ? 'Test Services & API Runner' : ''">
           <i class="ph ph-flask nav-icon"></i>
-          <span class="nav-label" *ngIf="!isSidebarCollapsed">Test Services</span>
+          @if (!isSidebarCollapsed()) {
+            <span class="nav-label">Test Services</span>
+          }
         </a>
       </div>
     </div>
 
     <!-- Profile section at bottom of left strip (Opens Profile Modal) -->
     <div class="sidebar-bottom">
-      <div class="sidebar-profile-card" (click)="openProfileModal()" [title]="isSidebarCollapsed ? 'User Profile' : ''">
+      <div class="sidebar-profile-card" (click)="openProfileModal()" [title]="isSidebarCollapsed() ? 'User Profile' : ''">
         <div class="avatar-pill">
           <span>{{ getUserInitials() }}</span>
         </div>
-        <div class="profile-text-details" *ngIf="!isSidebarCollapsed">
-          <span class="profile-name">{{ currentUser?.name || 'Sai P' }}</span>
-          <span class="profile-role">{{ currentUser?.role || 'Administrator' }}</span>
-        </div>
+        @if (!isSidebarCollapsed()) {
+          <div class="profile-text-details">
+            <span class="profile-name">{{ getUserName() }}</span>
+            <span class="profile-role">{{ getUserRole() }}</span>
+          </div>
+        }
       </div>
     </div>
   </aside>
@@ -60,71 +72,76 @@
   <!-- MAIN CONTENT CONTAINER -->
   <div class="main-container">
     <!-- HEADER TITLE & TOP-RIGHT USER/ADMIN TOOLBAR -->
-    <header class="page-title-section" *ngIf="!isDetailView">
-      <div class="title-text-group">
-        <h1 class="main-title">{{ activeScreenName }}</h1>
-        <p class="subtitle-text">Investigator Sponsored Trial &bull; Browse all research and requests</p>
-      </div>
-
-      <!-- TOP RIGHT CORNER UTILITY TOOLBAR -->
-      <div class="top-header-user-toolbar">
-        <button class="top-tool-btn" (click)="showPermissionModal = true" title="FAQ & Documentation">
-          <i class="ph ph-book-open"></i>
-        </button>
-
-        <button class="top-tool-btn" (click)="showPermissionModal = true" title="Help & Support">
-          <i class="ph ph-question"></i>
-        </button>
-
-        <!-- Notification Icon -->
-        <div class="top-tool-btn has-badge" title="Notifications">
-          <i class="ph ph-bell"></i>
-          <span class="red-dot"></span>
+    @if (!isDetailView()) {
+      <header class="page-title-section">
+        <div class="title-text-group">
+          <h1 class="main-title">{{ activeScreenName() }}</h1>
+          <p class="subtitle-text">{{ getActiveProgramName() }} &bull; Browse all research and requests</p>
         </div>
 
-        <div class="top-tool-divider"></div>
+        <!-- TOP RIGHT CORNER UTILITY TOOLBAR -->
+        <div class="top-header-user-toolbar">
+          <button class="top-tool-btn" (click)="openPermissionModal()" title="FAQ & Documentation">
+            <i class="ph ph-book-open"></i>
+          </button>
 
-        <!-- Logout Action Button -->
-        <button class="top-tool-btn btn-logout" (click)="onLogout()" title="Sign Out">
-          <i class="ph ph-sign-out"></i>
-        </button>
-      </div>
-    </header>
+          <button class="top-tool-btn" (click)="openPermissionModal()" title="Help & Support">
+            <i class="ph ph-question"></i>
+          </button>
 
-    <!-- TOP MODULE TABS (Shown only on List/Dashboard view, Hidden on Detail View) -->
-    <div class="module-tabs-card" *ngIf="!isDetailView">
-      <div class="tabs-list">
-        <div 
-          *ngFor="let mod of authorizedMenu" 
-          class="mod-tab-dropdown-wrapper"
-          (mouseenter)="activeDropdownModule = mod.code"
-          (mouseleave)="activeDropdownModule = null">
-          
-          <a 
-            [routerLink]="mod.screens[0].route || '/ist'"
-            routerLinkActive="active-tab"
-            class="mod-tab-btn">
-            {{ getModuleDisplayName(mod.code) }}
-          </a>
-
-          <!-- Sub-screen Dropdown Menu -->
-          <div 
-            class="dropdown-menu-card" 
-            *ngIf="activeDropdownModule === mod.code && mod.screens.length > 0">
-            <a 
-              *ngFor="let scr of mod.screens"
-              [routerLink]="scr.route"
-              routerLinkActive="active-sub-item"
-              class="dropdown-item"
-              (click)="activeScreenName = scr.name; activeDropdownModule = null">
-              {{ scr.name }}
-            </a>
+          <!-- Notification Icon -->
+          <div class="top-tool-btn has-badge" title="Notifications">
+            <i class="ph ph-bell"></i>
+            <span class="red-dot"></span>
           </div>
-        </div>
 
-        <a class="mod-tab-btn disabled-tab">Analytics</a>
+          <div class="top-tool-divider"></div>
+
+          <!-- Logout Action Button -->
+          <button class="top-tool-btn btn-logout" (click)="onLogout()" title="Sign Out">
+            <i class="ph ph-sign-out"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- TOP MODULE TABS (Shown only on List/Dashboard view, Hidden on Detail View) -->
+      <div class="program-pills-container">
+        @for (mod of getNavModules(); track mod.id) {
+          <div 
+            class="mod-tab-dropdown-wrapper"
+            (mouseenter)="openDropdown(mod.id)"
+            (mouseleave)="closeDropdown()">
+            
+            <a 
+              [routerLink]="mod.route"
+              routerLinkActive="active"
+              class="program-pill-btn"
+              (click)="onModuleClick(mod, $event)">
+              <span>{{ mod.name }}</span>
+              @if (mod.screens.length > 0) {
+                <i class="ph ph-caret-down pill-chevron"></i>
+              }
+            </a>
+
+            <!-- Sub-screen Dropdown Menu (e.g. "All Applications") -->
+            @if (activeDropdownModule() === mod.id && mod.screens.length > 0) {
+              <div class="dropdown-menu-card">
+                @for (scr of mod.screens; track scr.name) {
+                  <a 
+                    [routerLink]="scr.route"
+                    routerLinkActive="active-sub-item"
+                    class="dropdown-item"
+                    (click)="onScreenClick(scr, mod, $event)">
+                    <i class="ph ph-squares-four dropdown-item-icon"></i>
+                    <span>{{ scr.name }}</span>
+                  </a>
+                }
+              </div>
+            }
+          </div>
+        }
       </div>
-    </div>
+    }
 
     <!-- ROUTED CONTENT VIEWPORT (Renders IstDashboard or ApplicationDetail Component) -->
     <div class="viewport-content">
@@ -134,117 +151,128 @@
 </div>
 
 <!-- PROFILE MODAL DIALOG (Exact pixel-accurate reproduction of the reference screenshot) -->
-<div class="modal-overlay-backdrop profile-modal-backdrop" *ngIf="showProfileModal" (click)="showProfileModal = false">
-  <div class="profile-modal-card" (click)="$event.stopPropagation()">
-    <!-- Modal Header -->
-    <div class="profile-modal-header">
-      <div class="header-titles">
-        <h2 class="profile-main-title">Profile</h2>
-        <p class="profile-subtitle">View and manage your account settings.</p>
+@if (showProfileModal()) {
+  <div class="modal-overlay-backdrop profile-modal-backdrop" (click)="closeProfileModal()">
+    <div class="profile-modal-card" (click)="$event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="profile-modal-header">
+        <div class="header-titles">
+          <h2 class="profile-main-title">Profile</h2>
+          <p class="profile-subtitle">View and manage your account settings.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-change-password-pill" (click)="openChangePassword()">
+            Change Password
+          </button>
+          <button class="btn-change-password-pill" style="background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-color: rgba(239, 68, 68, 0.3);" (click)="onLogout()">
+            Sign Out
+          </button>
+          <button class="btn-close-circle" (click)="closeProfileModal()" title="Close">
+            <i class="ph ph-x"></i>
+          </button>
+        </div>
       </div>
-      <div class="header-actions">
-        <button class="btn-change-password-pill" (click)="openChangePassword()">
-          Change Password
-        </button>
-        <button class="btn-change-password-pill" style="background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-color: rgba(239, 68, 68, 0.3);" (click)="onLogout()">
-          Sign Out
-        </button>
-        <button class="btn-close-circle" (click)="showProfileModal = false" title="Close">
+
+      <!-- Modal Body Content -->
+      <div class="profile-modal-body">
+        <!-- Section 1: ACCOUNT -->
+        <div class="profile-section-group">
+          <span class="section-group-label">ACCOUNT</span>
+          <div class="account-card-box">
+            <div class="account-info-row">
+              <span class="info-label">Username</span>
+              <span class="info-val-bold">{{ getUserName() }}</span>
+            </div>
+            <div class="account-row-divider"></div>
+            <div class="account-info-row">
+              <span class="info-label">Email ID</span>
+              <span class="info-val-bold">{{ getUserEmail() }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: PREFERENCES -->
+        <div class="profile-section-group">
+          <span class="section-group-label">PREFERENCES</span>
+
+          <!-- Time Zone Field -->
+          <div class="pref-field-group">
+            <label class="pref-field-label">Time Zone</label>
+            <div class="pref-select-wrapper">
+              <select [(ngModel)]="selectedTimeZone" class="pref-select-input">
+                @for (tz of timeZoneOptions; track tz) {
+                  <option [value]="tz">{{ tz }}</option>
+                }
+              </select>
+              <i class="ph ph-caret-down select-chevron"></i>
+            </div>
+          </div>
+
+          <!-- Preferred Currency Field -->
+          <div class="pref-field-group">
+            <label class="pref-field-label">Preferred Currency</label>
+            <div class="pref-select-wrapper">
+              <select [(ngModel)]="selectedCurrency" class="pref-select-input">
+                @for (cur of currencyOptions; track cur) {
+                  <option [value]="cur">{{ cur }}</option>
+                }
+              </select>
+              <i class="ph ph-caret-down select-chevron"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- CHANGE PASSWORD MODAL DIALOG -->
+@if (showChangePasswordModal()) {
+  <div class="modal-overlay-backdrop" (click)="closeChangePassword()">
+    <div class="modal-card-dialog password-modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Change Password</h2>
+        <button class="btn-close-circle" (click)="closeChangePassword()">
           <i class="ph ph-x"></i>
         </button>
       </div>
-    </div>
 
-    <!-- Modal Body Content -->
-    <div class="profile-modal-body">
-      <!-- Section 1: ACCOUNT -->
-      <div class="profile-section-group">
-        <span class="section-group-label">ACCOUNT</span>
-        <div class="account-card-box">
-          <div class="account-info-row">
-            <span class="info-label">Username</span>
-            <span class="info-val-bold">{{ currentUser?.name || 'Sai P' }}</span>
-          </div>
-          <div class="account-row-divider"></div>
-          <div class="account-info-row">
-            <span class="info-label">Email ID</span>
-            <span class="info-val-bold">{{ currentUser?.email || 'internal@gmail.com' }}</span>
-          </div>
+      <!-- Alert Banner -->
+      @if (passwordBanner(); as banner) {
+        <div class="password-banner" [ngClass]="'banner-' + banner.type">
+          <i class="ph" [class.ph-check-circle]="banner.type === 'success'" [class.ph-warning-circle]="banner.type === 'error'"></i>
+          <span>{{ banner.text }}</span>
+        </div>
+      }
+
+      <div class="modal-form-body">
+        <div class="form-field">
+          <label class="field-label">Current Password <span class="required-star">*</span></label>
+          <input type="password" [(ngModel)]="passwordForm.current" placeholder="Enter current password" class="scimax-input" />
+        </div>
+
+        <div class="form-field">
+          <label class="field-label">New Password <span class="required-star">*</span></label>
+          <input type="password" [(ngModel)]="passwordForm.newPass" placeholder="Enter new password (min. 6 chars)" class="scimax-input" />
+        </div>
+
+        <div class="form-field">
+          <label class="field-label">Confirm New Password <span class="required-star">*</span></label>
+          <input type="password" [(ngModel)]="passwordForm.confirm" placeholder="Confirm new password" class="scimax-input" />
         </div>
       </div>
 
-      <!-- Section 2: PREFERENCES -->
-      <div class="profile-section-group">
-        <span class="section-group-label">PREFERENCES</span>
-
-        <!-- Time Zone Field -->
-        <div class="pref-field-group">
-          <label class="pref-field-label">Time Zone</label>
-          <div class="pref-select-wrapper">
-            <select [(ngModel)]="selectedTimeZone" class="pref-select-input">
-              <option *ngFor="let tz of timeZoneOptions" [value]="tz">{{ tz }}</option>
-            </select>
-            <i class="ph ph-caret-down select-chevron"></i>
-          </div>
-        </div>
-
-        <!-- Preferred Currency Field -->
-        <div class="pref-field-group">
-          <label class="pref-field-label">Preferred Currency</label>
-          <div class="pref-select-wrapper">
-            <select [(ngModel)]="selectedCurrency" class="pref-select-input">
-              <option *ngFor="let cur of currencyOptions" [value]="cur">{{ cur }}</option>
-            </select>
-            <i class="ph ph-caret-down select-chevron"></i>
-          </div>
-        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-footer-save" (click)="submitPasswordChange()">Update Password</button>
+        <button type="button" class="btn-footer-cancel" (click)="closeChangePassword()">Cancel</button>
       </div>
     </div>
   </div>
-</div>
-
-<!-- CHANGE PASSWORD MODAL DIALOG -->
-<div class="modal-overlay-backdrop" *ngIf="showChangePasswordModal" (click)="showChangePasswordModal = false">
-  <div class="modal-card-dialog password-modal-dialog" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2 class="modal-title">Change Password</h2>
-      <button class="btn-close-circle" (click)="showChangePasswordModal = false">
-        <i class="ph ph-x"></i>
-      </button>
-    </div>
-
-    <!-- Alert Banner -->
-    <div *ngIf="passwordBanner" class="password-banner" [ngClass]="'banner-' + passwordBanner.type">
-      <i class="ph" [class.ph-check-circle]="passwordBanner.type === 'success'" [class.ph-warning-circle]="passwordBanner.type === 'error'"></i>
-      <span>{{ passwordBanner.text }}</span>
-    </div>
-
-    <div class="modal-form-body">
-      <div class="form-field">
-        <label class="field-label">Current Password <span class="required-star">*</span></label>
-        <input type="password" [(ngModel)]="passwordForm.current" placeholder="Enter current password" class="scimax-input" />
-      </div>
-
-      <div class="form-field">
-        <label class="field-label">New Password <span class="required-star">*</span></label>
-        <input type="password" [(ngModel)]="passwordForm.newPass" placeholder="Enter new password (min. 6 chars)" class="scimax-input" />
-      </div>
-
-      <div class="form-field">
-        <label class="field-label">Confirm New Password <span class="required-star">*</span></label>
-        <input type="password" [(ngModel)]="passwordForm.confirm" placeholder="Confirm new password" class="scimax-input" />
-      </div>
-    </div>
-
-    <div class="modal-footer">
-      <button type="button" class="btn-footer-save" (click)="submitPasswordChange()">Update Password</button>
-      <button type="button" class="btn-footer-cancel" (click)="showChangePasswordModal = false">Cancel</button>
-    </div>
-  </div>
-</div>
+}
 
 <!-- Permission Manager Modal -->
-<app-permission-manager 
-  *ngIf="showPermissionModal" 
-  (close)="showPermissionModal = false">
-</app-permission-manager>
+@if (showPermissionModal()) {
+  <app-permission-manager 
+    (close)="closePermissionModal()">
+  </app-permission-manager>
+}

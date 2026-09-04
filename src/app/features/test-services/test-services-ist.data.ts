@@ -17,8 +17,8 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       categoryLabel: 'General Info & Apps',
       apiName: 'Get Applications List',
       endpoint: 'api/ISTGeneralInfo/GetApplicationsList',
-      method: 'POST',
-      payload: { Status: 'ALL', PageIndex: 1, PageSize: 10 },
+      method: 'GET',
+      payload: null,
       expectedData: 'Array of IST applications',
       status: 'IDLE',
       matched: false
@@ -53,8 +53,8 @@ export function getIstTestItems(context: TestContextIds): DetailedTestItem[] {
       categoryLabel: 'General Info & Apps',
       apiName: 'Get My Applications List',
       endpoint: 'api/ISTMyApplications/GetMyApplicationsList',
-      method: 'POST',
-      payload: { PageIndex: 1, PageSize: 10 },
+      method: 'GET',
+      payload: null,
       expectedData: 'User-specific IST applications',
       status: 'IDLE',
       matched: false

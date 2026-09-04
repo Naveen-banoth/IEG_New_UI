@@ -17,66 +17,79 @@
 
   <!-- Administration 8 Cards Grid -->
   <div class="admin-grid">
-    <div *ngFor="let section of sections" class="admin-card">
-      <!-- Card Top Header -->
-      <div class="card-header">
-        <div class="icon-avatar" [ngClass]="'icon-' + section.iconType">
-          <!-- Core Settings -->
-          <i *ngIf="section.iconType === 'core'" class="ph ph-sliders" style="font-size: 1.35rem;"></i>
-
-          <!-- Product Setup -->
-          <i *ngIf="section.iconType === 'product'" class="ph ph-cube" style="font-size: 1.35rem;"></i>
-
-          <!-- User Instructions -->
-          <i *ngIf="section.iconType === 'instructions'" class="ph ph-book-open" style="font-size: 1.35rem;"></i>
-
-          <!-- Platform & Logs -->
-          <i *ngIf="section.iconType === 'platform'" class="ph ph-activity" style="font-size: 1.35rem;"></i>
-
-          <!-- IST -->
-          <i *ngIf="section.iconType === 'ist'" class="ph ph-flask" style="font-size: 1.35rem;"></i>
-
-          <!-- EAP -->
-          <i *ngIf="section.iconType === 'eap'" class="ph ph-heartbeat" style="font-size: 1.35rem;"></i>
-
-          <!-- Grants -->
-          <i *ngIf="section.iconType === 'grants'" class="ph ph-graduation-cap" style="font-size: 1.35rem;"></i>
-
-          <!-- Budget -->
-          <i *ngIf="section.iconType === 'budget'" class="ph ph-currency-circle-dollar" style="font-size: 1.35rem;"></i>
-        </div>
-
-        <div class="card-titles">
-          <h2 class="card-name">{{ section.title }}</h2>
-          <span class="card-badge">{{ section.countText }}</span>
-        </div>
-      </div>
-
-      <!-- Card Content Links (Direct items or Grouped sub-sections) -->
-      <div class="card-body">
-        <!-- Direct Items -->
-        <ng-container *ngIf="section.items">
-          <div class="links-list">
-            <a *ngFor="let item of section.items" [routerLink]="item.route" class="admin-shortcut-link">
-              <span>{{ item.title }}</span>
-              <i class="ph ph-arrow-up-right arrow-icon"></i>
-            </a>
+    @for (section of sections; track section.title) {
+      <div class="admin-card">
+        <!-- Card Top Header -->
+        <div class="card-header">
+          <div class="icon-avatar" [ngClass]="'icon-' + section.iconType">
+            @switch (section.iconType) {
+              @case ('core') {
+                <i class="ph ph-sliders" style="font-size: 1.35rem;"></i>
+              }
+              @case ('product') {
+                <i class="ph ph-cube" style="font-size: 1.35rem;"></i>
+              }
+              @case ('instructions') {
+                <i class="ph ph-book-open" style="font-size: 1.35rem;"></i>
+              }
+              @case ('platform') {
+                <i class="ph ph-activity" style="font-size: 1.35rem;"></i>
+              }
+              @case ('ist') {
+                <i class="ph ph-flask" style="font-size: 1.35rem;"></i>
+              }
+              @case ('eap') {
+                <i class="ph ph-heartbeat" style="font-size: 1.35rem;"></i>
+              }
+              @case ('grants') {
+                <i class="ph ph-graduation-cap" style="font-size: 1.35rem;"></i>
+              }
+              @case ('budget') {
+                <i class="ph ph-currency-circle-dollar" style="font-size: 1.35rem;"></i>
+              }
+            }
           </div>
-        </ng-container>
 
-        <!-- Sub-sections with headers -->
-        <ng-container *ngIf="section.subSections">
-          <div *ngFor="let sub of section.subSections" class="sub-section-block">
-            <div *ngIf="sub.header" class="sub-header">{{ sub.header }}</div>
+          <div class="card-titles">
+            <h2 class="card-name">{{ section.title }}</h2>
+            <span class="card-badge">{{ section.countText }}</span>
+          </div>
+        </div>
+
+        <!-- Card Content Links (Direct items or Grouped sub-sections) -->
+        <div class="card-body">
+          <!-- Direct Items -->
+          @if (section.items) {
             <div class="links-list">
-              <a *ngFor="let item of sub.items" [routerLink]="item.route" class="admin-shortcut-link">
-                <span>{{ item.title }}</span>
-                <i class="ph ph-arrow-up-right arrow-icon"></i>
-              </a>
+              @for (item of section.items; track item.title) {
+                <a [routerLink]="item.route" class="admin-shortcut-link">
+                  <span>{{ item.title }}</span>
+                  <i class="ph ph-arrow-up-right arrow-icon"></i>
+                </a>
+              }
             </div>
-          </div>
-        </ng-container>
+          }
+
+          <!-- Sub-sections with headers -->
+          @if (section.subSections) {
+            @for (sub of section.subSections; track $index) {
+              <div class="sub-section-block">
+                @if (sub.header) {
+                  <div class="sub-header">{{ sub.header }}</div>
+                }
+                <div class="links-list">
+                  @for (item of sub.items; track item.title) {
+                    <a [routerLink]="item.route" class="admin-shortcut-link">
+                      <span>{{ item.title }}</span>
+                      <i class="ph ph-arrow-up-right arrow-icon"></i>
+                    </a>
+                  }
+                </div>
+              </div>
+            }
+          }
+        </div>
       </div>
-    </div>
+    }
   </div>
 </div>

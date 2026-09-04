@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { httpOptions, serviceConstants } from '../../constants/service.constants';
@@ -7,8 +7,25 @@ import { httpOptions, serviceConstants } from '../../constants/service.constants
   providedIn: 'root'
 })
 export class SuperAdminAuthService {
+  readonly logindata = signal<any>(this.getInitialLoginData());
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
+
+  private getInitialLoginData(): any {
+    try {
+      const stored = localStorage.getItem('loginData') || sessionStorage.getItem('loginData');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  clearLoginData(): void {
+    this.logindata.set(null);
+    localStorage.removeItem('loginData');
+    sessionStorage.removeItem('loginData');
+  }
+
 
   /**
    * Fetch application configuration data (before login)
@@ -109,7 +126,7 @@ export class SuperAdminAuthService {
    * Super Admin Login authentication
    * POST api/appuser/login
    */
-  login(payload: { 
+  login(payload: {
     CODE: string;
     PASSWORD?: string;
     ORGCODE?: string | null;
@@ -119,6 +136,14 @@ export class SuperAdminAuthService {
     return this.http.post(`${serviceConstants.apiURL}api/appuser/login`, payload, httpOptions).pipe(
       tap((res: any) => {
         const raw = res?.Data || res;
+        this.logindata.set(raw);
+        try {
+          localStorage.setItem('loginData', JSON.stringify(raw));
+          sessionStorage.setItem('loginData', JSON.stringify(raw));
+        } catch (e) {
+          console.warn('Could not cache loginData', e);
+        }
+
         const token = raw?.Token || raw?.token || raw?.access_token || res?.Token || res?.token;
         if (token) {
           sessionStorage.setItem('token', token);

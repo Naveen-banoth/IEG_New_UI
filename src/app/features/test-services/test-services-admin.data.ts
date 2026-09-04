@@ -7,7 +7,8 @@ export const ADMIN_CATEGORIES: CategoryTab[] = [
   { key: 'PRODUCT', label: 'Product & Lookups', icon: 'ph-cube' },
   { key: 'INSTRUCTIONS', label: 'Instructions & FAQs', icon: 'ph-book-open-text' },
   { key: 'PLATFORM', label: 'Platform & Logs', icon: 'ph-sliders' },
-  { key: 'WORKFLOW', label: 'Workflow & Policy', icon: 'ph-git-fork' }
+  { key: 'WORKFLOW', label: 'Workflow & Policy', icon: 'ph-git-fork' },
+  { key: 'ANALYTICS', label: 'Analytics & Dashboards', icon: 'ph-chart-bar' }
 ];
 
 export function getAdministrationTestItems(context: TestContextIds): DetailedTestItem[] {
@@ -798,6 +799,81 @@ export function getAdministrationTestItems(context: TestContextIds): DetailedTes
       method: 'GET',
       payload: null,
       expectedData: 'Timeline configuration object',
+      status: 'PENDING',
+      matched: false
+    },
+    // ----------------------------------------------------
+    // 7. ANALYTICS & DASHBOARDS (ANALYTICS)
+    // ----------------------------------------------------
+    {
+      id: 'ADM-ANALYTICS-1',
+      category: 'ANALYTICS',
+      categoryLabel: 'Analytics & Dashboards',
+      apiName: 'Get Analytics Dashboards Details',
+      endpoint: 'api/Analytics/GetAnalyticsDashboardsDetails',
+      method: 'POST',
+      payload: {},
+      expectedData: 'List of analytics dashboard items',
+      status: 'PENDING',
+      matched: false
+    },
+    {
+      id: 'ADM-ANALYTICS-2',
+      category: 'ANALYTICS',
+      categoryLabel: 'Analytics & Dashboards',
+      apiName: 'Get Analytics Dashboard By ID',
+      endpoint: 'api/Analytics/GetAnalyticsDashboardsDetailsByID/{id}',
+      method: 'GET',
+      payload: { id: 'DASH-IST-01' },
+      expectedData: 'Single analytics dashboard detail',
+      status: 'PENDING',
+      matched: false
+    },
+    {
+      id: 'ADM-ANALYTICS-3',
+      category: 'ANALYTICS',
+      categoryLabel: 'Analytics & Dashboards',
+      apiName: 'Get User Assigned Dashboards',
+      endpoint: 'api/Analytics/GetUserDashboards/',
+      method: 'GET',
+      payload: null,
+      expectedData: 'Array of user accessible dashboards',
+      status: 'PENDING',
+      matched: false
+    },
+    {
+      id: 'ADM-ANALYTICS-4',
+      category: 'ANALYTICS',
+      categoryLabel: 'Analytics & Dashboards',
+      apiName: 'Sync Organization Dashboards',
+      endpoint: 'api/organization/SyncDashboards',
+      method: 'POST',
+      payload: { OrgId: '1', OrgName: 'scimax', IST: true, EAP: true, GRANTS: true, IS_ORG_ACCOUNT_IN_LOGI: true },
+      expectedData: 'Sync operation confirmation response',
+      status: 'PENDING',
+      matched: false
+    },
+    {
+      id: 'ADM-ANALYTICS-5',
+      category: 'ANALYTICS',
+      categoryLabel: 'Analytics & Dashboards',
+      apiName: 'Refresh Organization Analytics',
+      endpoint: 'api/organization/RefreshOrg',
+      method: 'POST',
+      payload: { OrgId: '1', OrgName: 'scimax', IST: true, EAP: true, GRANTS: true },
+      expectedData: 'Refresh operation response',
+      status: 'PENDING',
+      matched: false
+    },
+    {
+      id: 'ADM-ANALYTICS-6',
+      category: 'ANALYTICS',
+      categoryLabel: 'Analytics & Dashboards',
+      apiName: 'Check If Analytics Update Enabled',
+      endpoint: 'api/Analytics/IsAnalyticsUpdateEnabledWhileDashboardClick',
+      method: 'GET',
+      payload: null,
+      expectedData: 'Boolean or flag indicating if update is enabled on click',
       status: 'PENDING',
       matched: false
     }

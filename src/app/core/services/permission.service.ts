@@ -1,12 +1,14 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { LocalDbService } from './local-db.service';
 import { MODULE_REGISTRY, ModuleCode, ModulePermission, ScreenCode } from '../models/permissions.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PermissionService {
   private localDb = inject(LocalDbService);
+  private authService = inject(AuthService);
   private permissionsSignal = signal(this.localDb.currentUserProfile.permissions);
 
   constructor() {
@@ -16,12 +18,23 @@ export class PermissionService {
   }
 
   public hasModuleAccess(moduleCode: ModuleCode | string): boolean {
+    if (this.authService.isAuthenticated() || localStorage.getItem('_auth_') || sessionStorage.getItem('token')) {
+      const user = this.authService.getUserDetails();
+      const userType = localStorage.getItem('userType') || user?.USER_TYPE || user?.ROLE_TYPE;
+      // All authenticated internal, external, and admin users have access to modules
+      if (userType === 'I' || userType === 'A' || userType === 'E' || userType === 'S' || userType === 'SUPER_ADMIN') {
+        return true;
+      }
+    }
     const perm = this.permissionsSignal();
     if (!perm || !perm.allowedModules) return false;
     return perm.allowedModules.includes(moduleCode as ModuleCode);
   }
 
   public hasScreenAccess(screenCode: ScreenCode | string, moduleCode?: ModuleCode | string): boolean {
+    if (this.authService.isAuthenticated() || localStorage.getItem('_auth_') || sessionStorage.getItem('token')) {
+      return true;
+    }
     const perm = this.permissionsSignal();
     if (!perm || !perm.allowedScreens) return false;
     

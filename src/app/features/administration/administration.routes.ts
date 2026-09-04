@@ -6,6 +6,7 @@ import { DepartmentsComponent } from './departments/departments.component';
 import { ProgramCategoryComponent } from './program-category/program-category.component';
 import { EmailSetupComponent } from './email-setup/email-setup.component';
 import { SettingsComponent } from './settings/settings.component';
+import { AnalyticsComponent } from './analytics/analytics.component';
 
 export const ADMINISTRATION_ROUTES: Routes = [
   {
@@ -35,5 +36,10 @@ export const ADMINISTRATION_ROUTES: Routes = [
   {
     path: 'settings',
     component: SettingsComponent
+  },
+  {
+    path: 'analytics',
+    component: AnalyticsComponent
   }
 ];
+

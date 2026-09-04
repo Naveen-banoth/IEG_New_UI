@@ -5,4 +5,4 @@ export * from './admin-platform-logs.service';
 export * from './admin-workflow-policy.service';
 export * from './admin-email-configuration.service';
 export * from './admin-test-runner.service';
-
+export * from './admin-analytics.service';

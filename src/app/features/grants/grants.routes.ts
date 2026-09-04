@@ -10,11 +10,11 @@ export const GRANTS_ROUTES: Routes = [
   },
   {
     path: 'dashboard',
-    loadComponent: () => import('./grants-dashboard.component').then(m => m.GrantsDashboardComponent),
+    loadComponent: () => import('../ist/ist-dashboard.component').then(m => m.IstDashboardComponent),
     canActivate: [permissionGuard],
     data: {
-      module: ModuleCode.GRANTS,
-      screen: ScreenCode.GRANTS_DASHBOARD
+      module: 'GRANTS',
+      screen: 'grants-dashboard'
     }
   },
   {

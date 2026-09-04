@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -6,7 +6,6 @@ import { SuperAdminEmailConfigService } from '../../../TestServices/Superadmin/s
 import { EmailAccountItem } from '../../../core/models/administration.model';
 
 export { EmailAccountItem };
-
 
 import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-user-toolbar.component';
 
@@ -18,13 +17,15 @@ import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-us
   styleUrl: './email-setup.component.scss'
 })
 export class EmailSetupComponent implements OnInit {
-  public searchExpanded = false;
-  public searchKeyword = '';
+  private emailService = inject(SuperAdminEmailConfigService);
 
-  public showModal = false;
-  public isEditMode = false;
-  public isSaving = false;
-  public activeActionMenuId: string | null = null;
+  public searchExpanded = signal<boolean>(false);
+  public searchKeyword = signal<string>('');
+
+  public showModal = signal<boolean>(false);
+  public isEditMode = signal<boolean>(false);
+  public isSaving = signal<boolean>(false);
+  public activeActionMenuId = signal<string | null>(null);
 
   public emailForm: EmailAccountItem = {
     id: '',
@@ -39,12 +40,31 @@ export class EmailSetupComponent implements OnInit {
     accountType: 'GOOGLE'
   };
 
-  public accountsList: EmailAccountItem[] = [];
+  public accountsList = signal<EmailAccountItem[]>([]);
 
-  public currentPage = 1;
-  public pageSize = 10;
+  public currentPage = signal<number>(1);
+  public pageSize = signal<number>(10);
 
-  constructor(private emailService: SuperAdminEmailConfigService) {}
+  public filteredAccounts = computed(() => {
+    const keyword = this.searchKeyword().toLowerCase().trim();
+    const list = this.accountsList();
+    if (!keyword) return list;
+    return list.filter(a =>
+      a.email.toLowerCase().includes(keyword) ||
+      a.displayName.toLowerCase().includes(keyword)
+    );
+  });
+
+  public paginatedAccounts = computed(() => {
+    const page = this.currentPage();
+    const size = this.pageSize();
+    const start = (page - 1) * size;
+    return this.filteredAccounts().slice(start, start + size);
+  });
+
+  public totalPages = computed(() => {
+    return Math.ceil(this.filteredAccounts().length / this.pageSize()) || 1;
+  });
 
   ngOnInit(): void {
     this.loadEmailAccounts();
@@ -55,7 +75,7 @@ export class EmailSetupComponent implements OnInit {
       next: (res: any) => {
         const records = Array.isArray(res) ? res : (res?.Data && Array.isArray(res.Data) ? res.Data : []);
         if (records.length > 0) {
-          this.accountsList = records.map((r: any, idx: number) => ({
+          const mapped = records.map((r: any, idx: number) => ({
             id: r.EmailConfigID || `EML-${idx + 1}`,
             email: r.EmailID || '',
             displayName: r.EmailDisplayName || '',
@@ -68,6 +88,7 @@ export class EmailSetupComponent implements OnInit {
             accountType: r.EmailAccountTypeCode || 'GOOGLE',
             rawConfig: r
           }));
+          this.accountsList.set(mapped);
         } else {
           this.loadSingleConfig();
         }
@@ -83,7 +104,7 @@ export class EmailSetupComponent implements OnInit {
       next: (res: any) => {
         const cfg = res?.Data || res;
         if (cfg && (cfg.EmailID || cfg.EmailConfigID)) {
-          this.accountsList = [{
+          this.accountsList.set([{
             id: cfg.EmailConfigID || 'EML-1',
             email: cfg.EmailID || 'ieg@scimaxier.com',
             displayName: cfg.EmailDisplayName || 'Scimax IEG Notifications',
@@ -95,9 +116,9 @@ export class EmailSetupComponent implements OnInit {
             active: cfg.EmailServerStatus !== false,
             accountType: cfg.EmailAccountTypeCode || 'GOOGLE',
             rawConfig: cfg
-          }];
-        } else if (this.accountsList.length === 0) {
-          this.accountsList = [
+          }]);
+        } else if (this.accountsList().length === 0) {
+          this.accountsList.set([
             {
               id: 'EML-1',
               email: 'ieg@scimaxier.com',
@@ -109,12 +130,12 @@ export class EmailSetupComponent implements OnInit {
               active: true,
               accountType: 'GOOGLE'
             }
-          ];
+          ]);
         }
       },
       error: () => {
-        if (this.accountsList.length === 0) {
-          this.accountsList = [
+        if (this.accountsList().length === 0) {
+          this.accountsList.set([
             {
               id: 'EML-1',
               email: 'ieg@scimaxier.com',
@@ -126,31 +147,14 @@ export class EmailSetupComponent implements OnInit {
               active: true,
               accountType: 'GOOGLE'
             }
-          ];
+          ]);
         }
       }
     });
   }
 
-  get filteredAccounts(): EmailAccountItem[] {
-    return this.accountsList.filter(a => {
-      return !this.searchKeyword || 
-        a.email.toLowerCase().includes(this.searchKeyword.toLowerCase()) ||
-        a.displayName.toLowerCase().includes(this.searchKeyword.toLowerCase());
-    });
-  }
-
-  get paginatedAccounts(): EmailAccountItem[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredAccounts.slice(start, start + this.pageSize);
-  }
-
-  get totalPages(): number {
-    return Math.ceil(this.filteredAccounts.length / this.pageSize) || 1;
-  }
-
   openAddModal(): void {
-    this.isEditMode = false;
+    this.isEditMode.set(false);
     this.emailForm = {
       id: '',
       email: '',
@@ -163,24 +167,25 @@ export class EmailSetupComponent implements OnInit {
       active: true,
       accountType: 'GOOGLE'
     };
-    this.showModal = true;
+    this.showModal.set(true);
   }
 
   openEditModal(account: EmailAccountItem): void {
-    this.isEditMode = true;
+    this.isEditMode.set(true);
     this.emailForm = { ...account };
-    this.showModal = true;
-    this.activeActionMenuId = null;
+    this.showModal.set(true);
+    this.activeActionMenuId.set(null);
   }
 
   saveAccount(): void {
     if (!this.emailForm.email) return;
 
-    this.isSaving = true;
+    this.isSaving.set(true);
     const raw = this.emailForm.rawConfig || {};
+    const isEdit = this.isEditMode();
     const payload = {
       ...raw,
-      EmailConfigID: this.isEditMode && this.emailForm.id && !this.emailForm.id.startsWith('EML-') 
+      EmailConfigID: isEdit && this.emailForm.id && !this.emailForm.id.startsWith('EML-') 
         ? this.emailForm.id 
         : (raw.EmailConfigID || this.generateGuid()),
       EmailAccountTypeCode: this.emailForm.accountType || raw.EmailAccountTypeCode || 'GOOGLE',
@@ -199,40 +204,42 @@ export class EmailSetupComponent implements OnInit {
 
     this.emailService.insertSMTPConfiguration(payload).subscribe({
       next: () => {
-        this.isSaving = false;
-        this.showModal = false;
+        this.isSaving.set(false);
+        this.showModal.set(false);
         this.loadEmailAccounts();
       },
       error: () => {
-        this.isSaving = false;
-        if (this.isEditMode) {
-          const idx = this.accountsList.findIndex(a => a.id === this.emailForm.id);
+        this.isSaving.set(false);
+        if (isEdit) {
+          const list = [...this.accountsList()];
+          const idx = list.findIndex(a => a.id === this.emailForm.id);
           if (idx !== -1) {
-            this.accountsList[idx] = { ...this.emailForm };
+            list[idx] = { ...this.emailForm };
+            this.accountsList.set(list);
           }
         } else {
-          this.accountsList.unshift({ ...this.emailForm, id: payload.EmailConfigID });
+          this.accountsList.update(list => [{ ...this.emailForm, id: payload.EmailConfigID }, ...list]);
         }
-        this.showModal = false;
+        this.showModal.set(false);
       }
     });
   }
 
   deleteAccount(id: string): void {
-    const rawAccount = this.accountsList.find(a => a.id === id);
+    const rawAccount = this.accountsList().find(a => a.id === id);
     const apiId = rawAccount?.rawConfig?.EmailConfigID || rawAccount?.rawConfig?.EmailServerID || id;
 
-    this.accountsList = this.accountsList.filter(a => a.id !== id);
+    this.accountsList.update(list => list.filter(a => a.id !== id));
     this.emailService.deleteConfigAsync(apiId).subscribe({
       next: () => {},
       error: () => {}
     });
-    this.activeActionMenuId = null;
+    this.activeActionMenuId.set(null);
   }
 
   toggleActionMenu(event: MouseEvent, id: string): void {
     event.stopPropagation();
-    this.activeActionMenuId = this.activeActionMenuId === id ? null : id;
+    this.activeActionMenuId.set(this.activeActionMenuId() === id ? null : id);
   }
 
   private generateGuid(): string {

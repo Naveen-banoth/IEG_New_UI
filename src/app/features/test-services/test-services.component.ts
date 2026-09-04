@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, signal, computed } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -304,18 +304,16 @@ export class TestServicesComponent implements OnInit {
     firstProductId: '1'
   };
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-    private superTestRunner: SuperAdminTestRunnerService,
-    private adminTestRunner: AdminTestRunnerService,
-    private commonTestRunner: CommonTestRunnerService,
-    private eapTestRunner: EapTestRunnerService,
-    private istTestRunner: IstTestRunnerService,
-    private grantsTestRunner: GrantsTestRunnerService,
-    private umTestRunner: UmTestRunnerService
-  ) {}
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+  private superTestRunner = inject(SuperAdminTestRunnerService);
+  private adminTestRunner = inject(AdminTestRunnerService);
+  private commonTestRunner = inject(CommonTestRunnerService);
+  private eapTestRunner = inject(EapTestRunnerService);
+  private istTestRunner = inject(IstTestRunnerService);
+  private grantsTestRunner = inject(GrantsTestRunnerService);
+  private umTestRunner = inject(UmTestRunnerService);
 
   ngOnInit(): void {
     // Check route URL segments

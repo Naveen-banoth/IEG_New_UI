@@ -100,19 +100,46 @@ export class AuthService {
 
   public setUserDetails(details: any): void {
     if (details) {
-      localStorage.setItem('userDetails', JSON.stringify(details));
-      sessionStorage.setItem('userDetails', JSON.stringify(details));
+      const detailsStr = JSON.stringify(details);
+      localStorage.setItem('userDetails', detailsStr);
+      sessionStorage.setItem('userDetails', detailsStr);
+      localStorage.setItem('uds', detailsStr);
+      localStorage.setItem('_U_log', 'true');
+
       if (details.ID) {
         localStorage.setItem('id', String(details.ID));
         sessionStorage.setItem('id', String(details.ID));
+        localStorage.setItem('u_i_d', String(details.ID));
       }
       if (details.USER_TYPE) {
         localStorage.setItem('userType', details.USER_TYPE);
         sessionStorage.setItem('userType', details.USER_TYPE);
       }
-      if (details.LoggedUserDateFormat) localStorage.setItem('LoggedUserDateFormat', details.LoggedUserDateFormat);
-      if (details.LoggedUserTimeFormat) localStorage.setItem('LoggedUserTimeFormat', details.LoggedUserTimeFormat);
-      if (details.LoggedUserTimeZone) localStorage.setItem('LoggedUserTimeZone', details.LoggedUserTimeZone);
+      if (details.Token) {
+        this.setToken(details.Token);
+        localStorage.setItem('_auth_', details.Token);
+      }
+      if (details.IST_CURRENCY_ID) localStorage.setItem('_I_CUR_ID_', String(details.IST_CURRENCY_ID));
+      if (details.EAP_CURRENCY_ID) localStorage.setItem('_E_CUR_ID_', String(details.EAP_CURRENCY_ID));
+      if (details.GRANTS1_CURRENCY_ID) localStorage.setItem('_G_CM_CUR_ID', String(details.GRANTS1_CURRENCY_ID));
+      if (details.GRANTS2_CURRENCY_ID) localStorage.setItem('_G_CHA_CUR_ID_', String(details.GRANTS2_CURRENCY_ID));
+      if (details.GRANTS3_CURRENCY_ID) localStorage.setItem('_G_SPON_CUR_ID_', String(details.GRANTS3_CURRENCY_ID));
+      if (details.LoggedUserDateFormat) {
+        localStorage.setItem('LoggedUserDateFormat', details.LoggedUserDateFormat);
+        localStorage.setItem('_UDF_', details.LoggedUserDateFormat);
+      }
+      if (details.LoggedUserTimeFormat) {
+        localStorage.setItem('LoggedUserTimeFormat', details.LoggedUserTimeFormat);
+        localStorage.setItem('_UTF_', details.LoggedUserTimeFormat);
+      }
+      if (details.LoggedUserTimeZone) {
+        localStorage.setItem('LoggedUserTimeZone', details.LoggedUserTimeZone);
+        localStorage.setItem('U_trhe_T_sdji_Z', details.LoggedUserTimeZone);
+      }
+      if (details.LoggedUserOrgTimeZone) {
+        localStorage.setItem('LoggedUserOrgTimeZone', details.LoggedUserOrgTimeZone);
+        localStorage.setItem('_UOTZ_', details.LoggedUserOrgTimeZone);
+      }
     }
   }
 
@@ -193,10 +220,27 @@ export class AuthService {
     localStorage.removeItem(STORAGE_KEY_AUTH);
     localStorage.removeItem('userDetails');
     sessionStorage.removeItem('userDetails');
+    localStorage.removeItem('uds');
+    localStorage.removeItem('_U_log');
     localStorage.removeItem('id');
     sessionStorage.removeItem('id');
+    localStorage.removeItem('u_i_d');
     localStorage.removeItem('userType');
     sessionStorage.removeItem('userType');
+    localStorage.removeItem('_auth_');
+    localStorage.removeItem('_I_CUR_ID_');
+    localStorage.removeItem('_E_CUR_ID_');
+    localStorage.removeItem('_G_CM_CUR_ID');
+    localStorage.removeItem('_G_CHA_CUR_ID_');
+    localStorage.removeItem('_G_SPON_CUR_ID_');
+    localStorage.removeItem('_UDF_');
+    localStorage.removeItem('_UTF_');
+    localStorage.removeItem('U_trhe_T_sdji_Z');
+    localStorage.removeItem('_UOTZ_');
+    localStorage.removeItem('LoggedUserDateFormat');
+    localStorage.removeItem('LoggedUserTimeFormat');
+    localStorage.removeItem('LoggedUserTimeZone');
+    localStorage.removeItem('LoggedUserOrgTimeZone');
     this.clearToken();
     this.loggedInSubject.next(false);
     this.router.navigate(['/login']);

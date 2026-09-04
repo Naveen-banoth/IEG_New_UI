@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PermissionService } from '../../core/services/permission.service';
@@ -13,24 +13,24 @@ import { PermissionManagerComponent } from '../permission-manager/permission-man
   styleUrl: './unauthorized.component.css'
 })
 export class UnauthorizedComponent {
-  public deniedModule = '';
-  public deniedScreen = '';
-  public showManager = false;
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private permissionService = inject(PermissionService);
   private localDb = inject(LocalDbService);
-  public currentProfile = this.localDb.currentUserProfile;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private permissionService: PermissionService
-  ) {
+  public deniedModule = signal<string>('');
+  public deniedScreen = signal<string>('');
+  public showManager = signal<boolean>(false);
+  public currentProfile = signal(this.localDb.currentUserProfile);
+
+  constructor() {
     this.route.queryParams.subscribe(params => {
-      this.deniedModule = params['deniedModule'] || '';
-      this.deniedScreen = params['deniedScreen'] || '';
+      this.deniedModule.set(params['deniedModule'] || '');
+      this.deniedScreen.set(params['deniedScreen'] || '');
     });
 
     this.localDb.userProfile$.subscribe(p => {
-      this.currentProfile = p;
+      this.currentProfile.set(p);
     });
   }
 

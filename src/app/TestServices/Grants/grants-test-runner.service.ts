@@ -55,12 +55,12 @@ export class GrantsTestRunnerService {
     switch (item.id) {
       // 1. GENERAL INFO & AUDIENCE
       case 'GRT-GEN-1':
-        res = await firstValueFrom(this.generalInfoService.getMyApplicationsList(effective));
+        res = await firstValueFrom(this.generalInfoService.getAdvSearch(effective));
         item.matched = Array.isArray(res);
         break;
 
       case 'GRT-GEN-2':
-        res = await firstValueFrom(this.generalInfoService.getMySummarySearch(effective));
+        res = await firstValueFrom(this.generalInfoService.getMyApplicationsList(effective));
         item.matched = Array.isArray(res);
         break;
 

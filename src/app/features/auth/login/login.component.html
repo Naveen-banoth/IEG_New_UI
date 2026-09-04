@@ -13,10 +13,11 @@
         <!-- Brand Header -->
         <header class="login-info__brand">
           <div class="login-info__logo" aria-hidden="true">
-            <!-- <img *ngIf="src" [src]="src" alt="Logo" class="w-8 h-8 object-contain rounded-lg" (error)="src = 'assets/images/logo1.png'" /> -->
-            <svg *ngIf="!src" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hexagon w-5 h-5">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-            </svg>
+            @if (!src) {
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hexagon w-5 h-5">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              </svg>
+            }
           </div>
           <div class="login-info__brand-copy">
             <p class="login-info__brand-kicker">Secure clinical platform</p>
@@ -39,17 +40,20 @@
             </div>
           </header>
           
-          <div *ngIf="DynamicContent" class="login-info__compliance-card-body login-info__compliance-html" [innerHTML]="DynamicContent"></div>
-          <div *ngIf="!DynamicContent" class="login-info__compliance-card-body login-info__compliance-html">
-            <p>Scimax maintains HIPAA compliance in the United States. HIPAA compliance involves fulfilling the requirements of the Health Insurance Portability and Accountability Act of 1996, its subsequent amendments, and related legislation such as the Health Information Technology for Economic and Clinical Health (HITECH) Act.</p>
-            <p>Protected health information (PHI) handled in Scimax is safeguarded under the HIPAA Privacy Rule. Access is limited to authorized users for permitted treatment, payment, and healthcare operations, with role-based controls that keep investigator, sponsor, and operations teams within their approved scope.</p>
-            <p>The HIPAA Security Rule guides how Scimax protects electronic PHI. Platform controls include encrypted transport (TLS), encrypted storage for sensitive records, unique user authentication, session timeouts, and audit logging of access and key administrative actions.</p>
-            <p>Under the Breach Notification Rule and HITECH Act expectations, Scimax maintains documented incident response practices. Suspected unauthorized access or disclosure is investigated promptly, contained, and communicated according to applicable federal and organizational requirements.</p>
-            <p>Administrative safeguards include workforce training, access authorization procedures, contingency planning, and vendor oversight for systems that touch PHI. Physical and technical safeguards cover facility access, workstation security, and continuous monitoring of identity and access events.</p>
-            <p>Business associate obligations are addressed through contractual and operational controls with partners that create, receive, maintain, or transmit PHI on behalf of covered entities using Scimax. Data retention and disposal practices are aligned with program, legal, and compliance policies.</p>
-            <p>Users should only access applications and documents needed for their assigned responsibilities, avoid sharing credentials, and report suspected security issues immediately. Scimax support can assist with access requests, MFA reset workflows, and compliance documentation for audits.</p>
-            <p>This overview is provided for transparency on the login experience and does not replace your organization’s policies, BAAs, or formal compliance attestations. For detailed security whitepapers or audit packages, contact your Scimax administrator or customer success representative.</p>
-          </div>
+          @if (DynamicContent) {
+            <div class="login-info__compliance-card-body login-info__compliance-html" [innerHTML]="DynamicContent"></div>
+          } @else {
+            <div class="login-info__compliance-card-body login-info__compliance-html">
+              <p>Scimax maintains HIPAA compliance in the United States. HIPAA compliance involves fulfilling the requirements of the Health Insurance Portability and Accountability Act of 1996, its subsequent amendments, and related legislation such as the Health Information Technology for Economic and Clinical Health (HITECH) Act.</p>
+              <p>Protected health information (PHI) handled in Scimax is safeguarded under the HIPAA Privacy Rule. Access is limited to authorized users for permitted treatment, payment, and healthcare operations, with role-based controls that keep investigator, sponsor, and operations teams within their approved scope.</p>
+              <p>The HIPAA Security Rule guides how Scimax protects electronic PHI. Platform controls include encrypted transport (TLS), encrypted storage for sensitive records, unique user authentication, session timeouts, and audit logging of access and key administrative actions.</p>
+              <p>Under the Breach Notification Rule and HITECH Act expectations, Scimax maintains documented incident response practices. Suspected unauthorized access or disclosure is investigated promptly, contained, and communicated according to applicable federal and organizational requirements.</p>
+              <p>Administrative safeguards include workforce training, access authorization procedures, contingency planning, and vendor oversight for systems that touch PHI. Physical and technical safeguards cover facility access, workstation security, and continuous monitoring of identity and access events.</p>
+              <p>Business associate obligations are addressed through contractual and operational controls with partners that create, receive, maintain, or transmit PHI on behalf of covered entities using Scimax. Data retention and disposal practices are aligned with program, legal, and compliance policies.</p>
+              <p>Users should only access applications and documents needed for their assigned responsibilities, avoid sharing credentials, and report suspected security issues immediately. Scimax support can assist with access requests, MFA reset workflows, and compliance documentation for audits.</p>
+              <p>This overview is provided for transparency on the login experience and does not replace your organization’s policies, BAAs, or formal compliance attestations. For detailed security whitepapers or audit packages, contact your Scimax administrator or customer success representative.</p>
+            </div>
+          }
         </article>
 
         <!-- Trust Badges Row -->
@@ -106,49 +110,56 @@
             </div>
 
             <!-- Password Field (Step 2) -->
-            <div class="login-form__field" *ngIf="showPassword">
-              <label for="login-password" class="login-form__label">
-                Password <span class="text-red-500 normal-case">*</span>
-              </label>
-              <div class="login-form__password">
-                <input
-                  id="login-password"
-                  [type]="showPasswordText ? 'text' : 'password'"
-                  formControlName="password"
-                  name="loginPassword"
-                  placeholder="Enter your password"
-                  autocomplete="current-password"
-                  required
-                  class="login-form__input login-form__input--password glass-input w-full px-3 py-2 rounded-xl font-medium text-slate-900 focus:ring-4 focus:ring-primary-500/10">
-                <button
-                  type="button"
-                  class="login-form__password-toggle"
-                  (click)="togglePasswordVisibility()"
-                  [attr.aria-label]="showPasswordText ? 'Hide password' : 'Show password'"
-                  [attr.aria-pressed]="showPasswordText">
-                  <svg *ngIf="!showPasswordText" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="w-4 h-4 pointer-events-none">
-                    <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                  <svg *ngIf="showPasswordText" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="w-4 h-4 pointer-events-none">
-                    <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"></path>
-                    <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"></path>
-                    <path d="M17.479 17.499A10.75 10.75 0 0 1 2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 2.828-4.242"></path>
-                    <line x1="2" x2="22" y1="2" y2="22"></line>
-                  </svg>
-                </button>
+            @if (showPassword) {
+              <div class="login-form__field">
+                <label for="login-password" class="login-form__label">
+                  Password <span class="text-red-500 normal-case">*</span>
+                </label>
+                <div class="login-form__password">
+                  <input
+                    id="login-password"
+                    [type]="showPasswordText ? 'text' : 'password'"
+                    formControlName="password"
+                    name="loginPassword"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                    class="login-form__input login-form__input--password glass-input w-full px-3 py-2 rounded-xl font-medium text-slate-900 focus:ring-4 focus:ring-primary-500/10">
+                  <button
+                    type="button"
+                    class="login-form__password-toggle"
+                    (click)="togglePasswordVisibility()"
+                    [attr.aria-label]="showPasswordText ? 'Hide password' : 'Show password'"
+                    [attr.aria-pressed]="showPasswordText">
+                    @if (!showPasswordText) {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="w-4 h-4 pointer-events-none">
+                        <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="w-4 h-4 pointer-events-none">
+                        <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"></path>
+                        <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"></path>
+                        <path d="M17.479 17.499A10.75 10.75 0 0 1 2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 2.828-4.242"></path>
+                        <line x1="2" x2="22" y1="2" y2="22"></line>
+                      </svg>
+                    }
+                  </button>
+                </div>
               </div>
-            </div>
+            }
 
             <!-- Error Banner -->
-            <div *ngIf="errorMess" class="login-form__error-alert">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-alert-circle flex-shrink-0">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" x2="12" y1="8" y2="12"></line>
-                <line x1="12" x2="12.01" y1="16" y2="16"></line>
-              </svg>
-              <span>{{ errorMess }}</span>
-            </div>
+            @if (errorMess) {
+              <div class="login-form__error-alert">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-alert-circle flex-shrink-0">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" x2="12" y1="8" y2="12"></line>
+                  <line x1="12" x2="12.01" y1="16" y2="16"></line>
+                </svg>
+                <span>{{ errorMess }}</span>
+              </div>
+            }
 
             <!-- Submit & Action Buttons -->
             <div class="login-form__actions">
@@ -159,16 +170,20 @@
                 [disabled]="isLoading"
                 [attr.aria-busy]="isLoading">
                 <span aria-hidden="true" class="login-form__submit-leading">
-                  <span *ngIf="isLoading" class="login-form__submit-spinner"></span>
+                  @if (isLoading) {
+                    <span class="login-form__submit-spinner"></span>
+                  }
                 </span>
                 <span aria-live="polite" class="login-form__submit-label">
                   {{ showPassword ? (isLoading ? 'Signing In...' : 'Sign In Securely') : 'Continue' }}
                 </span>
                 <span aria-hidden="true" class="login-form__submit-icon-slot">
-                  <svg *ngIf="!isLoading" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
-                    <path d="M5 12h14"></path>
-                    <path d="m12 5 7 7-7 7"></path>
-                  </svg>
+                  @if (!isLoading) {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                      <path d="M5 12h14"></path>
+                      <path d="m12 5 7 7-7 7"></path>
+                    </svg>
+                  }
                 </span>
               </button>
 

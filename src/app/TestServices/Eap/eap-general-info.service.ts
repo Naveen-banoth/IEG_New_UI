@@ -8,27 +8,25 @@ import { formOptions, httpOptions, serviceConstants } from '../../constants/serv
 })
 export class EapGeneralInfoService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Fetch EAP applications list
-   * POST api/EAPGeneralInfo/GetApplicationsList
+   * GET api/EAPGeneralInfo/GetALLEAPApplicationsList
    */
-  getApplicationsList(search: any = { Status: 'ALL', PageIndex: 1, PageSize: 10 }): Observable<any[]> {
-    return this.http.post<any[]>(
-      `${serviceConstants.apiURL}api/EAPGeneralInfo/GetApplicationsList`,
-      search,
-      httpOptions
+  getApplicationsList(): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${serviceConstants.apiURL}api/EAPGeneralInfo/GetALLEAPApplicationsList`
     );
   }
 
   /**
    * Summary search for EAP applications
-   * POST api/EAPGeneralInfo/getSummarySearch
+   * POST api/EAPGeneralInfo/getALLEapSummarySearch
    */
   getSummarySearch(search: any = { SearchText: '', Status: '-1' }): Observable<any[]> {
     return this.http.post<any[]>(
-      `${serviceConstants.apiURL}api/EAPGeneralInfo/getSummarySearch`,
+      `${serviceConstants.apiURL}api/EAPGeneralInfo/getALLEapSummarySearch`,
       search,
       httpOptions
     );
@@ -47,13 +45,11 @@ export class EapGeneralInfoService {
 
   /**
    * Fetch My EAP Applications grid list
-   * POST api/EAPMyApplications/GetMyApplicationsList
+   * GET api/EAPGeneralInfo/GetMyEAPApplicationsList
    */
-  getMyApplicationsList(search: any = { PageIndex: 1, PageSize: 10 }): Observable<any[]> {
-    return this.http.post<any[]>(
-      `${serviceConstants.apiURL}api/EAPMyApplications/GetMyApplicationsList`,
-      search,
-      httpOptions
+  getMyApplicationsList(): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${serviceConstants.apiURL}api/EAPGeneralInfo/GetMyEAPApplicationsList`
     );
   }
 

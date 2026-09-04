@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +15,6 @@ import {
 } from '../../TestServices';
 import { ModulePermission, UserProfile } from '../../core/models/permissions.model';
 import { PermissionManagerComponent } from '../permission-manager/permission-manager.component';
-import { serviceConstants, httpOptions } from '../../constants/service.constants';
 
 @Component({
   selector: 'app-main-layout',
@@ -25,15 +24,26 @@ import { serviceConstants, httpOptions } from '../../constants/service.constants
   styleUrl: './main-layout.component.css'
 })
 export class MainLayoutComponent implements OnInit, OnDestroy {
-  public showPermissionModal = false;
-  public showProfileModal = false;
-  public showChangePasswordModal = false;
-  public currentUser: UserProfile | null = null;
-  public authorizedMenu: ModulePermission[] = [];
-  public activeDropdownModule: string | null = null;
-  public activeScreenName = 'All Applications';
-  public isDetailView = false;
-  public isSidebarCollapsed = true;
+  private http = inject(HttpClient);
+  private localDb = inject(LocalDbService);
+  private permissionService = inject(PermissionService);
+  private authService = inject(AuthService);
+  public superAdminAuth = inject(SuperAdminAuthService);
+  private commonSummary = inject(CommonSummaryService);
+  private alertsNotifications = inject(CommonAlertsNotificationsService);
+  private istGeneralInfo = inject(IstGeneralInfoService);
+  private router = inject(Router);
+
+  // Modern Reactive Signals
+  public showPermissionModal = signal<boolean>(false);
+  public showProfileModal = signal<boolean>(false);
+  public showChangePasswordModal = signal<boolean>(false);
+  public currentUser = signal<UserProfile | null>(null);
+  public authorizedMenu = signal<ModulePermission[]>([]);
+  public activeDropdownModule = signal<string | null>(null);
+  public activeScreenName = signal<string>('All Applications');
+  public isDetailView = signal<boolean>(false);
+  public isSidebarCollapsed = signal<boolean>(true);
 
   public selectedTimeZone = '(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi';
   public selectedCurrency = '$ - United States Dollar (United States)';
@@ -64,67 +74,71 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     confirm: ''
   };
 
-  public passwordBanner: { text: string; type: 'success' | 'error' } | null = null;
+  public passwordBanner = signal<{ text: string; type: 'success' | 'error' } | null>(null);
 
   private sub = new Subscription();
 
   toggleSidebar(): void {
-    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    this.isSidebarCollapsed.update(v => !v);
   }
 
   openProfileModal(): void {
-    this.showProfileModal = true;
-    this.showChangePasswordModal = false;
+    this.showProfileModal.set(true);
+    this.showChangePasswordModal.set(false);
+  }
+
+  closeProfileModal(): void {
+    this.showProfileModal.set(false);
   }
 
   openChangePassword(): void {
-    this.showChangePasswordModal = true;
-    this.passwordBanner = null;
+    this.showChangePasswordModal.set(true);
+    this.passwordBanner.set(null);
     this.passwordForm = { current: '', newPass: '', confirm: '' };
+  }
+
+  closeChangePassword(): void {
+    this.showChangePasswordModal.set(false);
+  }
+
+  openPermissionModal(): void {
+    this.showPermissionModal.set(true);
+  }
+
+  closePermissionModal(): void {
+    this.showPermissionModal.set(false);
   }
 
   submitPasswordChange(): void {
     if (!this.passwordForm.current || !this.passwordForm.newPass || !this.passwordForm.confirm) {
-      this.passwordBanner = { text: 'Please fill in all password fields.', type: 'error' };
+      this.passwordBanner.set({ text: 'Please fill in all password fields.', type: 'error' });
       return;
     }
     if (this.passwordForm.newPass !== this.passwordForm.confirm) {
-      this.passwordBanner = { text: 'New password and confirmation do not match.', type: 'error' };
+      this.passwordBanner.set({ text: 'New password and confirmation do not match.', type: 'error' });
       return;
     }
     if (this.passwordForm.newPass.length < 6) {
-      this.passwordBanner = { text: 'Password must be at least 6 characters long.', type: 'error' };
+      this.passwordBanner.set({ text: 'Password must be at least 6 characters long.', type: 'error' });
       return;
     }
-    this.passwordBanner = { text: 'Password changed successfully!', type: 'success' };
+    this.passwordBanner.set({ text: 'Password changed successfully!', type: 'success' });
     setTimeout(() => {
-      this.showChangePasswordModal = false;
-      this.passwordBanner = null;
+      this.showChangePasswordModal.set(false);
+      this.passwordBanner.set(null);
     }, 1500);
   }
-
-  constructor(
-    private http: HttpClient,
-    private localDb: LocalDbService,
-    private permissionService: PermissionService,
-    private authService: AuthService,
-    private superAdminAuth: SuperAdminAuthService,
-    private commonSummary: CommonSummaryService,
-    private alertsNotifications: CommonAlertsNotificationsService,
-    private istGeneralInfo: IstGeneralInfoService,
-    private router: Router
-  ) {}
 
   ngOnInit(): void {
     this.sub.add(
       this.localDb.userProfile$.subscribe(profile => {
-        this.currentUser = profile;
-        this.authorizedMenu = this.permissionService.getAuthorizedMenu();
+        this.currentUser.set(profile);
+        this.authorizedMenu.set(this.permissionService.getAuthorizedMenu());
       })
     );
 
     const userDetails = this.authService.getUserDetails();
-    const userType = userDetails?.USER_TYPE || (this.currentUser?.role === 'Super Admin' ? 'A' : 'I');
+    const userType = userDetails?.USER_TYPE || (this.currentUser()?.role === 'Super Admin' ? 'A' : 'I');
     const orgCode = this.authService.getOrgCode() || 'scimax';
 
     // Trigger after-login background calls directly via TestServices
@@ -166,7 +180,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       });
 
       // 5. IST Applications List: GET api/ISTGeneralInfo/GetApplicationsList
-      this.http.get(`${serviceConstants.apiURL}api/ISTGeneralInfo/GetApplicationsList`, httpOptions).subscribe({
+      this.istGeneralInfo.getApplicationsList().subscribe({
         next: (res: any) => console.log('Applications list loaded:', res ? 'OK' : 'Empty'),
         error: (err) => {
           this.istGeneralInfo.getApplicationsList().subscribe({
@@ -208,33 +222,173 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   }
 
   public onLogout(): void {
-    this.showProfileModal = false;
-    this.showChangePasswordModal = false;
+    this.showProfileModal.set(false);
+    this.showChangePasswordModal.set(false);
     this.authService.logout();
   }
 
   private checkRouteState(): void {
     const currentUrl = this.router.url;
     // When URL contains /detail, /administration, or /test-services, we hide top module tabs & generic header title so it renders full-screen!
-    this.isDetailView = currentUrl.includes('/detail') || currentUrl.includes('/administration') || currentUrl.includes('/test-services');
+    this.isDetailView.set(currentUrl.includes('/detail') || currentUrl.includes('/administration') || currentUrl.includes('/test-services'));
+  }
+
+  getUserName(): string {
+    const loginInfo = this.superAdminAuth.logindata();
+    if (loginInfo?.FullName) return loginInfo.FullName;
+    if (loginInfo?.FIRST_NAME) {
+      return `${loginInfo.FIRST_NAME} ${loginInfo.LAST_NAME || ''}`.trim();
+    }
+    if (loginInfo?.TITLE) return loginInfo.TITLE;
+    if (loginInfo?.Username) return loginInfo.Username;
+    return this.currentUser()?.name || '';
+  }
+
+  getUserEmail(): string {
+    const loginInfo = this.superAdminAuth.logindata();
+    return loginInfo?.EMAIL || loginInfo?.Email || loginInfo?.UserEmail || this.currentUser()?.email || '';
+  }
+
+  getUserRole(): string {
+    const loginInfo = this.superAdminAuth.logindata();
+    if (loginInfo?.ROLE_NAME) return loginInfo.ROLE_NAME;
+    if (loginInfo?.RoleName) return loginInfo.RoleName;
+    if (loginInfo?.USER_TYPE === 'A' || loginInfo?.CODE === 'SUPERADMIN') return 'Super Admin';
+    if (loginInfo?.USER_TYPE === 'E') return 'External User';
+    return this.currentUser()?.role || 'Administrator';
   }
 
   getUserInitials(): string {
-    if (!this.currentUser?.name) return 'AS';
-    return this.currentUser.name
+    const name = this.getUserName();
+    if (!name) return 'U';
+    return name
       .split(' ')
+      .filter(Boolean)
       .map(n => n[0])
       .join('')
       .substring(0, 2)
       .toUpperCase();
   }
 
-  getModuleDisplayName(code: string): string {
-    switch (code) {
-      case 'IST': return 'Investigator Sponsored Trial';
-      case 'EAP': return 'Expanded Access Program';
-      case 'GRANTS': return 'Grants';
-      default: return code;
+  getNavModules(): { id: string; name: string; route: string; screens: { name: string; route: string; code?: string; id?: string }[] }[] {
+    const loginInfo = this.superAdminAuth.logindata();
+    const features = loginInfo?.FEATURES || loginInfo?.Features;
+
+    if (Array.isArray(features) && features.length > 0) {
+      const validModules: { id: string; name: string; route: string; screens: { name: string; route: string; code?: string; id?: string }[] }[] = [];
+
+      for (const f of features) {
+        if (!f || !f.Name) continue;
+        const idLower = (f.Id || '').toLowerCase();
+
+        // Skip internal non-program console modules from main program pills
+        if (idLower === 'general' || idLower === 'auditlog') continue;
+
+        let baseRoute = '/' + idLower.replace('console', '');
+        if (!baseRoute || baseRoute === '/') {
+          baseRoute = '/ist';
+        }
+
+        const subScreens: { name: string; route: string; code?: string; id?: string }[] = [];
+        if (Array.isArray(f.Features) && f.Features.length > 0) {
+          for (const sub of f.Features) {
+            subScreens.push({
+              name: sub.Name || 'All Applications',
+              route: baseRoute,
+              code: sub.Code,
+              id: sub.Id
+            });
+          }
+        } else {
+          subScreens.push({
+            name: 'All Applications',
+            route: baseRoute
+          });
+        }
+
+        const existing = validModules.find(m => m.route === baseRoute || m.id === f.Id);
+        if (!existing) {
+          validModules.push({
+            id: f.Id || baseRoute.replace('/', ''),
+            name: f.Name,
+            route: baseRoute,
+            screens: subScreens
+          });
+        }
+      }
+
+      if (validModules.length > 0) {
+        return validModules;
+      }
     }
+
+    return [];
+  }
+
+  openDropdown(moduleId: string): void {
+    this.activeDropdownModule.set(moduleId);
+  }
+
+  closeDropdown(): void {
+    this.activeDropdownModule.set(null);
+  }
+
+  toggleDropdown(moduleId: string, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.activeDropdownModule.update(curr => curr === moduleId ? null : moduleId);
+  }
+
+  onModuleClick(mod: any, event?: Event): void {
+    if (mod.screens && mod.screens.length > 0) {
+      this.activeScreenName.set(mod.screens[0].name || 'All Applications');
+    } else {
+      this.activeScreenName.set('All Applications');
+    }
+    this.activeDropdownModule.set(null);
+  }
+
+  onScreenClick(scr: any, mod: any, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.activeScreenName.set(scr.name || 'All Applications');
+    this.activeDropdownModule.set(null);
+  }
+
+  getActiveProgramName(): string {
+    const currentUrl = this.router.url.toLowerCase();
+    const modules = this.getNavModules();
+
+    // Match by route
+    const match = modules.find(m => m.route && currentUrl.includes(m.route.toLowerCase()));
+    if (match) {
+      return match.name;
+    }
+
+    // Default to first feature name from login data if present
+    if (modules.length > 0) {
+      return modules[0].name;
+    }
+
+    const loginInfo = this.superAdminAuth.logindata();
+    const firstFeature = loginInfo?.FEATURES?.[0] || loginInfo?.Features?.[0];
+    return firstFeature?.Name || '';
+  }
+
+  getModuleDisplayName(code: string): string {
+    const loginInfo = this.superAdminAuth.logindata();
+    const features = loginInfo?.FEATURES || loginInfo?.Features;
+    if (Array.isArray(features) && features.length > 0) {
+      const codeUpper = (code || '').toUpperCase();
+      const match = features.find((f: any) =>
+        (f.Id && f.Id.toUpperCase() === codeUpper) ||
+        (f.Id && f.Id.toUpperCase().includes(codeUpper)) ||
+        (f.Name && f.Name.toUpperCase().includes(codeUpper))
+      );
+      if (match?.Name) return match.Name;
+    }
+    return code || '';
   }
 }

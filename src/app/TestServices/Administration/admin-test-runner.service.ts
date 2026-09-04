@@ -6,6 +6,7 @@ import { AdminInstructionsConfigService } from './admin-instructions-config.serv
 import { AdminPlatformLogsService } from './admin-platform-logs.service';
 import { AdminWorkflowPolicyService } from './admin-workflow-policy.service';
 import { AdminEmailConfigurationService } from './admin-email-configuration.service';
+import { AdminAnalyticsService } from './admin-analytics.service';
 import { DetailedTestItem, TestContextIds } from '../../features/test-services/test-services.types';
 import { getAdministrationTestItems } from '../../features/test-services/test-services-admin.data';
 
@@ -43,7 +44,8 @@ export class AdminTestRunnerService {
     private instructionsService: AdminInstructionsConfigService,
     private platformLogsService: AdminPlatformLogsService,
     private workflowPolicyService: AdminWorkflowPolicyService,
-    private emailConfigService: AdminEmailConfigurationService
+    private emailConfigService: AdminEmailConfigurationService,
+    private analyticsService: AdminAnalyticsService
   ) {
     // Expose test runner to window for direct browser console execution
     (window as any).runAdministrationApiTests = () => this.runAllTests();
@@ -382,6 +384,37 @@ export class AdminTestRunnerService {
 
       case 'ADM-WF-6':
         res = await firstValueFrom(this.workflowPolicyService.getTimeConfig());
+        item.matched = res !== undefined;
+        break;
+
+      // 7. ANALYTICS & DASHBOARDS
+      case 'ADM-ANALYTICS-1':
+        res = await firstValueFrom(this.analyticsService.getDashboardsDetails(effective || {}));
+        item.matched = res !== undefined;
+        break;
+
+      case 'ADM-ANALYTICS-2':
+        res = await firstValueFrom(this.analyticsService.getDashboardsDetailsID(effective?.id || 'DASH-IST-01'));
+        item.matched = res !== undefined;
+        break;
+
+      case 'ADM-ANALYTICS-3':
+        res = await firstValueFrom(this.analyticsService.getUserDashboards());
+        item.matched = Array.isArray(res) || res !== undefined;
+        break;
+
+      case 'ADM-ANALYTICS-4':
+        res = await firstValueFrom(this.analyticsService.postOrgDetails(effective));
+        item.matched = res !== undefined;
+        break;
+
+      case 'ADM-ANALYTICS-5':
+        res = await firstValueFrom(this.analyticsService.refreshOrgDetails(effective));
+        item.matched = res !== undefined;
+        break;
+
+      case 'ADM-ANALYTICS-6':
+        res = await firstValueFrom(this.analyticsService.fetchUpdatedAnalytics());
         item.matched = res !== undefined;
         break;
 

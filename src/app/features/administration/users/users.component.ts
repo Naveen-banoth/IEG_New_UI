@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -6,7 +6,6 @@ import { AdminUserManagementService } from '../../../TestServices/Administration
 import { UserItem } from '../../../core/models/administration.model';
 
 export { UserItem };
-
 
 import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-user-toolbar.component';
 
@@ -18,20 +17,22 @@ import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-us
   styleUrl: './users.component.scss'
 })
 export class UsersComponent implements OnInit {
-  public searchExpanded = false;
-  public searchKeyword = '';
-  public filterDepartment = '';
-  public filterStatus = '';
-  public isLoading = false;
-  public isSaving = false;
+  private userMgmtService = inject(AdminUserManagementService);
 
-  public showUserModal = false;
-  public isEditMode = false;
-  public activeActionMenuId: string | null = null;
-  public showDeptDropdown = false;
-  public deptSearch = '';
+  public searchExpanded = signal<boolean>(false);
+  public searchKeyword = signal<string>('');
+  public filterDepartment = signal<string>('');
+  public filterStatus = signal<string>('');
+  public isLoading = signal<boolean>(false);
+  public isSaving = signal<boolean>(false);
 
-  public allDepartments: string[] = [
+  public showUserModal = signal<boolean>(false);
+  public isEditMode = signal<boolean>(false);
+  public activeActionMenuId = signal<string | null>(null);
+  public showDeptDropdown = signal<boolean>(false);
+  public deptSearch = signal<string>('');
+
+  public allDepartments = signal<string[]>([
     'Development',
     'Developers/Coders',
     'Testing',
@@ -45,7 +46,7 @@ export class UsersComponent implements OnInit {
     'Pharmacovigilance',
     'Grants & Funding',
     'Biostatistics'
-  ];
+  ]);
 
   public authOptions: string[] = [
     'Basic Authentication',
@@ -66,7 +67,7 @@ export class UsersComponent implements OnInit {
     active: true
   };
 
-  public usersList: UserItem[] = [
+  public usersList = signal<UserItem[]>([
     {
       id: 'USR-1',
       username: 's',
@@ -188,12 +189,43 @@ export class UsersComponent implements OnInit {
       authType: 'Basic Authentication',
       active: true
     }
-  ];
+  ]);
 
-  public currentPage = 1;
-  public pageSize = 10;
+  public currentPage = signal<number>(1);
+  public pageSize = signal<number>(10);
 
-  constructor(private userMgmtService: AdminUserManagementService) {}
+  public filteredUsers = computed(() => {
+    const key = this.searchKeyword().toLowerCase().trim();
+    const dept = this.filterDepartment().toLowerCase().trim();
+    const status = this.filterStatus();
+
+    return this.usersList().filter(u => {
+      const matchKey = !key || 
+        u.username.toLowerCase().includes(key) || 
+        u.email.toLowerCase().includes(key);
+      const matchDept = !dept || u.department.toLowerCase().includes(dept);
+      const matchStatus = !status || (status === 'Active' ? u.active : !u.active);
+      return matchKey && matchDept && matchStatus;
+    });
+  });
+
+  public paginatedUsers = computed(() => {
+    const page = this.currentPage();
+    const size = this.pageSize();
+    const start = (page - 1) * size;
+    return this.filteredUsers().slice(start, start + size);
+  });
+
+  public totalPages = computed(() => {
+    return Math.ceil(this.filteredUsers().length / this.pageSize()) || 1;
+  });
+
+  public filteredDepartmentsList = computed(() => {
+    const query = this.deptSearch().toLowerCase().trim();
+    const all = this.allDepartments();
+    if (!query) return all;
+    return all.filter(d => d.toLowerCase().includes(query));
+  });
 
   ngOnInit(): void {
     this.loadUsers();
@@ -201,23 +233,23 @@ export class UsersComponent implements OnInit {
   }
 
   loadUsers(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     const payload = {
       CODE: '',
-      TITLE: this.searchKeyword || '',
-      EMAIL: this.searchKeyword || '',
-      DEPARTMENT_ID: this.filterDepartment || '',
+      TITLE: this.searchKeyword() || '',
+      EMAIL: this.searchKeyword() || '',
+      DEPARTMENT_ID: this.filterDepartment() || '',
       ROLEID: '',
-      STATUS: this.filterStatus === 'Active' ? '1' : this.filterStatus === 'Inactive' ? '0' : '-1',
+      STATUS: this.filterStatus() === 'Active' ? '1' : this.filterStatus() === 'Inactive' ? '0' : '-1',
       RECORD_STATE: 101
     };
 
     this.userMgmtService.getUsersAdvSearch(payload).subscribe({
       next: (res: any) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         const records = Array.isArray(res) ? res : (res?.Data && Array.isArray(res.Data) ? res.Data : []);
         if (records.length > 0) {
-          this.usersList = records.map((u: any, idx: number) => {
+          const mapped = records.map((u: any, idx: number) => {
             const deptStr = u.DEPARTMENT_NAME || u.DEPARTMENT || (u.DEPARTMENT_ID ? String(u.DEPARTMENT_ID) : '—');
             const deptsArray = deptStr && deptStr !== '—' ? deptStr.split(',').map((d: string) => d.trim()) : [];
             return {
@@ -234,10 +266,11 @@ export class UsersComponent implements OnInit {
               raw: u
             };
           });
+          this.usersList.set(mapped);
         }
       },
       error: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
       }
     });
   }
@@ -249,7 +282,7 @@ export class UsersComponent implements OnInit {
         if (list.length > 0) {
           const deptNames = list.map((d: any) => d.NAME || d.label || d.Value).filter(Boolean);
           if (deptNames.length > 0) {
-            this.allDepartments = Array.from(new Set([...this.allDepartments, ...deptNames]));
+            this.allDepartments.update(all => Array.from(new Set([...all, ...deptNames])));
           }
         }
       },
@@ -257,46 +290,22 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  get filteredUsers(): UserItem[] {
-    return this.usersList.filter(u => {
-      const matchKey = !this.searchKeyword || 
-        u.username.toLowerCase().includes(this.searchKeyword.toLowerCase()) || 
-        u.email.toLowerCase().includes(this.searchKeyword.toLowerCase());
-      const matchDept = !this.filterDepartment || u.department.toLowerCase().includes(this.filterDepartment.toLowerCase());
-      const matchStatus = !this.filterStatus || (this.filterStatus === 'Active' ? u.active : !u.active);
-      return matchKey && matchDept && matchStatus;
-    });
-  }
-
-  get paginatedUsers(): UserItem[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredUsers.slice(start, start + this.pageSize);
-  }
-
-  get totalPages(): number {
-    return Math.ceil(this.filteredUsers.length / this.pageSize) || 1;
-  }
-
-  get filteredDepartmentsList(): string[] {
-    if (!this.deptSearch) return this.allDepartments;
-    return this.allDepartments.filter(d => d.toLowerCase().includes(this.deptSearch.toLowerCase()));
-  }
-
   toggleSearchCriteria(): void {
-    this.searchExpanded = !this.searchExpanded;
+    this.searchExpanded.update(v => !v);
   }
 
   clearSearch(): void {
-    this.searchKeyword = '';
-    this.filterDepartment = '';
-    this.filterStatus = '';
+    this.searchKeyword.set('');
+    this.filterDepartment.set('');
+    this.filterStatus.set('');
+    this.currentPage.set(1);
     this.loadUsers();
   }
 
   openAddModal(): void {
-    this.isEditMode = false;
+    this.isEditMode.set(false);
     this.userForm = {
-      id: 'USR-' + (this.usersList.length + 1),
+      id: 'USR-' + (this.usersList().length + 1),
       username: '',
       email: '',
       phone: '',
@@ -306,33 +315,34 @@ export class UsersComponent implements OnInit {
       authType: 'Basic Authentication',
       active: true
     };
-    this.showDeptDropdown = false;
-    this.showUserModal = true;
+    this.showDeptDropdown.set(false);
+    this.showUserModal.set(true);
   }
 
   openEditModal(user: UserItem): void {
-    this.isEditMode = true;
+    this.isEditMode.set(true);
     this.userForm = {
       ...user,
       departments: user.departments.length > 0 ? [...user.departments] : (user.department !== '—' ? [user.department] : [])
     };
-    this.showDeptDropdown = false;
-    this.showUserModal = true;
-    this.activeActionMenuId = null;
+    this.showDeptDropdown.set(false);
+    this.showUserModal.set(true);
+    this.activeActionMenuId.set(null);
   }
 
   saveUser(): void {
     if (!this.userForm.username || !this.userForm.email) return;
 
-    this.isSaving = true;
+    this.isSaving.set(true);
     this.userForm.department = this.userForm.departments.length > 0 
       ? this.userForm.departments.join(', ') 
       : '—';
 
     const raw = this.userForm.raw || {};
+    const isEdit = this.isEditMode();
     const payload = {
       ...raw,
-      ID: this.isEditMode && this.userForm.id && !this.userForm.id.startsWith('USR-') ? this.userForm.id : (raw.ID || ''),
+      ID: isEdit && this.userForm.id && !this.userForm.id.startsWith('USR-') ? this.userForm.id : (raw.ID || ''),
       TITLE: this.userForm.username,
       FIRST_NAME: this.userForm.username,
       EMAIL: this.userForm.email,
@@ -345,48 +355,50 @@ export class UsersComponent implements OnInit {
       RECORD_STATE: this.userForm.active ? 1 : 0
     };
 
-    if (this.isEditMode) {
+    if (isEdit) {
       this.userMgmtService.updateUser(payload).subscribe({
         next: () => {
-          this.isSaving = false;
-          this.showUserModal = false;
+          this.isSaving.set(false);
+          this.showUserModal.set(false);
           this.loadUsers();
         },
         error: () => {
-          this.isSaving = false;
-          const idx = this.usersList.findIndex(u => u.id === this.userForm.id);
+          this.isSaving.set(false);
+          const list = [...this.usersList()];
+          const idx = list.findIndex(u => u.id === this.userForm.id);
           if (idx !== -1) {
-            this.usersList[idx] = { ...this.userForm };
+            list[idx] = { ...this.userForm };
+            this.usersList.set(list);
           }
-          this.showUserModal = false;
+          this.showUserModal.set(false);
         }
       });
     } else {
       this.userMgmtService.insertUser(payload).subscribe({
         next: () => {
-          this.isSaving = false;
-          this.showUserModal = false;
+          this.isSaving.set(false);
+          this.showUserModal.set(false);
           this.loadUsers();
         },
         error: () => {
-          this.isSaving = false;
-          this.usersList.unshift({ ...this.userForm });
-          this.showUserModal = false;
+          this.isSaving.set(false);
+          this.usersList.update(list => [{ ...this.userForm }, ...list]);
+          this.showUserModal.set(false);
         }
       });
     }
   }
 
   deleteUser(userId: string): void {
-    const rawUser = this.usersList.find(u => u.id === userId);
+    const rawUser = this.usersList().find(u => u.id === userId);
     const apiId = rawUser?.raw?.ID || userId;
 
-    this.usersList = this.usersList.filter(u => u.id !== userId);
+    this.usersList.update(list => list.filter(u => u.id !== userId));
     this.userMgmtService.deleteUser(apiId).subscribe({
       next: () => {},
       error: () => {}
     });
-    this.activeActionMenuId = null;
+    this.activeActionMenuId.set(null);
   }
 
   toggleUserStatus(user: UserItem): void {
@@ -405,7 +417,7 @@ export class UsersComponent implements OnInit {
       next: () => {},
       error: () => {}
     });
-    this.activeActionMenuId = null;
+    this.activeActionMenuId.set(null);
   }
 
   toggleDeptSelection(dept: string): void {
@@ -422,10 +434,10 @@ export class UsersComponent implements OnInit {
   }
 
   selectAllDepartments(): void {
-    if (this.userForm.departments.length === this.allDepartments.length) {
+    if (this.userForm.departments.length === this.allDepartments().length) {
       this.userForm.departments = [];
     } else {
-      this.userForm.departments = [...this.allDepartments];
+      this.userForm.departments = [...this.allDepartments()];
     }
   }
 
@@ -438,7 +450,6 @@ export class UsersComponent implements OnInit {
 
   toggleActionMenu(event: MouseEvent, id: string): void {
     event.stopPropagation();
-    this.activeActionMenuId = this.activeActionMenuId === id ? null : id;
+    this.activeActionMenuId.set(this.activeActionMenuId() === id ? null : id);
   }
 }
-

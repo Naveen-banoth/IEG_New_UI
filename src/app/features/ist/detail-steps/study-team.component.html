@@ -18,15 +18,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let member of teamMembers; let i = index">
-          <td class="col-fullname">{{ member.fullName }}</td>
-          <td class="col-occupation">{{ member.occupation }}</td>
-          <td class="col-email">{{ member.emailId }}</td>
-          <td class="text-right">
-            <button class="btn-sm-edit">Edit</button>
-            <button class="btn-sm-remove" (click)="removeMember(i)">Remove</button>
-          </td>
-        </tr>
+        @for (member of teamMembers; track member.emailId; let i = $index) {
+          <tr>
+            <td class="col-fullname">{{ member.fullName }}</td>
+            <td class="col-occupation">{{ member.occupation }}</td>
+            <td class="col-email">{{ member.emailId }}</td>
+            <td class="text-right">
+              <button class="btn-sm-edit">Edit</button>
+              <button class="btn-sm-remove" (click)="removeMember(i)">Remove</button>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>

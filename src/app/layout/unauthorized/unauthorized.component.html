@@ -7,33 +7,40 @@
     <span class="error-badge">403 Access Denied</span>
     <h2>Permission Required</h2>
     <p class="desc">
-      Your current account role <strong class="highlight">({{ currentProfile.role }})</strong> does not have permission in 
+      Your current account role <strong class="highlight">({{ currentProfile().role }})</strong> does not have permission in 
       the Local DB to access this resource.
     </p>
 
-    <div class="denied-details" *ngIf="deniedModule || deniedScreen">
-      <div class="detail-item" *ngIf="deniedModule">
-        <span class="label">Missing Module Access:</span>
-        <span class="value code-tag">{{ deniedModule }}</span>
+    @if (deniedModule() || deniedScreen()) {
+      <div class="denied-details">
+        @if (deniedModule()) {
+          <div class="detail-item">
+            <span class="label">Missing Module Access:</span>
+            <span class="value code-tag">{{ deniedModule() }}</span>
+          </div>
+        }
+        @if (deniedScreen()) {
+          <div class="detail-item">
+            <span class="label">Missing Screen Access:</span>
+            <span class="value code-tag">{{ deniedScreen() }}</span>
+          </div>
+        }
       </div>
-      <div class="detail-item" *ngIf="deniedScreen">
-        <span class="label">Missing Screen Access:</span>
-        <span class="value code-tag">{{ deniedScreen }}</span>
-      </div>
-    </div>
+    }
 
     <div class="actions">
       <button class="btn btn-primary" (click)="goToFirstAvailableScreen()">
         Go to My Authorized Home
       </button>
-      <button class="btn btn-secondary" (click)="showManager = true">
+      <button class="btn btn-secondary" (click)="showManager.set(true)">
         Manage Local DB Permissions
       </button>
     </div>
   </div>
 </div>
 
-<app-permission-manager 
-  *ngIf="showManager" 
-  (close)="showManager = false">
-</app-permission-manager>
+@if (showManager()) {
+  <app-permission-manager 
+    (close)="showManager.set(false)">
+  </app-permission-manager>
+}

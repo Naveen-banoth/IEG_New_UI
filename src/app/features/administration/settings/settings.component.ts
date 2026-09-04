@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AdminUserManagementService } from '../../../TestServices/Administration/admin-user-management.service';
-
 
 import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-user-toolbar.component';
 
@@ -15,13 +14,15 @@ import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-us
   styleUrl: './settings.component.scss'
 })
 export class SettingsComponent implements OnInit {
+  private userMgmtService = inject(AdminUserManagementService);
+
   public accountActivity = 'Enabled for all portal users';
   public correspondence = 'Automated system digests & webhooks';
   public timeZone = '(UTC-05:00) Eastern Time (US & Canada)';
   public currency = 'USD ($)';
   
-  public isSavedAlert = false;
-  public showTextPreview = false;
+  public isSavedAlert = signal<boolean>(false);
+  public showTextPreview = signal<boolean>(false);
 
   public loginScreenText = `Scimax maintains HIPAA compliance in the United States. HIPAA compliance involves fulfilling the requirements of the Health Insurance Portability and Accountability Act of 1996, its subsequent amendments, and related regulations such as the HITECH Act. All data transmissions are encrypted with AES-256 standards.`;
 
@@ -29,7 +30,7 @@ export class SettingsComponent implements OnInit {
   public activeFontSize = '15px';
   public activeFormat = 'Paragraph';
 
-  public timezonesList: string[] = [
+  public timezonesList = signal<string[]>([
     '(UTC-08:00) Pacific Time (US & Canada)',
     '(UTC-07:00) Mountain Time (US & Canada)',
     '(UTC-06:00) Central Time (US & Canada)',
@@ -39,7 +40,7 @@ export class SettingsComponent implements OnInit {
     '(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi',
     '(UTC+08:00) Singapore, Beijing, Perth',
     '(UTC+09:00) Tokyo, Seoul'
-  ];
+  ]);
 
   public accountActivityOptions: string[] = [
     'Enabled for all portal users',
@@ -53,8 +54,6 @@ export class SettingsComponent implements OnInit {
     'Batch nightly summaries'
   ];
 
-  constructor(private userMgmtService: AdminUserManagementService) {}
-
   ngOnInit(): void {
     this.loadSettings();
   }
@@ -66,7 +65,7 @@ export class SettingsComponent implements OnInit {
         if (list.length > 0) {
           const tzNames = list.map((t: any) => t.DisplayName || t.TimeZone || t.Value || t.label || t).filter(Boolean);
           if (tzNames.length > 0) {
-            this.timezonesList = Array.from(new Set([...this.timezonesList, ...tzNames]));
+            this.timezonesList.update(all => Array.from(new Set([...all, ...tzNames])));
           }
         }
       },
@@ -94,14 +93,13 @@ export class SettingsComponent implements OnInit {
       error: () => {}
     });
 
-    this.isSavedAlert = true;
+    this.isSavedAlert.set(true);
     setTimeout(() => {
-      this.isSavedAlert = false;
+      this.isSavedAlert.set(false);
     }, 3000);
   }
 
-  formatText(command: string, value: string = ''): void {
-    document.execCommand(command, false, value);
+  formatText(cmd: string): void {
+    document.execCommand(cmd, false, undefined);
   }
 }
-

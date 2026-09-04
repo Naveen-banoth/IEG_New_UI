@@ -47,6 +47,30 @@ export const routes: Routes = [
         loadChildren: () => import('./features/administration/administration.routes').then(m => m.ADMINISTRATION_ROUTES)
       },
       {
+        path: 'home/ist/applications',
+        redirectTo: 'ist'
+      },
+      {
+        path: 'home/eap/applications',
+        redirectTo: 'eap'
+      },
+      {
+        path: 'home/grants/applications',
+        redirectTo: 'grants'
+      },
+      {
+        path: 'ist/applications',
+        redirectTo: 'ist'
+      },
+      {
+        path: 'eap/applications',
+        redirectTo: 'eap'
+      },
+      {
+        path: 'grants/applications',
+        redirectTo: 'grants'
+      },
+      {
         path: 'internal/dashboard/ist',
         redirectTo: 'ist'
       },

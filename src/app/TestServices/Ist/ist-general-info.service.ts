@@ -8,17 +8,15 @@ import { formOptions, httpOptions, serviceConstants } from '../../constants/serv
 })
 export class IstGeneralInfoService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Fetch IST applications list
-   * POST api/ISTGeneralInfo/GetApplicationsList
+   * GET api/ISTGeneralInfo/GetApplicationsList
    */
-  getApplicationsList(search: any = { Status: 'ALL', PageIndex: 1, PageSize: 10 }): Observable<any[]> {
-    return this.http.post<any[]>(
-      `${serviceConstants.apiURL}api/ISTGeneralInfo/GetApplicationsList`,
-      search,
-      httpOptions
+  getApplicationsList(): Observable<any> {
+    return this.http.get<any>(
+      `${serviceConstants.apiURL}api/ISTGeneralInfo/GetApplicationsList`
     );
   }
 
@@ -47,13 +45,11 @@ export class IstGeneralInfoService {
 
   /**
    * Fetch My IST Applications grid list
-   * POST api/ISTMyApplications/GetMyApplicationsList
+   * GET api/ISTMyApplications/GetMyApplicationsList
    */
-  getMyApplicationsList(search: any = { PageIndex: 1, PageSize: 10 }): Observable<any[]> {
-    return this.http.post<any[]>(
-      `${serviceConstants.apiURL}api/ISTMyApplications/GetMyApplicationsList`,
-      search,
-      httpOptions
+  getMyApplicationsList(): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${serviceConstants.apiURL}api/ISTMyApplications/GetMyApplicationsList`
     );
   }
 

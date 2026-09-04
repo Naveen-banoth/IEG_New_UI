@@ -100,7 +100,7 @@ export class AdministrationComponent {
         {
           header: 'ANALYTICS',
           items: [
-            { title: 'Dashboards', route: '/ist/dashboard' }
+            { title: 'Dashboards', route: '/administration/analytics' }
           ]
         }
       ]

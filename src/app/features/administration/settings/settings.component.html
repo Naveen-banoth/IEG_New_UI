@@ -23,10 +23,12 @@
   </div>
 
   <!-- Success Notification -->
-  <div class="success-banner" *ngIf="isSavedAlert">
-    <i class="ph ph-check-circle" style="font-size: 1.15rem;"></i>
-    <span>Settings successfully saved and synchronized across all nodes.</span>
-  </div>
+  @if (isSavedAlert()) {
+    <div class="success-banner">
+      <i class="ph ph-check-circle" style="font-size: 1.15rem;"></i>
+      <span>Settings successfully saved and synchronized across all nodes.</span>
+    </div>
+  }
 
   <div class="settings-cards-list">
     <!-- Card 1: Account Activities & Correspondence -->
@@ -35,14 +37,18 @@
         <div class="form-field">
           <label class="field-label">Account Activities <span class="required-star">*</span></label>
           <select [(ngModel)]="accountActivity" class="scimax-input select-styled">
-            <option *ngFor="let opt of accountActivityOptions" [value]="opt">{{ opt }}</option>
+            @for (opt of accountActivityOptions; track opt) {
+              <option [value]="opt">{{ opt }}</option>
+            }
           </select>
         </div>
 
         <div class="form-field">
           <label class="field-label">Correspondence <span class="required-star">*</span></label>
           <select [(ngModel)]="correspondence" class="scimax-input select-styled">
-            <option *ngFor="let opt of correspondenceOptions" [value]="opt">{{ opt }}</option>
+            @for (opt of correspondenceOptions; track opt) {
+              <option [value]="opt">{{ opt }}</option>
+            }
           </select>
         </div>
       </div>
@@ -56,7 +62,9 @@
       <div class="form-field max-w-half">
         <label class="field-label">Time Zone</label>
         <select [(ngModel)]="timeZone" class="scimax-input select-styled">
-          <option *ngFor="let tz of timezonesList" [value]="tz">{{ tz }}</option>
+          @for (tz of timezonesList(); track tz) {
+            <option [value]="tz">{{ tz }}</option>
+          }
         </select>
       </div>
     </div>
@@ -65,13 +73,13 @@
     <div class="section-card">
       <div class="title-with-pill">
         <h2 class="section-title">Login Screen Text</h2>
-        <button class="pill-preview-btn" (click)="showTextPreview = !showTextPreview">
-          {{ showTextPreview ? 'Close Preview' : 'Preview' }}
+        <button class="pill-preview-btn" (click)="showTextPreview.set(!showTextPreview())">
+          {{ showTextPreview() ? 'Close Preview' : 'Preview' }}
         </button>
       </div>
       <p class="section-desc">Compose the compliance message shown on the login experience.</p>
 
-      <!-- Rich Text Editor Container (Exact replicate from scimaxieg) -->
+      <!-- Rich Text Editor Container -->
       <div class="rich-editor-wrapper">
         <!-- Menu Bar Row -->
         <div class="editor-menu-bar">
@@ -140,11 +148,15 @@
         </div>
       </div>
 
-      <!-- Preview Modal if toggled -->
-      <div class="login-preview-box" *ngIf="showTextPreview">
-        <div class="preview-tag">Live Login Screen Banner Preview</div>
-        <p class="preview-text-rendered">{{ loginScreenText }}</p>
-      </div>
+      <!-- Live Preview Drawer -->
+      @if (showTextPreview()) {
+        <div class="live-preview-box">
+          <div class="preview-tag">LIVE PREVIEW</div>
+          <div class="preview-content-rendered" [style.font-family]="activeFont" [style.font-size]="activeFontSize">
+            <p>{{ loginScreenText }}</p>
+          </div>
+        </div>
+      }
     </div>
   </div>
 </div>

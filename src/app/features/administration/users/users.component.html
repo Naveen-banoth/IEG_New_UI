@@ -1,4 +1,4 @@
-<div class="admin-subpage-container" (click)="activeActionMenuId = null; showDeptDropdown = false">
+<div class="admin-subpage-container" (click)="activeActionMenuId.set(null); showDeptDropdown.set(false)">
   <!-- Top Breadcrumbs & Page Header -->
   <div class="subpage-header">
     <div class="header-titles">
@@ -25,36 +25,51 @@
   <!-- Search Criteria Accordion Card -->
   <div class="search-criteria-card">
     <button class="criteria-toggle" (click)="toggleSearchCriteria(); $event.stopPropagation()">
-      <span class="toggle-symbol">{{ searchExpanded ? '-' : '+' }}</span>
+      <span class="toggle-symbol">{{ searchExpanded() ? '-' : '+' }}</span>
       <span class="toggle-label">Search Criteria</span>
     </button>
 
-    <div class="criteria-body" *ngIf="searchExpanded">
-      <div class="criteria-grid">
-        <div class="form-group">
-          <label>Username / Email</label>
-          <input type="text" [(ngModel)]="searchKeyword" placeholder="Search by name or email..." class="filter-input" />
+    @if (searchExpanded()) {
+      <div class="criteria-body">
+        <div class="criteria-grid">
+          <div class="form-group">
+            <label>Username / Email</label>
+            <input 
+              type="text" 
+              [ngModel]="searchKeyword()" 
+              (ngModelChange)="searchKeyword.set($event); currentPage.set(1)" 
+              placeholder="Search by name or email..." 
+              class="filter-input" />
+          </div>
+          <div class="form-group">
+            <label>Department</label>
+            <select 
+              [ngModel]="filterDepartment()" 
+              (ngModelChange)="filterDepartment.set($event); currentPage.set(1)" 
+              class="filter-input">
+              <option value="">All Departments</option>
+              @for (dept of allDepartments(); track dept) {
+                <option [value]="dept">{{ dept }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select 
+              [ngModel]="filterStatus()" 
+              (ngModelChange)="filterStatus.set($event); currentPage.set(1)" 
+              class="filter-input">
+              <option value="">All Statuses</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Department</label>
-          <select [(ngModel)]="filterDepartment" class="filter-input">
-            <option value="">All Departments</option>
-            <option *ngFor="let dept of allDepartments" [value]="dept">{{ dept }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Status</label>
-          <select [(ngModel)]="filterStatus" class="filter-input">
-            <option value="">All Statuses</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
+        <div class="criteria-actions">
+          <button class="btn-reset-filter" (click)="clearSearch()">Clear Filters</button>
         </div>
       </div>
-      <div class="criteria-actions">
-        <button class="btn-reset-filter" (click)="clearSearch()">Clear Filters</button>
-      </div>
-    </div>
+    }
   </div>
 
   <!-- Table Container Card -->
@@ -62,18 +77,20 @@
     <!-- Meta info & Pagination -->
     <div class="table-meta-bar">
       <span class="meta-count">
-        Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ (currentPage * pageSize > filteredUsers.length) ? filteredUsers.length : currentPage * pageSize }} of {{ filteredUsers.length }}
+        Showing {{ (currentPage() - 1) * pageSize() + 1 }} to {{ (currentPage() * pageSize() > filteredUsers().length) ? filteredUsers().length : currentPage() * pageSize() }} of {{ filteredUsers().length }}
       </span>
 
-      <div class="pagination-controls" *ngIf="totalPages > 1">
-        <button class="page-arrow" [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1">
-          <i class="ph ph-caret-left"></i>
-        </button>
-        <span class="page-num active">{{ currentPage }}</span>
-        <button class="page-arrow" [disabled]="currentPage === totalPages" (click)="currentPage = currentPage + 1">
-          <i class="ph ph-caret-right"></i>
-        </button>
-      </div>
+      @if (totalPages() > 1) {
+        <div class="pagination-controls">
+          <button class="page-arrow" [disabled]="currentPage() === 1" (click)="currentPage.set(currentPage() - 1)">
+            <i class="ph ph-caret-left"></i>
+          </button>
+          <span class="page-num active">{{ currentPage() }}</span>
+          <button class="page-arrow" [disabled]="currentPage() === totalPages()" (click)="currentPage.set(currentPage() + 1)">
+            <i class="ph ph-caret-right"></i>
+          </button>
+        </div>
+      }
     </div>
 
     <!-- Data Table -->
@@ -88,162 +105,186 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let user of paginatedUsers" (click)="openEditModal(user)">
-            <td class="td-username">
-              <span class="user-link-name">{{ user.username }}</span>
-            </td>
-            <td class="td-department">
-              {{ user.department }}
-            </td>
-            <td class="td-status">
-              <span class="status-badge" [ngClass]="user.active ? 'badge-active' : 'badge-inactive'">
-                {{ user.active ? 'Active' : 'Inactive' }}
-              </span>
-            </td>
-            <td class="td-actions" (click)="$event.stopPropagation()">
-              <div class="action-dropdown-anchor">
-                <button class="btn-more-dots" (click)="toggleActionMenu($event, user.id)">
-                  <i class="ph ph-dots-three-vertical"></i>
-                </button>
+          @for (user of paginatedUsers(); track user.id) {
+            <tr (click)="openEditModal(user)">
+              <td class="td-username">
+                <span class="user-link-name">{{ user.username }}</span>
+                @if (user.role) {
+                  <div class="role-desc-preview">{{ user.role }} &bull; {{ user.email }}</div>
+                }
+              </td>
+              <td class="td-department">
+                {{ user.department }}
+              </td>
+              <td class="td-status">
+                <span class="status-badge" [ngClass]="user.active ? 'badge-active' : 'badge-inactive'">
+                  {{ user.active ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td class="td-actions" (click)="$event.stopPropagation()">
+                <div class="action-dropdown-anchor">
+                  <button class="btn-more-dots" (click)="toggleActionMenu($event, user.id)">
+                    <i class="ph ph-dots-three-vertical"></i>
+                  </button>
 
-                <!-- Actions popover -->
-                <div class="action-popover" *ngIf="activeActionMenuId === user.id">
-                  <button class="pop-item" (click)="openEditModal(user)">
-                    <i class="ph ph-pencil-simple"></i>
-                    <span>Edit User</span>
-                  </button>
-                  <button class="pop-item" (click)="toggleUserStatus(user)">
-                    <i class="ph ph-power"></i>
-                    <span>{{ user.active ? 'Deactivate' : 'Activate' }}</span>
-                  </button>
-                  <button class="pop-item item-danger" (click)="deleteUser(user.id)">
-                    <i class="ph ph-trash"></i>
-                    <span>Delete User</span>
-                  </button>
+                  <!-- Actions popover -->
+                  @if (activeActionMenuId() === user.id) {
+                    <div class="action-popover">
+                      <button class="pop-item" (click)="openEditModal(user)">
+                        <i class="ph ph-pencil-simple"></i>
+                        <span>Edit User</span>
+                      </button>
+                      <button class="pop-item" (click)="toggleUserStatus(user)">
+                        <i class="ph ph-power"></i>
+                        <span>{{ user.active ? 'Deactivate' : 'Activate' }}</span>
+                      </button>
+                      <button class="pop-item item-danger" (click)="deleteUser(user.id)">
+                        <i class="ph ph-trash"></i>
+                        <span>Delete User</span>
+                      </button>
+                    </div>
+                  }
                 </div>
-              </div>
-            </td>
-          </tr>
-          <tr *ngIf="paginatedUsers.length === 0">
-            <td colspan="4" class="empty-message">No users found matching your search criteria.</td>
-          </tr>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="empty-message">No users found matching your search criteria.</td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
   </div>
 </div>
 
-<!-- Add / Edit User Modal Dialog (Exact pixel structure from scimaxieg) -->
-<div class="modal-overlay-backdrop" *ngIf="showUserModal" (click)="showUserModal = false">
-  <div class="modal-card-dialog user-modal-dialog" (click)="$event.stopPropagation()">
-    <!-- Modal Header -->
-    <div class="modal-header">
-      <h2 class="modal-title">{{ isEditMode ? 'Edit User' : 'Add User' }}</h2>
-      <div class="modal-header-actions">
-        <button class="btn-modal-save" (click)="saveUser()">Save</button>
-        <button class="btn-modal-close" (click)="showUserModal = false">
-          <i class="ph ph-x"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Modal Body Form -->
-    <div class="modal-form-body">
-      <!-- Row 1: Username & Active Switch -->
-      <div class="form-row-between">
-        <div class="form-field full-flex">
-          <label class="field-label">Username <span class="required-star">*</span></label>
-          <input type="text" [(ngModel)]="userForm.username" placeholder="e.g. John Doe" class="scimax-input" />
+<!-- Add / Edit User Modal Dialog -->
+@if (showUserModal()) {
+  <div class="modal-overlay-backdrop" (click)="showUserModal.set(false)">
+    <div class="modal-card-dialog user-modal-dialog" (click)="$event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h2 class="modal-title">{{ isEditMode() ? 'Edit User' : 'Add User' }}</h2>
+        <div class="modal-header-actions">
+          <button class="btn-modal-save" [disabled]="isSaving()" (click)="saveUser()">
+            {{ isSaving() ? 'Saving...' : 'Save' }}
+          </button>
+          <button class="btn-modal-close" (click)="showUserModal.set(false)">
+            <i class="ph ph-x"></i>
+          </button>
         </div>
-        <div class="status-toggle-wrapper">
-          <span class="toggle-status-label">Active</span>
-          <div class="toggle-switch-container">
-            <button 
-              type="button" 
-              class="ios-switch" 
-              [class.switch-on]="userForm.active"
-              (click)="userForm.active = !userForm.active">
-              <span class="switch-thumb"></span>
-            </button>
-            <span class="toggle-state-text">{{ userForm.active ? 'On' : 'Off' }}</span>
+      </div>
+
+      <!-- Modal Body Form -->
+      <div class="modal-form-body">
+        <!-- Row 1: Username & Active Switch -->
+        <div class="form-row-between">
+          <div class="form-field full-flex">
+            <label class="field-label">Username <span class="required-star">*</span></label>
+            <input type="text" [(ngModel)]="userForm.username" placeholder="e.g. John Doe" class="scimax-input" />
+          </div>
+          <div class="status-toggle-wrapper">
+            <span class="toggle-status-label">Active</span>
+            <div class="toggle-switch-container">
+              <button 
+                type="button" 
+                class="ios-switch" 
+                [class.switch-on]="userForm.active"
+                (click)="userForm.active = !userForm.active">
+                <span class="switch-thumb"></span>
+              </button>
+              <span class="toggle-state-text">{{ userForm.active ? 'On' : 'Off' }}</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Row 2: Email & Phone -->
-      <div class="form-grid-2">
-        <div class="form-field">
-          <label class="field-label">Email ID <span class="required-star">*</span></label>
-          <input type="email" [(ngModel)]="userForm.email" placeholder="user@company.com" class="scimax-input" />
-        </div>
-        <div class="form-field">
-          <label class="field-label">Phone</label>
-          <input type="text" [(ngModel)]="userForm.phone" placeholder="+1 (555) 000-0000" class="scimax-input" />
-        </div>
-      </div>
-
-      <!-- Row 3: Department Multi-select & Auth Type -->
-      <div class="form-grid-2">
-        <div class="form-field position-relative">
-          <label class="field-label">Department</label>
-          <div class="custom-multiselect-input" (click)="showDeptDropdown = !showDeptDropdown; $event.stopPropagation()">
-            <span class="selected-text" [class.placeholder-color]="userForm.departments.length === 0">
-              {{ getDepartmentDisplayText() }}
-            </span>
-            <i class="ph ph-caret-down dropdown-chevron" [class.rotated]="showDeptDropdown"></i>
+        <!-- Row 2: Email & Phone -->
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label class="field-label">Email ID <span class="required-star">*</span></label>
+            <input type="email" [(ngModel)]="userForm.email" placeholder="user@company.com" class="scimax-input" />
           </div>
+          <div class="form-field">
+            <label class="field-label">Phone</label>
+            <input type="text" [(ngModel)]="userForm.phone" placeholder="+1 (555) 000-0000" class="scimax-input" />
+          </div>
+        </div>
 
-          <!-- Multi-select Popup Drawer -->
-          <div class="multiselect-dropdown-drawer" *ngIf="showDeptDropdown" (click)="$event.stopPropagation()">
-            <div class="multiselect-search-header">
-              <label class="select-all-label">
-                <input 
-                  type="checkbox" 
-                  [checked]="userForm.departments.length === allDepartments.length && allDepartments.length > 0"
-                  (change)="selectAllDepartments()" />
-                <span>Select all</span>
-              </label>
+        <!-- Row 3: Department Multi-select & Auth Type -->
+        <div class="form-grid-2">
+          <div class="form-field position-relative">
+            <label class="field-label">Department</label>
+            <div class="custom-multiselect-input" (click)="showDeptDropdown.set(!showDeptDropdown()); $event.stopPropagation()">
+              <span class="selected-text" [class.placeholder-color]="userForm.departments.length === 0">
+                {{ getDepartmentDisplayText() }}
+              </span>
+              <i class="ph ph-caret-down dropdown-chevron" [class.rotated]="showDeptDropdown()"></i>
+            </div>
 
-              <div class="multiselect-search-box">
-                <i class="ph ph-magnifying-glass search-ico"></i>
-                <input type="text" [(ngModel)]="deptSearch" placeholder="Search..." />
-                <button class="clear-search-btn" *ngIf="deptSearch" (click)="deptSearch = ''">×</button>
+            <!-- Multi-select Popup Drawer -->
+            @if (showDeptDropdown()) {
+              <div class="multiselect-dropdown-drawer" (click)="$event.stopPropagation()">
+                <div class="multiselect-search-header">
+                  <label class="select-all-label">
+                    <input 
+                      type="checkbox" 
+                      [checked]="userForm.departments.length === allDepartments().length && allDepartments().length > 0"
+                      (change)="selectAllDepartments()" />
+                    <span>Select all</span>
+                  </label>
+
+                  <div class="multiselect-search-box">
+                    <i class="ph ph-magnifying-glass search-ico"></i>
+                    <input 
+                      type="text" 
+                      [ngModel]="deptSearch()" 
+                      (ngModelChange)="deptSearch.set($event)" 
+                      placeholder="Search..." />
+                    @if (deptSearch()) {
+                      <button class="clear-search-btn" (click)="deptSearch.set('')">×</button>
+                    }
+                  </div>
+                </div>
+
+                <div class="multiselect-options-list">
+                  @for (d of filteredDepartmentsList(); track d) {
+                    <label class="option-row">
+                      <input 
+                        type="checkbox" 
+                        [checked]="isDeptSelected(d)"
+                        (change)="toggleDeptSelection(d)" />
+                      <span class="option-label-text">{{ d }}</span>
+                    </label>
+                  }
+                </div>
               </div>
-            </div>
+            }
+          </div>
 
-            <div class="multiselect-options-list">
-              <label *ngFor="let d of filteredDepartmentsList" class="option-row">
-                <input 
-                  type="checkbox" 
-                  [checked]="isDeptSelected(d)"
-                  (change)="toggleDeptSelection(d)" />
-                <span class="option-label-text">{{ d }}</span>
-              </label>
-            </div>
+          <div class="form-field">
+            <label class="field-label">Authentication for User <span class="required-star">*</span></label>
+            <select [(ngModel)]="userForm.authType" class="scimax-input select-styled">
+              @for (opt of authOptions; track opt) {
+                <option [value]="opt">{{ opt }}</option>
+              }
+            </select>
           </div>
         </div>
 
+        <!-- Row 4: Assigned Roles Selection -->
         <div class="form-field">
-          <label class="field-label">Authentication for User <span class="required-star">*</span></label>
-          <select [(ngModel)]="userForm.authType" class="scimax-input select-styled">
-            <option *ngFor="let opt of authOptions" [value]="opt">{{ opt }}</option>
+          <label class="field-label">Assigned Role</label>
+          <select [(ngModel)]="userForm.role" class="scimax-input select-styled">
+            <option value="Super Admin">Super Admin</option>
+            <option value="IST Department Lead">IST Department Lead</option>
+            <option value="EAP Specialist">EAP Specialist</option>
+            <option value="Grants & Compliance Officer">Grants & Compliance Officer</option>
+            <option value="IST & GRANTS Co Owner">IST & GRANTS Co Owner</option>
+            <option value="IST & Grants Reviewer">IST & Grants Reviewer</option>
+            <option value="Analytics">Analytics</option>
           </select>
         </div>
       </div>
-
-      <!-- Row 4: Assigned Roles Selection -->
-      <div class="form-field">
-        <label class="field-label">Assigned Role</label>
-        <select [(ngModel)]="userForm.role" class="scimax-input select-styled">
-          <option value="Super Admin">Super Admin</option>
-          <option value="IST Department Lead">IST Department Lead</option>
-          <option value="EAP Specialist">EAP Specialist</option>
-          <option value="Grants & Compliance Officer">Grants & Compliance Officer</option>
-          <option value="IST & GRANTS Co Owner">IST & GRANTS Co Owner</option>
-          <option value="IST & Grants Reviewer">IST & Grants Reviewer</option>
-          <option value="Analytics">Analytics</option>
-        </select>
-      </div>
     </div>
   </div>
-</div>
+}

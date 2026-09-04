@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
@@ -49,17 +49,17 @@ export class LoginComponent implements OnInit {
     this.showPasswordText = !this.showPasswordText;
   }
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private http: HttpClient,
-    private authService: AuthService,
-    private superAdminAuth: SuperAdminAuthService,
-    private userMgmtService: UmUserManagementService,
-    private commonSummary: CommonSummaryService,
-    private alertsNotifications: CommonAlertsNotificationsService,
-    private istGeneralInfo: IstGeneralInfoService
-  ) {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private http = inject(HttpClient);
+  private authService = inject(AuthService);
+  private superAdminAuth = inject(SuperAdminAuthService);
+  private userMgmtService = inject(UmUserManagementService);
+  private commonSummary = inject(CommonSummaryService);
+  private alertsNotifications = inject(CommonAlertsNotificationsService);
+  private istGeneralInfo = inject(IstGeneralInfoService);
+
+  constructor() {
     this.orgCode = this.getResolvedOrgCode();
     if (this.orgCode) {
       this.orgName = this.orgCode.toUpperCase();
@@ -478,14 +478,9 @@ export class LoginComponent implements OnInit {
     });
 
     // 5. IST Applications List: GET api/ISTGeneralInfo/GetApplicationsList
-    this.http.get(`${serviceConstants.apiURL}api/ISTGeneralInfo/GetApplicationsList`, httpOptions).subscribe({
+    this.istGeneralInfo.getApplicationsList().subscribe({
       next: (res: any) => console.log('Applications list loaded:', res ? 'OK' : 'Empty'),
-      error: (err) => {
-        this.istGeneralInfo.getApplicationsList().subscribe({
-          next: (postRes: any) => console.log('Applications list fallback loaded:', postRes ? 'OK' : 'Empty'),
-          error: (pErr) => console.warn('GetApplicationsList fallback:', pErr)
-        });
-      }
+      error: (err) => console.warn('GetApplicationsList fallback:', err)
     });
 
     // 6. Search Application Types: GET api/apptypes/getallappforsearch/2/-1

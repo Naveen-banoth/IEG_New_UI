@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -6,7 +6,6 @@ import { AdminUserManagementService } from '../../../TestServices/Administration
 import { UserRoleItem } from '../../../core/models/administration.model';
 
 export { UserRoleItem };
-
 
 import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-user-toolbar.component';
 
@@ -18,20 +17,22 @@ import { TopUserToolbarComponent } from '../../../layout/top-user-toolbar/top-us
   styleUrl: './user-roles.component.scss'
 })
 export class UserRolesComponent implements OnInit {
-  public searchExpanded = false;
-  public searchKeyword = '';
-  public filterStatus = '';
-  public isLoading = false;
-  public isSaving = false;
+  private userMgmtService = inject(AdminUserManagementService);
 
-  public isCreatingOrEditing = false;
-  public isEditMode = false;
-  public activeActionMenuId: string | null = null;
-  public activeSidebarTab: 'details' | 'general' | 'ist' | 'eap' | 'grants' | 'analytics' = 'details';
+  public searchExpanded = signal<boolean>(false);
+  public searchKeyword = signal<string>('');
+  public filterStatus = signal<string>('');
+  public isLoading = signal<boolean>(false);
+  public isSaving = signal<boolean>(false);
+
+  public isCreatingOrEditing = signal<boolean>(false);
+  public isEditMode = signal<boolean>(false);
+  public activeActionMenuId = signal<string | null>(null);
+  public activeSidebarTab = signal<'details' | 'general' | 'ist' | 'eap' | 'grants' | 'analytics'>('details');
 
   public roleForm: UserRoleItem = this.getEmptyRoleForm();
 
-  public rolesList: UserRoleItem[] = [
+  public rolesList = signal<UserRoleItem[]>([
     {
       id: 'ROLE-1',
       name: 'ANALYTICS 123',
@@ -41,52 +42,52 @@ export class UserRolesComponent implements OnInit {
     },
     {
       id: 'ROLE-2',
-      name: 'all',
-      description: 'Global access across all modules.',
+      name: 'App Admin',
+      description: 'Application administration and configuration manager.',
       active: true,
       modulePermissions: this.getDefaultPermissions(true, true, true, true, true)
     },
     {
       id: 'ROLE-3',
-      name: 'IST & GRANTS Co Owner Privilege',
-      description: 'Co-ownership and approval privileges for IST and Grants.',
+      name: 'App Lead',
+      description: 'Program team lead with cross-module approval authority.',
       active: true,
-      modulePermissions: this.getDefaultPermissions(true, true, false, true, false)
+      modulePermissions: this.getDefaultPermissions(true, true, true, true, true)
     },
     {
       id: 'ROLE-4',
-      name: 'IST & Grants Reviewer privilege',
-      description: 'Reviewer and scoring permissions for IST & Grants.',
+      name: 'APPROVER 123',
+      description: 'Approval queue management for research grants.',
       active: true,
       modulePermissions: this.getDefaultPermissions(true, true, false, true, false)
     },
     {
       id: 'ROLE-5',
-      name: 'Inactive All in one except analytics',
-      description: 'Deactivated legacy role preset.',
-      active: false,
-      modulePermissions: this.getDefaultPermissions(false, false, false, false, true)
+      name: 'Approver 4',
+      description: 'Stage 4 final signoff for clinical program proposals.',
+      active: true,
+      modulePermissions: this.getDefaultPermissions(true, true, false, false, false)
     },
     {
       id: 'ROLE-6',
-      name: 'IST & Grants change ownership',
-      description: 'Ability to transfer ownership of research applications.',
+      name: 'Approver 5',
+      description: 'Executive committee and audit authorization.',
       active: true,
-      modulePermissions: this.getDefaultPermissions(true, true, false, true, false)
+      modulePermissions: this.getDefaultPermissions(true, false, false, true, true)
     },
     {
       id: 'ROLE-7',
-      name: 'Analytics',
-      description: 'Read-only access to portal metrics and charts.',
+      name: 'Approver 6',
+      description: 'Regulatory submission and compliance reviewer.',
       active: true,
-      modulePermissions: this.getDefaultPermissions(true, false, false, false, true)
+      modulePermissions: this.getDefaultPermissions(true, false, true, false, false)
     },
     {
       id: 'ROLE-8',
-      name: 'Super Admin',
-      description: 'Full un-restricted administrative access across entire portal.',
+      name: 'Approver 7',
+      description: 'Financial ledger and milestone disbursement oversight.',
       active: true,
-      modulePermissions: this.getDefaultPermissions(true, true, true, true, true)
+      modulePermissions: this.getDefaultPermissions(true, false, false, true, false)
     },
     {
       id: 'ROLE-9',
@@ -102,30 +103,52 @@ export class UserRolesComponent implements OnInit {
       active: true,
       modulePermissions: this.getDefaultPermissions(true, false, true, false, false)
     }
-  ];
+  ]);
 
-  public currentPage = 1;
-  public pageSize = 10;
+  public currentPage = signal<number>(1);
+  public pageSize = signal<number>(10);
 
-  constructor(private userMgmtService: AdminUserManagementService) {}
+  public filteredRoles = computed(() => {
+    const keyword = this.searchKeyword().toLowerCase().trim();
+    const status = this.filterStatus();
+
+    return this.rolesList().filter(r => {
+      const matchKey = !keyword || r.name.toLowerCase().includes(keyword);
+      const matchStatus = !status || (status === 'Active' ? r.active : !r.active);
+      return matchKey && matchStatus;
+    });
+  });
+
+  public paginatedRoles = computed(() => {
+    const page = this.currentPage();
+    const size = this.pageSize();
+    const start = (page - 1) * size;
+    return this.filteredRoles().slice(start, start + size);
+  });
+
+  public totalPages = computed(() => {
+    return Math.ceil(this.filteredRoles().length / this.pageSize()) || 1;
+  });
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadRoles();
   }
 
   loadRoles(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     const payload = {
-      ROLE_NAME: this.searchKeyword || '',
-      STATUS: this.filterStatus === 'Active' ? '1' : this.filterStatus === 'Inactive' ? '0' : '-1'
+      ROLE_NAME: this.searchKeyword() || '',
+      STATUS: this.filterStatus() === 'Active' ? '1' : this.filterStatus() === 'Inactive' ? '0' : '-1'
     };
 
     this.userMgmtService.getRoleAdvSearch(payload).subscribe({
       next: (res: any) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         const records = Array.isArray(res) ? res : (res?.Data && Array.isArray(res.Data) ? res.Data : []);
         if (records.length > 0) {
-          this.rolesList = records.map((r: any, idx: number) => ({
+          const mapped = records.map((r: any, idx: number) => ({
             id: r.ROLEID || r.ID || r.Role_ID || `ROLE-${idx + 1}`,
             name: r.ROLE_NAME || r.Role_Name || r.NAME || '',
             description: r.DESCRIPTION || r.Description || '',
@@ -133,10 +156,11 @@ export class UserRolesComponent implements OnInit {
             modulePermissions: this.getDefaultPermissions(true, true, true, true, true),
             raw: r
           }));
+          this.rolesList.set(mapped);
         }
       },
       error: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
       }
     });
   }
@@ -197,47 +221,30 @@ export class UserRolesComponent implements OnInit {
     };
   }
 
-  get filteredRoles(): UserRoleItem[] {
-    return this.rolesList.filter(r => {
-      const matchKey = !this.searchKeyword || r.name.toLowerCase().includes(this.searchKeyword.toLowerCase());
-      const matchStatus = !this.filterStatus || (this.filterStatus === 'Active' ? r.active : !r.active);
-      return matchKey && matchStatus;
-    });
-  }
-
-  get paginatedRoles(): UserRoleItem[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredRoles.slice(start, start + this.pageSize);
-  }
-
-  get totalPages(): number {
-    return Math.ceil(this.filteredRoles.length / this.pageSize) || 1;
-  }
-
   getEnabledCount(items: { name: string; enabled: boolean }[]): number {
     if (!items) return 0;
     return items.filter(i => i.enabled).length;
   }
 
   openCreateRole(): void {
-    this.isEditMode = false;
+    this.isEditMode.set(false);
     this.roleForm = {
-      id: 'ROLE-' + (this.rolesList.length + 1),
+      id: 'ROLE-' + (this.rolesList().length + 1),
       name: '',
       description: '',
       active: true,
       modulePermissions: this.getDefaultPermissions(false, false, false, false, false)
     };
-    this.activeSidebarTab = 'details';
-    this.isCreatingOrEditing = true;
+    this.activeSidebarTab.set('details');
+    this.isCreatingOrEditing.set(true);
   }
 
   openEditRole(role: UserRoleItem): void {
-    this.isEditMode = true;
+    this.isEditMode.set(true);
     this.roleForm = JSON.parse(JSON.stringify(role));
-    this.activeSidebarTab = 'details';
-    this.isCreatingOrEditing = true;
-    this.activeActionMenuId = null;
+    this.activeSidebarTab.set('details');
+    this.isCreatingOrEditing.set(true);
+    this.activeActionMenuId.set(null);
 
     if (role.id && !role.id.startsWith('ROLE-')) {
       this.userMgmtService.getRolePrivileges(role.id).subscribe({
@@ -250,12 +257,13 @@ export class UserRolesComponent implements OnInit {
   saveRole(): void {
     if (!this.roleForm.name) return;
 
-    this.isSaving = true;
+    this.isSaving.set(true);
     const raw = this.roleForm.raw || {};
+    const isEdit = this.isEditMode();
     const payload = {
       ...raw,
-      ID: this.isEditMode && this.roleForm.id && !this.roleForm.id.startsWith('ROLE-') ? this.roleForm.id : (raw.ID || ''),
-      Role_ID: this.isEditMode && this.roleForm.id && !this.roleForm.id.startsWith('ROLE-') ? this.roleForm.id : (raw.Role_ID || ''),
+      ID: isEdit && this.roleForm.id && !this.roleForm.id.startsWith('ROLE-') ? this.roleForm.id : (raw.ID || ''),
+      Role_ID: isEdit && this.roleForm.id && !this.roleForm.id.startsWith('ROLE-') ? this.roleForm.id : (raw.Role_ID || ''),
       Role_Name: this.roleForm.name,
       NAME: this.roleForm.name,
       DESCRIPTION: this.roleForm.description || '',
@@ -263,52 +271,54 @@ export class UserRolesComponent implements OnInit {
       STATUS: this.roleForm.active ? '1' : '0'
     };
 
-    if (this.isEditMode) {
+    if (isEdit) {
       this.userMgmtService.updateRole(payload).subscribe({
         next: () => {
-          this.isSaving = false;
-          this.isCreatingOrEditing = false;
+          this.isSaving.set(false);
+          this.isCreatingOrEditing.set(false);
           this.loadRoles();
         },
         error: () => {
-          this.isSaving = false;
-          const idx = this.rolesList.findIndex(r => r.id === this.roleForm.id);
+          this.isSaving.set(false);
+          const list = [...this.rolesList()];
+          const idx = list.findIndex(r => r.id === this.roleForm.id);
           if (idx !== -1) {
-            this.rolesList[idx] = JSON.parse(JSON.stringify(this.roleForm));
+            list[idx] = JSON.parse(JSON.stringify(this.roleForm));
+            this.rolesList.set(list);
           }
-          this.isCreatingOrEditing = false;
+          this.isCreatingOrEditing.set(false);
         }
       });
     } else {
       this.userMgmtService.insertRole(payload).subscribe({
         next: () => {
-          this.isSaving = false;
-          this.isCreatingOrEditing = false;
+          this.isSaving.set(false);
+          this.isCreatingOrEditing.set(false);
           this.loadRoles();
         },
         error: () => {
-          this.isSaving = false;
-          this.rolesList.unshift(JSON.parse(JSON.stringify(this.roleForm)));
-          this.isCreatingOrEditing = false;
+          this.isSaving.set(false);
+          this.rolesList.update(list => [JSON.parse(JSON.stringify(this.roleForm)), ...list]);
+          this.isCreatingOrEditing.set(false);
         }
       });
     }
   }
 
   cancelEdit(): void {
-    this.isCreatingOrEditing = false;
+    this.isCreatingOrEditing.set(false);
   }
 
   deleteRole(roleId: string): void {
-    const rawRole = this.rolesList.find(r => r.id === roleId);
+    const rawRole = this.rolesList().find(r => r.id === roleId);
     const apiId = rawRole?.raw?.ID || rawRole?.raw?.ROLEID || roleId;
 
-    this.rolesList = this.rolesList.filter(r => r.id !== roleId);
+    this.rolesList.update(list => list.filter(r => r.id !== roleId));
     this.userMgmtService.deleteRole(apiId).subscribe({
       next: () => {},
       error: () => {}
     });
-    this.activeActionMenuId = null;
+    this.activeActionMenuId.set(null);
   }
 
   toggleRoleStatus(role: UserRoleItem): void {
@@ -327,18 +337,26 @@ export class UserRolesComponent implements OnInit {
       next: () => {},
       error: () => {}
     });
-    this.activeActionMenuId = null;
+    this.activeActionMenuId.set(null);
   }
 
   toggleActionMenu(event: MouseEvent, id: string): void {
     event.stopPropagation();
-    this.activeActionMenuId = this.activeActionMenuId === id ? null : id;
+    this.activeActionMenuId.set(this.activeActionMenuId() === id ? null : id);
   }
 
-  toggleAllInModule(module: 'general' | 'ist' | 'eap' | 'grants' | 'analytics', enable: boolean): void {
-    const list = this.roleForm.modulePermissions[module];
-    list.forEach(item => item.enabled = enable);
+  getActiveModulePermissions(): { name: string; enabled: boolean; code?: string }[] {
+    const tab = this.activeSidebarTab();
+    if (tab === 'details') return [];
+    return this.roleForm.modulePermissions[tab] || [];
+  }
+
+  toggleAllInActiveModule(enable: boolean): void {
+    const tab = this.activeSidebarTab();
+    if (tab === 'details') return;
+    const list = this.roleForm.modulePermissions[tab];
+    if (list) {
+      list.forEach(item => item.enabled = enable);
+    }
   }
 }
-
-

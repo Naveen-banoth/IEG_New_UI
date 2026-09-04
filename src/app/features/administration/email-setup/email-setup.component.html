@@ -1,4 +1,4 @@
-<div class="admin-subpage-container" (click)="activeActionMenuId = null">
+<div class="admin-subpage-container" (click)="activeActionMenuId.set(null)">
   <!-- Header -->
   <div class="subpage-header">
     <div class="header-titles">
@@ -24,35 +24,44 @@
 
   <!-- Search Criteria Accordion Card -->
   <div class="search-criteria-card">
-    <button class="criteria-toggle" (click)="searchExpanded = !searchExpanded; $event.stopPropagation()">
-      <span class="toggle-symbol">{{ searchExpanded ? '-' : '+' }}</span>
+    <button class="criteria-toggle" (click)="searchExpanded.set(!searchExpanded()); $event.stopPropagation()">
+      <span class="toggle-symbol">{{ searchExpanded() ? '-' : '+' }}</span>
       <span class="toggle-label">Search Criteria</span>
     </button>
 
-    <div class="criteria-body" *ngIf="searchExpanded">
-      <div class="form-group">
-        <label>Email Address</label>
-        <input type="text" [(ngModel)]="searchKeyword" placeholder="Search email address..." class="filter-input" />
+    @if (searchExpanded()) {
+      <div class="criteria-body">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input 
+            type="text" 
+            [ngModel]="searchKeyword()" 
+            (ngModelChange)="searchKeyword.set($event); currentPage.set(1)" 
+            placeholder="Search email address..." 
+            class="filter-input" />
+        </div>
       </div>
-    </div>
+    }
   </div>
 
   <!-- Data Table Card -->
   <div class="data-table-card">
     <div class="table-meta-bar">
       <span class="meta-count">
-        Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ (currentPage * pageSize > filteredAccounts.length) ? filteredAccounts.length : currentPage * pageSize }} of {{ filteredAccounts.length }}
+        Showing {{ (currentPage() - 1) * pageSize() + 1 }} to {{ (currentPage() * pageSize() > filteredAccounts().length) ? filteredAccounts().length : currentPage() * pageSize() }} of {{ filteredAccounts().length }}
       </span>
 
-      <div class="pagination-controls" *ngIf="totalPages > 1">
-        <button class="page-arrow" [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1">
-          <i class="ph ph-caret-left"></i>
-        </button>
-        <span class="page-num active">{{ currentPage }}</span>
-        <button class="page-arrow" [disabled]="currentPage === totalPages" (click)="currentPage = currentPage + 1">
-          <i class="ph ph-caret-right"></i>
-        </button>
-      </div>
+      @if (totalPages() > 1) {
+        <div class="pagination-controls">
+          <button class="page-arrow" [disabled]="currentPage() === 1" (click)="currentPage.set(currentPage() - 1)">
+            <i class="ph ph-caret-left"></i>
+          </button>
+          <span class="page-num active">{{ currentPage() }}</span>
+          <button class="page-arrow" [disabled]="currentPage() === totalPages()" (click)="currentPage.set(currentPage() + 1)">
+            <i class="ph ph-caret-right"></i>
+          </button>
+        </div>
+      }
     </div>
 
     <div class="table-responsive">
@@ -64,33 +73,40 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let acc of paginatedAccounts" (click)="openEditModal(acc)">
-            <td class="td-username">
-              <span class="user-link-name">{{ acc.email }}</span>
-              <div class="role-desc-preview" *ngIf="acc.displayName">{{ acc.displayName }} &bull; {{ acc.smtpHost }}:{{ acc.port }}</div>
-            </td>
-            <td class="td-actions" (click)="$event.stopPropagation()">
-              <div class="action-dropdown-anchor">
-                <button class="btn-more-dots" (click)="toggleActionMenu($event, acc.id)">
-                  <i class="ph ph-dots-three-vertical"></i>
-                </button>
+          @for (acc of paginatedAccounts(); track acc.id) {
+            <tr (click)="openEditModal(acc)">
+              <td class="td-username">
+                <span class="user-link-name">{{ acc.email }}</span>
+                @if (acc.displayName) {
+                  <div class="role-desc-preview">{{ acc.displayName }} &bull; {{ acc.smtpHost }}:{{ acc.port }}</div>
+                }
+              </td>
+              <td class="td-actions" (click)="$event.stopPropagation()">
+                <div class="action-dropdown-anchor">
+                  <button class="btn-more-dots" (click)="toggleActionMenu($event, acc.id)">
+                    <i class="ph ph-dots-three-vertical"></i>
+                  </button>
 
-                <div class="action-popover" *ngIf="activeActionMenuId === acc.id">
-                  <button class="pop-item" (click)="openEditModal(acc)">
-                    <i class="ph ph-pencil-simple"></i>
-                    <span>Edit Account</span>
-                  </button>
-                  <button class="pop-item item-danger" (click)="deleteAccount(acc.id)">
-                    <i class="ph ph-trash"></i>
-                    <span>Delete Account</span>
-                  </button>
+                  @if (activeActionMenuId() === acc.id) {
+                    <div class="action-popover">
+                      <button class="pop-item" (click)="openEditModal(acc)">
+                        <i class="ph ph-pencil-simple"></i>
+                        <span>Edit Account</span>
+                      </button>
+                      <button class="pop-item item-danger" (click)="deleteAccount(acc.id)">
+                        <i class="ph ph-trash"></i>
+                        <span>Delete Account</span>
+                      </button>
+                    </div>
+                  }
                 </div>
-              </div>
-            </td>
-          </tr>
-          <tr *ngIf="paginatedAccounts.length === 0">
-            <td colspan="2" class="empty-message">No email accounts configured.</td>
-          </tr>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="2" class="empty-message">No email accounts configured.</td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
@@ -98,81 +114,85 @@
 </div>
 
 <!-- Add / Edit Email Account Drawer/Modal -->
-<div class="modal-overlay-backdrop" *ngIf="showModal" (click)="showModal = false">
-  <div class="modal-card-dialog email-modal-dialog" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2 class="modal-title">{{ isEditMode ? 'Edit Email Account' : 'Add Email Account' }}</h2>
-      <div class="modal-header-actions">
-        <button class="btn-modal-save" (click)="saveAccount()">Save</button>
-        <button class="btn-modal-close" (click)="showModal = false">
-          <i class="ph ph-x"></i>
-        </button>
-      </div>
-    </div>
-
-    <div class="modal-form-body">
-      <div class="form-grid-2">
-        <div class="form-field">
-          <label class="field-label">Email Address <span class="required-star">*</span></label>
-          <input type="email" [(ngModel)]="emailForm.email" placeholder="notifications@domain.com" class="scimax-input" />
-        </div>
-        <div class="form-field">
-          <label class="field-label">Display Name</label>
-          <input type="text" [(ngModel)]="emailForm.displayName" placeholder="e.g. Scimax Portal Mailer" class="scimax-input" />
+@if (showModal()) {
+  <div class="modal-overlay-backdrop" (click)="showModal.set(false)">
+    <div class="modal-card-dialog email-modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">{{ isEditMode() ? 'Edit Email Account' : 'Add Email Account' }}</h2>
+        <div class="modal-header-actions">
+          <button class="btn-modal-save" [disabled]="isSaving()" (click)="saveAccount()">
+            {{ isSaving() ? 'Saving...' : 'Save' }}
+          </button>
+          <button class="btn-modal-close" (click)="showModal.set(false)">
+            <i class="ph ph-x"></i>
+          </button>
         </div>
       </div>
 
-      <div class="form-grid-2">
-        <div class="form-field">
-          <label class="field-label">SMTP Host Server <span class="required-star">*</span></label>
-          <input type="text" [(ngModel)]="emailForm.smtpHost" placeholder="smtp.office365.com" class="scimax-input" />
-        </div>
-        <div class="form-field">
-          <label class="field-label">SMTP Port <span class="required-star">*</span></label>
-          <input type="number" [(ngModel)]="emailForm.port" placeholder="587" class="scimax-input" />
-        </div>
-      </div>
-
-      <div class="form-grid-2">
-        <div class="form-field">
-          <label class="field-label">SMTP Username</label>
-          <input type="text" [(ngModel)]="emailForm.username" placeholder="Username" class="scimax-input" />
-        </div>
-        <div class="form-field">
-          <label class="field-label">SMTP Password</label>
-          <input type="password" placeholder="••••••••••••" class="scimax-input" />
-        </div>
-      </div>
-
-      <div class="form-row-between">
-        <div class="status-toggle-wrapper">
-          <span class="toggle-status-label">SSL / TLS Encryption</span>
-          <div class="toggle-switch-container">
-            <button 
-              type="button" 
-              class="ios-switch" 
-              [class.switch-on]="emailForm.enableSsl"
-              (click)="emailForm.enableSsl = !emailForm.enableSsl">
-              <span class="switch-thumb"></span>
-            </button>
-            <span class="toggle-state-text">{{ emailForm.enableSsl ? 'Enabled' : 'Disabled' }}</span>
+      <div class="modal-form-body">
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label class="field-label">Email Address <span class="required-star">*</span></label>
+            <input type="email" [(ngModel)]="emailForm.email" placeholder="notifications@domain.com" class="scimax-input" />
+          </div>
+          <div class="form-field">
+            <label class="field-label">Display Name</label>
+            <input type="text" [(ngModel)]="emailForm.displayName" placeholder="e.g. Scimax Portal Mailer" class="scimax-input" />
           </div>
         </div>
 
-        <div class="status-toggle-wrapper">
-          <span class="toggle-status-label">Active Status</span>
-          <div class="toggle-switch-container">
-            <button 
-              type="button" 
-              class="ios-switch" 
-              [class.switch-on]="emailForm.active"
-              (click)="emailForm.active = !emailForm.active">
-              <span class="switch-thumb"></span>
-            </button>
-            <span class="toggle-state-text">{{ emailForm.active ? 'Active' : 'Inactive' }}</span>
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label class="field-label">SMTP Host Server <span class="required-star">*</span></label>
+            <input type="text" [(ngModel)]="emailForm.smtpHost" placeholder="smtp.office365.com" class="scimax-input" />
+          </div>
+          <div class="form-field">
+            <label class="field-label">SMTP Port <span class="required-star">*</span></label>
+            <input type="number" [(ngModel)]="emailForm.port" placeholder="587" class="scimax-input" />
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label class="field-label">SMTP Username</label>
+            <input type="text" [(ngModel)]="emailForm.username" placeholder="Username" class="scimax-input" />
+          </div>
+          <div class="form-field">
+            <label class="field-label">SMTP Password</label>
+            <input type="password" [(ngModel)]="emailForm.password" placeholder="••••••••••••" class="scimax-input" />
+          </div>
+        </div>
+
+        <div class="form-row-between">
+          <div class="status-toggle-wrapper">
+            <span class="toggle-status-label">SSL / TLS Encryption</span>
+            <div class="toggle-switch-container">
+              <button 
+                type="button" 
+                class="ios-switch" 
+                [class.switch-on]="emailForm.enableSsl"
+                (click)="emailForm.enableSsl = !emailForm.enableSsl">
+                <span class="switch-thumb"></span>
+              </button>
+              <span class="toggle-state-text">{{ emailForm.enableSsl ? 'Enabled' : 'Disabled' }}</span>
+            </div>
+          </div>
+
+          <div class="status-toggle-wrapper">
+            <span class="toggle-status-label">Active Status</span>
+            <div class="toggle-switch-container">
+              <button 
+                type="button" 
+                class="ios-switch" 
+                [class.switch-on]="emailForm.active"
+                (click)="emailForm.active = !emailForm.active">
+                <span class="switch-thumb"></span>
+              </button>
+              <span class="toggle-state-text">{{ emailForm.active ? 'Active' : 'Inactive' }}</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+}

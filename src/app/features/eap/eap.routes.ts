@@ -10,11 +10,11 @@ export const EAP_ROUTES: Routes = [
   },
   {
     path: 'dashboard',
-    loadComponent: () => import('./eap-dashboard.component').then(m => m.EapDashboardComponent),
+    loadComponent: () => import('../ist/ist-dashboard.component').then(m => m.IstDashboardComponent),
     canActivate: [permissionGuard],
     data: {
-      module: ModuleCode.EAP,
-      screen: ScreenCode.EAP_DASHBOARD
+      module: 'EAP',
+      screen: 'eap-dashboard'
     }
   },
   {

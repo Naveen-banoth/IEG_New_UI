@@ -8,7 +8,7 @@ import { formOptions, httpOptions, serviceConstants } from '../../constants/serv
 })
 export class GrantsGeneralInfoService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Fetch Grants application summary
@@ -23,36 +23,34 @@ export class GrantsGeneralInfoService {
 
   /**
    * Fetch Grants applications list
-   * POST api/gmmyapplications/getapplicationslist
+   * POST api/gmapp/getadvsearch
    */
-  getApplicationsList(search: any = { Status: 'ALL', PageIndex: 1, PageSize: 10 }): Observable<any[]> {
+  getAdvSearch(formData: any = { TYPE: 'A' }): Observable<any[]> {
     return this.http.post<any[]>(
-      `${serviceConstants.apiURL}api/gmmyapplications/getapplicationslist`,
-      search,
+      `${serviceConstants.apiURL}api/gmapp/getadvsearch`,
+      formData,
       httpOptions
     );
   }
 
   /**
-   * Fetch user grants applications list
-   * POST api/gmmyapplications/GetMyApplicationsList
+   * Fetch Grants applications list
+   * GET api/gmapp/getallapplications
    */
-  getMyApplicationsList(search: any = { PageIndex: 1, PageSize: 10 }): Observable<any[]> {
-    return this.http.post<any[]>(
-      `${serviceConstants.apiURL}api/gmmyapplications/GetMyApplicationsList`,
-      search,
-      httpOptions
+  getApplicationsList(): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${serviceConstants.apiURL}api/gmapp/getallapplications`
     );
   }
 
   /**
-   * Search personal grants applications
-   * POST api/gmmyapplications/getMySummarySearch
+   * Fetch user (My) grants applications list
+   * POST api/gmapp/getadvsearch
    */
-  getMySummarySearch(search: any = { SearchText: '' }): Observable<any[]> {
+  getMyApplicationsList(formData: any = { TYPE: 'M' }): Observable<any[]> {
     return this.http.post<any[]>(
-      `${serviceConstants.apiURL}api/gmmyapplications/getMySummarySearch`,
-      search,
+      `${serviceConstants.apiURL}api/gmapp/getadvsearch`,
+      formData,
       httpOptions
     );
   }
